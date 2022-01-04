@@ -991,5 +991,52 @@ SELECT EMPNO
   FROM EMP;
   
 
-// P.174 복습
-SELECT
+/* P.174 복습 문제 */
+// Q1
+SELECT EMPNO
+     , RPAD(SUBSTR(EMPNO, 0, 2), LENGTH(EMPNO), '*') AS MASKING_EMPNO
+     , ENAME
+     , RPAD(SUBSTR(ENAME, 0, 1), LENGTH(ENAME), '*')AS MASKING_ENAME
+  FROM EMP
+ WHERE LENGTH(ENAME) >= 5
+   AND LENGTH(ENAME) < 6;
+   
+// Q2
+SELECT EMPNO
+     , ENAME
+     , SAL
+     , TRUNC(SAL/21.5, 2) AS DAY_PAY
+     , ROUND(SAL/21.5/8, 1) AS TIME_PAY
+  FROM EMP;
+
+// Q3
+SELECT EMPNO
+     , ENAME
+     , HIREDATE
+     , TO_DATE(ADD_MONTHS(HIREDATE, 3), 'YYYY-MM-DD') AS R_JOB
+     , NVL(TO_CHAR(COMM), 'N/A') AS COMM
+--   , DECODE(NVL(COMM, -1), -1, 'N/A', COMM) AS COMM
+  FROM EMP;
+
+// Q4
+SELECT EMPNO
+     , ENAME
+     , MGR
+     , CASE 
+          WHEN TO_CHAR(MGR) IS NULL THEN '0000'
+          WHEN SUBSTR(TO_CHAR(MGR), 0, 2) = '75' THEN '5555'
+          WHEN SUBSTR(TO_CHAR(MGR), 0, 2) = '76' THEN '6666'
+          WHEN SUBSTR(TO_CHAR(MGR), 0, 2) = '77' THEN '7777'
+          WHEN SUBSTR(TO_CHAR(MGR), 0, 2) = '78' THEN '8888'
+          ELSE TO_CHAR(MGR)
+       END AS CHG_MGR
+  FROM EMP;
+  
+  
+/** 다중행 함수 및 데이터 그룹화 **/
+
+
+
+
+
+
