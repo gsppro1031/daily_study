@@ -1,6 +1,6 @@
-/*** Do it! ¿À¶óÅ¬·Î ¹è¿ì´Â µ¥ÀÌÅÍº£ÀÌ½º ÀÔ¹® ***/
+/*** Do it! ì˜¤ë¼í´ë¡œ ë°°ìš°ëŠ” ë°ì´í„°ë² ì´ìŠ¤ ìž…ë¬¸ ***/
 
--- ***±¸±Û¿¡ 'ANSI SQL' °Ë»öÇÏ¿© Âü°íÇÒ °Í
+-- ***êµ¬ê¸€ì— 'ANSI SQL' ê²€ìƒ‰í•˜ì—¬ ì°¸ê³ í•  ê²ƒ
 
 DESC EMP;
 DESC DEPT;
@@ -212,7 +212,7 @@ SELECT ENAME, SAL, SAL*12+COMM AS ANNSAL, COMM
 
 SELECT *
   FROM EMP
- WHERE COMM = NULL; -- NULLÀº Æ¯Á¤ °ªÀÌ ¾øÀ¸¹Ç·Î '=' ¿¬»êÀÚ·Î´Â ±¸º° ºÒ°¡´É!! 
+ WHERE COMM = NULL; -- NULLì€ íŠ¹ì • ê°’ì´ ì—†ìœ¼ë¯€ë¡œ '=' ì—°ì‚°ìžë¡œëŠ” êµ¬ë³„ ë¶ˆê°€ëŠ¥!! 
  
 SELECT *
   FROM EMP
@@ -251,7 +251,7 @@ SELECT EMPNO, ENAME, SAL
  WHERE DEPTNO = 20;
   -- ORA-01789: query block has incorrect number of result columns
   -- 01789. 00000 -  "query block has incorrect number of result columns"
-  -- ºÎÁ¤È®ÇÑ ¼öÀÇ °á°ú ÄÃ·³À» °¡Áö°í ÀÖ¾î¼­ ¹ß»ýÇÏ´Â ¿À·ù
+  -- ë¶€ì •í™•í•œ ìˆ˜ì˜ ê²°ê³¼ ì»¬ëŸ¼ì„ ê°€ì§€ê³  ìžˆì–´ì„œ ë°œìƒí•˜ëŠ” ì˜¤ë¥˜
 
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
@@ -262,7 +262,7 @@ SELECT ENAME, EMPNO, DEPTNO, SAL
  WHERE DEPTNO = 20;
   -- ORA-01790: expression must have same datatype as corresponding expression
   -- 01790. 00000 -  "expression must have same datatype as corresponding expression"
-  -- ¼­·Î ´Ù¸¥ µ¥ÀÌÅÍ À¯ÇüÀÌ¶ó ¹ß»ýÇÏ´Â ¿À·ù
+  -- ì„œë¡œ ë‹¤ë¥¸ ë°ì´í„° ìœ í˜•ì´ë¼ ë°œìƒí•˜ëŠ” ì˜¤ë¥˜
 
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
@@ -271,8 +271,8 @@ UNION
 SELECT SAL, JOB, DEPTNO, SAL
   FROM EMP
  WHERE DEPTNO = 20;
--- °á°ú´Â ÀÌ»óÇÏÁö¸¸ ¿À·ù´Â ¹ß»ýÇÏÁö ¾ÊÀ½
--- ÃÖÁ¾ Ãâ·ÂµÇ´Â ¿­ ÀÌ¸§Àº ¸ÕÀú ÀÛ¼ºÇÑ SELECT¹®ÀÇ ¿­ ÀÌ¸§À¸·Î Ç¥±âµÊ
+-- ê²°ê³¼ëŠ” ì´ìƒí•˜ì§€ë§Œ ì˜¤ë¥˜ëŠ” ë°œìƒí•˜ì§€ ì•ŠìŒ
+-- ìµœì¢… ì¶œë ¥ë˜ëŠ” ì—´ ì´ë¦„ì€ ë¨¼ì € ìž‘ì„±í•œ SELECTë¬¸ì˜ ì—´ ì´ë¦„ìœ¼ë¡œ í‘œê¸°ë¨
 
 -- EXAMPLE 'UNION ALL' --
 SELECT EMPNO, ENAME, SAL, DEPTNO
@@ -302,9 +302,9 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
  WHERE DEPTNO = 10;
  
  
--- STUDY ¿¬»êÀÚ ¿ì¼±¼øÀ§ --
+-- STUDY ì—°ì‚°ìž ìš°ì„ ìˆœìœ„ --
 /*
-¡è ¿ì¼±¼øÀ§ ³ôÀ½
+â†‘ ìš°ì„ ìˆœìœ„ ë†’ìŒ
 *, /
 +, -
 =, !=, ^=, <>, >, >=, <, <=
@@ -313,7 +313,7 @@ BETWEEN A AND B
 NOT
 AND
 OR
-¡é ¿ì¼±¼øÀ§ ³·À½
+â†“ ìš°ì„ ìˆœìœ„ ë‚®ìŒ
 */
 
 SELECT *
@@ -360,19 +360,19 @@ SELECT *
 
 
 /** STUDY ORACLE FUNCTION **/
--- ¹®ÀÚ¿­ °ü·Ã ÇÔ¼ö --
+-- ë¬¸ìžì—´ ê´€ë ¨ í•¨ìˆ˜ --
 
 -- STUDY UPPER, LOWER, INITCAP --
 SELECT ENAME, UPPER(ENAME), LOWER(ENAME), INITCAP(ENAME)
   FROM EMP;
   
--- UPPER, LOWER, INITCAP ½Ç¹« »ç¿ë ¿¹½Ã --
+-- UPPER, LOWER, INITCAP ì‹¤ë¬´ ì‚¬ìš© ì˜ˆì‹œ --
 SELECT *
-  FROM °Ô½ÃÆÇÅ×ÀÌºí
- WHERE °Ô½ÃÆÇ Á¦¸ñ ¿­ LIKE '%Oracle%'
-    OR °Ô½ÃÆÇ º»¹® ¿­ LIKE '%Oracle%';
-/* À§ Äõ¸® »ç¿ë ½Ã ´ë¼Ò¹®ÀÚ°¡ ´Ù¸¥ ¿©·¯ °¡Áö °æ¿ìÀÇ 'Oracle' ´Ü¾î¸¦ Ã£À» ¼ö ¾øÀ½.
-ÀÌ¶§ ¾Æ·¡ ¿¹½ÃÃ³·³ Á¶°Ç½Ä ¾çÂÊ Ç×¸ñÀÇ ¹®ÀÚ¿­ µ¥ÀÌÅÍ¸¦ ¸ðµÎ ´ë¹®ÀÚ³ª ¼Ò¹®ÀÚ·Î ¹Ù²ã¼­ ºñ±³ÇØ ÁÜ. */
+  FROM ê²Œì‹œíŒí…Œì´ë¸”
+ WHERE ê²Œì‹œíŒ ì œëª© ì—´ LIKE '%Oracle%'
+    OR ê²Œì‹œíŒ ë³¸ë¬¸ ì—´ LIKE '%Oracle%';
+/* ìœ„ ì¿¼ë¦¬ ì‚¬ìš© ì‹œ ëŒ€ì†Œë¬¸ìžê°€ ë‹¤ë¥¸ ì—¬ëŸ¬ ê°€ì§€ ê²½ìš°ì˜ 'Oracle' ë‹¨ì–´ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŒ.
+ì´ë•Œ ì•„ëž˜ ì˜ˆì‹œì²˜ëŸ¼ ì¡°ê±´ì‹ ì–‘ìª½ í•­ëª©ì˜ ë¬¸ìžì—´ ë°ì´í„°ë¥¼ ëª¨ë‘ ëŒ€ë¬¸ìžë‚˜ ì†Œë¬¸ìžë¡œ ë°”ê¿”ì„œ ë¹„êµí•´ ì¤Œ. */
 
 SELECT *
   FROM EMP
@@ -388,8 +388,8 @@ SELECT UPPER(ENAME)
 
 -- STUDY LENGTH, LENGTHB --
 /*
-LENGTH() : ¹®ÀÚ¿­ µ¥ÀÌÅÍ ±æÀÌ ¸®ÅÏÇÏ´Â ÇÔ¼ö
-LENGTHB() : ¹®ÀÚ¿­ µ¥ÀÌÅÍÀÇ ¹ÙÀÌÆ® ¼ö¸¦ ¸®ÅÏÇÏ´Â ÇÔ¼ö
+LENGTH() : ë¬¸ìžì—´ ë°ì´í„° ê¸¸ì´ ë¦¬í„´í•˜ëŠ” í•¨ìˆ˜
+LENGTHB() : ë¬¸ìžì—´ ë°ì´í„°ì˜ ë°”ì´íŠ¸ ìˆ˜ë¥¼ ë¦¬í„´í•˜ëŠ” í•¨ìˆ˜
 */
 SELECT ENAME, LENGTH(ENAME)
   FROM EMP;
@@ -398,7 +398,7 @@ SELECT ENAME, LENGTH(ENAME)
   FROM EMP
  WHERE LENGTH(ENAME) >= 5;
  
-SELECT LENGTH('ÇÑ±Û'), LENGTHB('ÇÑ±Û')
+SELECT LENGTH('í•œê¸€'), LENGTHB('í•œê¸€')
   FROM DUAL;
 
 SELECT *
@@ -408,12 +408,12 @@ SELECT *
  
 -- STUDY SUBSTR --
 /*
-SUBSTR() : ¹®ÀÚ¿­ Áß ÀÏºÎ¸¦ ÃßÃâÇÒ ¶§ »ç¿ëÇÏ´Â ÇÔ¼ö
+SUBSTR() : ë¬¸ìžì—´ ì¤‘ ì¼ë¶€ë¥¼ ì¶”ì¶œí•  ë•Œ ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-SUBSTR(¹®ÀÚ¿­ µ¥ÀÌÅÍ, ½ÃÀÛ À§Ä¡, ÃßÃâ ±æÀÌ)
-SUBSTR(¹®ÀÚ¿­ µ¥ÀÌÅÍ, ½ÃÀÛ À§Ä¡)
-[NOTE] ½ÃÀÛ À§Ä¡°¡ À½¼öÀÏ °æ¿ì, ¹®ÀÚ¿­ÀÇ ³¡¿¡¼­ ¿ªÀ¸·Î ¼ø¼­ °è»ê
+[ì‚¬ìš© í˜•íƒœ]
+SUBSTR(ë¬¸ìžì—´ ë°ì´í„°, ì‹œìž‘ ìœ„ì¹˜, ì¶”ì¶œ ê¸¸ì´)
+SUBSTR(ë¬¸ìžì—´ ë°ì´í„°, ì‹œìž‘ ìœ„ì¹˜)
+[NOTE] ì‹œìž‘ ìœ„ì¹˜ê°€ ìŒìˆ˜ì¼ ê²½ìš°, ë¬¸ìžì—´ì˜ ëì—ì„œ ì—­ìœ¼ë¡œ ìˆœì„œ ê³„ì‚°
 */
 
 SELECT JOB, SUBSTR(JOB, 1, 2), SUBSTR(JOB, 3, 2), SUBSTR(JOB, 5)
@@ -431,13 +431,13 @@ SELECT JOB
 
 -- STUDY INSTR --
 /*
-INSTR() : ¹®ÀÚ¿­ µ¥ÀÌÅÍ¿¡¼­ Æ¯Á¤ ¹®ÀÚ¿­ Ã£±â
+INSTR() : ë¬¸ìžì—´ ë°ì´í„°ì—ì„œ íŠ¹ì • ë¬¸ìžì—´ ì°¾ê¸°
 
-[»ç¿ë ÇüÅÂ]
-INSTR(°Ë»ö ´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ(ÇÊ¼ö)
-    , °Ë»ö ±âÁØ ¹®ÀÚ¿­(ÇÊ¼ö)
-    , °Ë»ö ½ÃÀÛ À§Ä¡(¼±ÅÃ, ±âº»°ª 1)
-    , ½ÃÀÛ À§Ä¡¿¡¼­ Ã£À¸·Á´Â ¹®ÀÚ°¡ ¸î ¹øÂ°ÀÎÁö ÁöÁ¤(¼±ÅÃ, ±âº»°ª 1))
+[ì‚¬ìš© í˜•íƒœ]
+INSTR(ê²€ìƒ‰ ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„°(í•„ìˆ˜)
+    , ê²€ìƒ‰ ê¸°ì¤€ ë¬¸ìžì—´(í•„ìˆ˜)
+    , ê²€ìƒ‰ ì‹œìž‘ ìœ„ì¹˜(ì„ íƒ, ê¸°ë³¸ê°’ 1)
+    , ì‹œìž‘ ìœ„ì¹˜ì—ì„œ ì°¾ìœ¼ë ¤ëŠ” ë¬¸ìžê°€ ëª‡ ë²ˆì§¸ì¸ì§€ ì§€ì •(ì„ íƒ, ê¸°ë³¸ê°’ 1))
 */
 
 SELECT INSTR('HELLO, ORACLE!', 'L') AS INSTR_1
@@ -445,26 +445,26 @@ SELECT INSTR('HELLO, ORACLE!', 'L') AS INSTR_1
      , INSTR('HELLO, ORACLE!', 'L', 2, 2) AS INSTR_3
   FROM DUAL;
 
-/* [INSTR È°¿ë] Æ¯Á¤ ¹®ÀÚ¸¦ Æ÷ÇÔÇÏ°í ÀÖ´Â Çà Ã£±â */
+/* [INSTR í™œìš©] íŠ¹ì • ë¬¸ìžë¥¼ í¬í•¨í•˜ê³  ìžˆëŠ” í–‰ ì°¾ê¸° */
 SELECT *
   FROM EMP
  WHERE INSTR(ENAME, 'S') > 0;
--- INSTR·Î »ç¿ø ÀÌ¸§¿¡ ¹®ÀÚ S°¡ ÀÖ´Â Çà ±¸ÇÏ±â
+-- INSTRë¡œ ì‚¬ì› ì´ë¦„ì— ë¬¸ìž Sê°€ ìžˆëŠ” í–‰ êµ¬í•˜ê¸°
 
 SELECT *
   FROM EMP
  WHERE ENAME LIKE '%S%';
--- LIKE ¿¬»êÀÚ·Î »ç¿ø ÀÌ¸§¿¡ ¹®ÀÚ S°¡ ÀÖ´Â Çà ±¸ÇÏ±â
+-- LIKE ì—°ì‚°ìžë¡œ ì‚¬ì› ì´ë¦„ì— ë¬¸ìž Sê°€ ìžˆëŠ” í–‰ êµ¬í•˜ê¸°
 
 
 -- STUDY REPLACE --
 /*
-REPLACE() : Æ¯Á¤ ¹®ÀÚ¿­ µ¥ÀÌÅÍ¿¡ Æ÷ÇÔµÈ ¹®ÀÚ¸¦ ´Ù¸¥ ¹®ÀÚ·Î ´ëÃ¼ÇÏ´Â ÇÔ¼ö
+REPLACE() : íŠ¹ì • ë¬¸ìžì—´ ë°ì´í„°ì— í¬í•¨ëœ ë¬¸ìžë¥¼ ë‹¤ë¥¸ ë¬¸ìžë¡œ ëŒ€ì²´í•˜ëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-INSTR(´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ ¶Ç´Â ¿­ ÀÌ¸§(ÇÊ¼ö)
-    , Ã£´Â ±âÁØ ¹®ÀÚ¿­(ÇÊ¼ö)
-    , ´ëÃ¼ÇÒ ¹®ÀÚ(¼±ÅÃ))
+[ì‚¬ìš© í˜•íƒœ]
+INSTR(ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„° ë˜ëŠ” ì—´ ì´ë¦„(í•„ìˆ˜)
+    , ì°¾ëŠ” ê¸°ì¤€ ë¬¸ìžì—´(í•„ìˆ˜)
+    , ëŒ€ì²´í•  ë¬¸ìž(ì„ íƒ))
 */
 
 SELECT '010-1234-5678' AS REPLACE_BEFORE 
@@ -475,12 +475,12 @@ SELECT '010-1234-5678' AS REPLACE_BEFORE
 
 -- STUDY LPAD, RPAD --
 /*
-LPAD() : ´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ ±æÀÌ°¡ ÁöÁ¤ÇÑ ÀÚ¸´¼öº¸´Ù ÀÛÀ» °æ¿ì¿¡ ¿ÞÂÊ ³ª¸ÓÁö °ø°£À» Æ¯Á¤ ¹®ÀÚ·Î Ã¤¿ì´Â ÇÔ¼ö.
-RPAD() : ´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ ±æÀÌ°¡ ÁöÁ¤ÇÑ ÀÚ¸´¼öº¸´Ù ÀÛÀ» °æ¿ì¿¡ ¿À¸¥ÂÊ ³ª¸ÓÁö °ø°£À» Æ¯Á¤ ¹®ÀÚ·Î Ã¤¿ì´Â ÇÔ¼ö.
+LPAD() : ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„° ê¸¸ì´ê°€ ì§€ì •í•œ ìžë¦¿ìˆ˜ë³´ë‹¤ ìž‘ì„ ê²½ìš°ì— ì™¼ìª½ ë‚˜ë¨¸ì§€ ê³µê°„ì„ íŠ¹ì • ë¬¸ìžë¡œ ì±„ìš°ëŠ” í•¨ìˆ˜.
+RPAD() : ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„° ê¸¸ì´ê°€ ì§€ì •í•œ ìžë¦¿ìˆ˜ë³´ë‹¤ ìž‘ì„ ê²½ìš°ì— ì˜¤ë¥¸ìª½ ë‚˜ë¨¸ì§€ ê³µê°„ì„ íŠ¹ì • ë¬¸ìžë¡œ ì±„ìš°ëŠ” í•¨ìˆ˜.
 
-[»ç¿ë ÇüÅÂ]
-LPAD(´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ ¶Ç´Â ¿­ ÀÌ¸§(ÇÊ¼ö), µ¥ÀÌÅÍÀÇ ÀÚ¸´¼ö(ÇÊ¼ö), ºó °ø°£¿¡ Ã¤¿ï ¹®ÀÚ(¼±ÅÃ))
-RPAD(´ë»ó ¹®ÀÚ¿­ µ¥ÀÌÅÍ ¶Ç´Â ¿­ ÀÌ¸§(ÇÊ¼ö), µ¥ÀÌÅÍÀÇ ÀÚ¸´¼ö(ÇÊ¼ö), ºó °ø°£¿¡ Ã¤¿ï ¹®ÀÚ(¼±ÅÃ))
+[ì‚¬ìš© í˜•íƒœ]
+LPAD(ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„° ë˜ëŠ” ì—´ ì´ë¦„(í•„ìˆ˜), ë°ì´í„°ì˜ ìžë¦¿ìˆ˜(í•„ìˆ˜), ë¹ˆ ê³µê°„ì— ì±„ìš¸ ë¬¸ìž(ì„ íƒ))
+RPAD(ëŒ€ìƒ ë¬¸ìžì—´ ë°ì´í„° ë˜ëŠ” ì—´ ì´ë¦„(í•„ìˆ˜), ë°ì´í„°ì˜ ìžë¦¿ìˆ˜(í•„ìˆ˜), ë¹ˆ ê³µê°„ì— ì±„ìš¸ ë¬¸ìž(ì„ íƒ))
 */
 
 SELECT 'Oracle'
@@ -490,7 +490,7 @@ SELECT 'Oracle'
      , RPAD('Oracle', 10) AS RPAD_2
   FROM DUAL;
   
--- [RPAD() È°¿ë] °³ÀÎÁ¤º¸ µÞÀÚ¸® *Ç¥½Ã·Î Ãâ·ÂÇÏ±â --
+-- [RPAD() í™œìš©] ê°œì¸ì •ë³´ ë’·ìžë¦¬ *í‘œì‹œë¡œ ì¶œë ¥í•˜ê¸° --
 SELECT RPAD('971225-', 14, '*') AS RPAD_JMNO
      , RPAD('010-1234-', 13, '*') AS RPAD_PHONE
   FROM DUAL;
@@ -502,9 +502,9 @@ SELECT CONCAT(EMPNO, ENAME)
   FROM EMP
  WHERE ENAME = 'SMITH';
  
-/* [NOTE] ¹®ÀÚ¿­ µ¥ÀÌÅÍ¸¦ ¿¬°áÇÏ´Â || ¿¬»êÀÚ
-|| ¿¬»êÀÚ´Â CONCAT ÇÔ¼ö¿Í À¯»çÇÏ°Ô ¿­ÀÌ³ª ¹®ÀÚ¿­À» ¿¬°áÇÔ. */
--- [»ç¿ë ¿¹½Ã]
+/* [NOTE] ë¬¸ìžì—´ ë°ì´í„°ë¥¼ ì—°ê²°í•˜ëŠ” || ì—°ì‚°ìž
+|| ì—°ì‚°ìžëŠ” CONCAT í•¨ìˆ˜ì™€ ìœ ì‚¬í•˜ê²Œ ì—´ì´ë‚˜ ë¬¸ìžì—´ì„ ì—°ê²°í•¨. */
+-- [ì‚¬ìš© ì˜ˆì‹œ]
 SELECT EMPNO || ENAME
      , EMPNO || ' : ' || ENAME
   FROM EMP
@@ -513,15 +513,15 @@ SELECT EMPNO || ENAME
  
 -- STUDY TRIM, LTRIM, RTRIM --
 /*
-TRIM() : ¹®ÀÚ¿­ µ¥ÀÌÅÍ ³»¿¡¼­ Æ¯Á¤ ¹®ÀÚ¸¦ Áö¿ì±â À§ÇØ »ç¿ëÇÏ´Â ÇÔ¼ö.
-LTRIM() : ¿ÞÂÊ ÁöÁ¤ ¹®ÀÚ¸¦ »èÁ¦ÇÏ´Â µ¥ »ç¿ëÇÏ´Â ÇÔ¼ö. TRIM()°ú ´Ù¸£°Ô ¹®ÀÚ¸¦ ¿©·µ ÁöÁ¤ °¡´É
-RTRIM() : ¿À¸¥ÂÊ ÁöÁ¤ ¹®ÀÚ¸¦ »èÁ¦ÇÏ´Â µ¥ »ç¿ëÇÏ´Â ÇÔ¼ö. TRIM()°ú ´Ù¸£°Ô ¹®ÀÚ¸¦ ¿©·µ ÁöÁ¤ °¡´É
+TRIM() : ë¬¸ìžì—´ ë°ì´í„° ë‚´ì—ì„œ íŠ¹ì • ë¬¸ìžë¥¼ ì§€ìš°ê¸° ìœ„í•´ ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜.
+LTRIM() : ì™¼ìª½ ì§€ì • ë¬¸ìžë¥¼ ì‚­ì œí•˜ëŠ” ë° ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜. TRIM()ê³¼ ë‹¤ë¥´ê²Œ ë¬¸ìžë¥¼ ì—¬ëŸ¿ ì§€ì • ê°€ëŠ¥
+RTRIM() : ì˜¤ë¥¸ìª½ ì§€ì • ë¬¸ìžë¥¼ ì‚­ì œí•˜ëŠ” ë° ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜. TRIM()ê³¼ ë‹¤ë¥´ê²Œ ë¬¸ìžë¥¼ ì—¬ëŸ¿ ì§€ì • ê°€ëŠ¥
 
-[NOTE] À§ ¼¼ ÇÔ¼ö¿¡¼­ Áö¿ï ¹®ÀÚ¸¦ ÁöÁ¤ÇÏÁö ¾ÊÀ¸¸é ±âº»ÀûÀ¸·Î °ø¹éÀ» Á¦°ÅÇÔ.
+[NOTE] ìœ„ ì„¸ í•¨ìˆ˜ì—ì„œ ì§€ìš¸ ë¬¸ìžë¥¼ ì§€ì •í•˜ì§€ ì•Šìœ¼ë©´ ê¸°ë³¸ì ìœ¼ë¡œ ê³µë°±ì„ ì œê±°í•¨.
 
-TRIM(»èÁ¦ ¿É¼Ç(¼±ÅÃ), »èÁ¦ÇÒ ¹®ÀÚ(¼±ÅÃ), FROM ¿øº» ¹®ÀÚ¿­ µ¥ÀÌÅÍ(ÇÊ¼ö))
-LTRIM(¿øº» ¹®ÀÚ¿­ µ¥ÀÌÅÍ(ÇÊ¼ö), »èÁ¦ÇÒ ¹®ÀÚ ÁýÇÕ(¼±ÅÃ))
-RTRIM(¿øº» ¹®ÀÚ¿­ µ¥ÀÌÅÍ(ÇÊ¼ö), »èÁ¦ÇÒ ¹®ÀÚ ÁýÇÕ(¼±ÅÃ))
+TRIM(ì‚­ì œ ì˜µì…˜(ì„ íƒ), ì‚­ì œí•  ë¬¸ìž(ì„ íƒ), FROM ì›ë³¸ ë¬¸ìžì—´ ë°ì´í„°(í•„ìˆ˜))
+LTRIM(ì›ë³¸ ë¬¸ìžì—´ ë°ì´í„°(í•„ìˆ˜), ì‚­ì œí•  ë¬¸ìž ì§‘í•©(ì„ íƒ))
+RTRIM(ì›ë³¸ ë¬¸ìžì—´ ë°ì´í„°(í•„ìˆ˜), ì‚­ì œí•  ë¬¸ìž ì§‘í•©(ì„ íƒ))
 */
 
 SELECT '[' || TRIM(' _ _Oracle_ _ ') || ']' AS TRIM
@@ -544,17 +544,17 @@ SELECT '[' || TRIM(' _Oracle_ ') || ']' AS TRIM
   FROM DUAL;
      
 
-/** ¼ýÀÚ, ¼öÄ¡ °ü·Ã ÇÔ¼ö **/
+/** ìˆ«ìž, ìˆ˜ì¹˜ ê´€ë ¨ í•¨ìˆ˜ **/
 -- STUDY ROUND, TRUNC --
 /*
-ROUND() : ÁöÁ¤µÈ ¼ýÀÚÀÇ Æ¯Á¤ À§Ä¡¿¡¼­ ¹Ý¿Ã¸²ÇÑ °ªÀ» ¹ÝÈ¯.
-¹Ý¿Ã¸² À§Ä¡¸¦ ÁöÁ¤ÇÏÁö ¾ÊÀ¸¸é ¼Ò¼öÁ¡ Ã¹ ¹øÂ° ÀÚ¸®¿¡¼­ ¹Ý¿Ã¸²ÇÔ.
-TRUNC() : ÁöÁ¤µÈ ¼ýÀÚÀÇ Æ¯Á¤ À§Ä¡¿¡¼­ ¹ö¸²ÇÑ °ªÀ» ¹ÝÈ¯.
-¹ö¸² À§Ä¡¸¦ ÁöÁ¤ÇÏÁö ¾ÊÀ¸¸é ¼Ò¼öÁ¡ Ã¹ ¹øÂ° ÀÚ¸®¿¡¼­ ¹ö¸²ÇÔ.
+ROUND() : ì§€ì •ëœ ìˆ«ìžì˜ íŠ¹ì • ìœ„ì¹˜ì—ì„œ ë°˜ì˜¬ë¦¼í•œ ê°’ì„ ë°˜í™˜.
+ë°˜ì˜¬ë¦¼ ìœ„ì¹˜ë¥¼ ì§€ì •í•˜ì§€ ì•Šìœ¼ë©´ ì†Œìˆ˜ì  ì²« ë²ˆì§¸ ìžë¦¬ì—ì„œ ë°˜ì˜¬ë¦¼í•¨.
+TRUNC() : ì§€ì •ëœ ìˆ«ìžì˜ íŠ¹ì • ìœ„ì¹˜ì—ì„œ ë²„ë¦¼í•œ ê°’ì„ ë°˜í™˜.
+ë²„ë¦¼ ìœ„ì¹˜ë¥¼ ì§€ì •í•˜ì§€ ì•Šìœ¼ë©´ ì†Œìˆ˜ì  ì²« ë²ˆì§¸ ìžë¦¬ì—ì„œ ë²„ë¦¼í•¨.
 
-[»ç¿ë ÇüÅÂ]
-ROUND(¼ýÀÚ(ÇÊ¼ö), ¹Ý¿Ã¸² À§Ä¡(¼±ÅÃ))
-TRUNC(¼ýÀÚ(ÇÊ¼ö), ¹ö¸² À§Ä¡(¼±ÅÃ))
+[ì‚¬ìš© í˜•íƒœ]
+ROUND(ìˆ«ìž(í•„ìˆ˜), ë°˜ì˜¬ë¦¼ ìœ„ì¹˜(ì„ íƒ))
+TRUNC(ìˆ«ìž(í•„ìˆ˜), ë²„ë¦¼ ìœ„ì¹˜(ì„ íƒ))
 */
 
 SELECT ROUND(1234.5678) AS ROUND
@@ -581,12 +581,12 @@ SELECT TRUNC(1539.125023, 4) AS TRUNC_EX1
 
 -- STUDY CEIL, FLOOR --
 /*
-CEIL() : ÁöÁ¤µÈ ¼ýÀÚº¸´Ù Å« Á¤¼ö Áß °¡Àå ÀÛÀº Á¤¼ö¸¦ ¹ÝÈ¯
-FLOOR() : ÁöÁ¤µÈ ¼ýÀÚº¸´Ù ÀÛÀº Á¤¼ö Áß °¡Àå Å« Á¤¼ö¸¦ ¹ÝÈ¯
+CEIL() : ì§€ì •ëœ ìˆ«ìžë³´ë‹¤ í° ì •ìˆ˜ ì¤‘ ê°€ìž¥ ìž‘ì€ ì •ìˆ˜ë¥¼ ë°˜í™˜
+FLOOR() : ì§€ì •ëœ ìˆ«ìžë³´ë‹¤ ìž‘ì€ ì •ìˆ˜ ì¤‘ ê°€ìž¥ í° ì •ìˆ˜ë¥¼ ë°˜í™˜
 
-[»ç¿ë ÇüÅÂ]
-CEIL(¼ýÀÚ(ÇÊ¼ö))
-FLOOR(¼ýÀÚ(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+CEIL(ìˆ«ìž(í•„ìˆ˜))
+FLOOR(ìˆ«ìž(í•„ìˆ˜))
 */
 
 SELECT CEIL(3.14)
@@ -598,10 +598,10 @@ SELECT CEIL(3.14)
 
 -- STUDY MOD --
 /*
-MOD() : ÁöÁ¤µÈ ¼ýÀÚ¸¦ ³ª´« ³ª¸ÓÁö °ªÀ» ¹ÝÈ¯
+MOD() : ì§€ì •ëœ ìˆ«ìžë¥¼ ë‚˜ëˆˆ ë‚˜ë¨¸ì§€ ê°’ì„ ë°˜í™˜
 
-[»ç¿ë ÇüÅÂ]
-MOD(³ª´°¼À µÉ ¼ýÀÚ(ÇÊ¼ö), ³ª´­ ¼ýÀÚ(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+MOD(ë‚˜ëˆ—ì…ˆ ë  ìˆ«ìž(í•„ìˆ˜), ë‚˜ëˆŒ ìˆ«ìž(í•„ìˆ˜))
 */
 
 SELECT MOD(15, 6)
@@ -610,23 +610,23 @@ SELECT MOD(15, 6)
   FROM DUAL;
   
 
-/** ³¯Â¥ µ¥ÀÌÅÍ °ü·Ã ÇÔ¼ö **/
+/** ë‚ ì§œ ë°ì´í„° ê´€ë ¨ í•¨ìˆ˜ **/
 /*
-[NOTE] DATEÇü³¢¸®ÀÇ °£´ÜÇÑ ¿¬»ê Âü°í
+[NOTE] DATEí˜•ë¼ë¦¬ì˜ ê°„ë‹¨í•œ ì—°ì‚° ì°¸ê³ 
 
-³¯Â¥ µ¥ÀÌÅÍ + ¼ýÀÚ = ³¯Â¥ µ¥ÀÌÅÍº¸´Ù ¼ýÀÚ¸¸Å­ ÀÏ¼ö ÀÌÈÄÀÇ ³¯Â¥
-³¯Â¥ µ¥ÀÌÅÍ - ¼ýÀÚ = ³¯Â¥ µ¥ÀÌÅÍº¸´Ù ¼ýÀÚ¸¸Å­ ÀÏ¼ö ÀÌÀüÀÇ ³¯Â¥
-³¯Â¥ µ¥ÀÌÅÍ - ³¯Â¥ µ¥ÀÌÅÍ = µÎ ³¯Â¥ µ¥ÀÌÅÍ °£ÀÇ ÀÏ¼ö Â÷ÀÌ
-³¯Â¥ µ¥ÀÌÅÍ + ³¯Â¥ µ¥ÀÌÅÍ = ¿¬»ê ºÒ°¡, Áö¿øÇÏÁö ¾ÊÀ½***
+ë‚ ì§œ ë°ì´í„° + ìˆ«ìž = ë‚ ì§œ ë°ì´í„°ë³´ë‹¤ ìˆ«ìžë§Œí¼ ì¼ìˆ˜ ì´í›„ì˜ ë‚ ì§œ
+ë‚ ì§œ ë°ì´í„° - ìˆ«ìž = ë‚ ì§œ ë°ì´í„°ë³´ë‹¤ ìˆ«ìžë§Œí¼ ì¼ìˆ˜ ì´ì „ì˜ ë‚ ì§œ
+ë‚ ì§œ ë°ì´í„° - ë‚ ì§œ ë°ì´í„° = ë‘ ë‚ ì§œ ë°ì´í„° ê°„ì˜ ì¼ìˆ˜ ì°¨ì´
+ë‚ ì§œ ë°ì´í„° + ë‚ ì§œ ë°ì´í„° = ì—°ì‚° ë¶ˆê°€, ì§€ì›í•˜ì§€ ì•ŠìŒ***
 /*
 
 
 -- STUDY SYSDATE --
 /*
-SYSDATE() : ¿À¶óÅ¬ µ¥ÀÌÅÍº£ÀÌ½º ¼­¹ö°¡ ³õÀÎ OSÀÇ ÇöÀç ³¯Â¥¿Í ½Ã°£À» º¸¿© ÁÜ
+SYSDATE() : ì˜¤ë¼í´ ë°ì´í„°ë² ì´ìŠ¤ ì„œë²„ê°€ ë†“ì¸ OSì˜ í˜„ìž¬ ë‚ ì§œì™€ ì‹œê°„ì„ ë³´ì—¬ ì¤Œ
 
-[»ç¿ë ÇüÅÂ]
-SYSDATE(³ª´°¼À µÉ ¼ýÀÚ(ÇÊ¼ö), ³ª´­ ¼ýÀÚ(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+SYSDATE(ë‚˜ëˆ—ì…ˆ ë  ìˆ«ìž(í•„ìˆ˜), ë‚˜ëˆŒ ìˆ«ìž(í•„ìˆ˜))
 */
 
 SELECT SYSDATE AS NOW
@@ -634,7 +634,7 @@ SELECT SYSDATE AS NOW
      , SYSDATE+1 AS TOMORROW
      , (SYSDATE+1) - (SYSDATE-1) AS TYSUB
 /*   , (SYSDATE+1) + (SYSDATE-1) AS TYADD
-DATE + DATE¸¦ ÇÒ °æ¿ì ¿À·ù ¹ß»ý.
+DATE + DATEë¥¼ í•  ê²½ìš° ì˜¤ë¥˜ ë°œìƒ.
 ORA-00975: date + date not allowed
 00975. 00000 -  "date + date not allowed"
 */
@@ -643,24 +643,24 @@ ORA-00975: date + date not allowed
   
 -- STUDY ADD_MONTHS --
 /*
-ADD_MONTHS() : Æ¯Á¤ ³¯Â¥¿¡ ÁöÁ¤ÇÑ °³¿ù ¼ö ÀÌÈÄ ³¯Â¥ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö.
+ADD_MONTHS() : íŠ¹ì • ë‚ ì§œì— ì§€ì •í•œ ê°œì›” ìˆ˜ ì´í›„ ë‚ ì§œ ë°ì´í„°ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜.
 
-[»ç¿ë ÇüÅÂ]
-ADD_MONTHS(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö), ´õÇÒ °³¿ù ¼ö(Á¤¼ö)(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+ADD_MONTHS(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜), ë”í•  ê°œì›” ìˆ˜(ì •ìˆ˜)(í•„ìˆ˜))
 */
 
 SELECT SYSDATE
      , ADD_MONTHS(SYSDATE, 3)
   FROM DUAL;
 
--- ÀÔ»ç 10ÁÖ³âÀÌ µÇ´Â »ç¿ø µ¥ÀÌÅÍ¸¦ Ãâ·Â
+-- ìž…ì‚¬ 10ì£¼ë…„ì´ ë˜ëŠ” ì‚¬ì› ë°ì´í„°ë¥¼ ì¶œë ¥
 SELECT EMPNO
      , ENAME
      , HIREDATE
      , ADD_MONTHS(HIREDATE, 120) AS WORK10YEAR
   FROM EMP;
 
--- ÀÔ»çÇÑ Áö 32³â ¹Ì¸¸ÀÎ »ç¿ø µ¥ÀÌÅÍ Ãâ·Â
+-- ìž…ì‚¬í•œ ì§€ 32ë…„ ë¯¸ë§Œì¸ ì‚¬ì› ë°ì´í„° ì¶œë ¥
 SELECT EMPNO
      , ENAME
      , HIREDATE
@@ -675,11 +675,11 @@ SELECT SYSDATE
 
 -- STUDY MONTHS_BETWEEN --
 /*
-MONTHS_BETWEEN() : µÎ ³¯Â¥ °£ÀÇ °³¿ù ¼ö Â÷ÀÌ¸¦ ±¸ÇÏ´Â MONTHS_BETWEEN ÇÔ¼ö
-[NOTE] ¼Ò¼öÁ¡ ´ÜÀ§±îÁö °á°ú°ªÀÌ ³ª¿À¹Ç·Î TRUNC ÇÔ¼ö¸¦ È°¿ëÇØ Á¤¼ö·Î Ãâ·ÂÇÒ ¼ö ÀÖÀ½.
+MONTHS_BETWEEN() : ë‘ ë‚ ì§œ ê°„ì˜ ê°œì›” ìˆ˜ ì°¨ì´ë¥¼ êµ¬í•˜ëŠ” MONTHS_BETWEEN í•¨ìˆ˜
+[NOTE] ì†Œìˆ˜ì  ë‹¨ìœ„ê¹Œì§€ ê²°ê³¼ê°’ì´ ë‚˜ì˜¤ë¯€ë¡œ TRUNC í•¨ìˆ˜ë¥¼ í™œìš©í•´ ì •ìˆ˜ë¡œ ì¶œë ¥í•  ìˆ˜ ìžˆìŒ.
 
-[»ç¿ë ÇüÅÂ]
-MONTHS_BETWEEN(³¯Â¥ µ¥ÀÌÅÍ1(ÇÊ¼ö), ³¯Â¥ µ¥ÀÌÅÍ2(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+MONTHS_BETWEEN(ë‚ ì§œ ë°ì´í„°1(í•„ìˆ˜), ë‚ ì§œ ë°ì´í„°2(í•„ìˆ˜))
 */ 
 
 SELECT EMPNO
@@ -694,43 +694,43 @@ SELECT EMPNO
 
 -- STUDY NEXT_DAY, LAST_DAY --
 /*
-NEXT_DAY() : Æ¯Á¤ ³¯Â¥¸¦ ±âÁØÀ¸·Î µ¹¾Æ¿À´Â ¿äÀÏÀÇ ³¯Â¥¸¦ Ãâ·ÂÇØ ÁÖ´Â ÇÔ¼ö
-LAST_DAY() : Æ¯Á¤ ³¯Â¥°¡ ¼ÓÇÑ ´ÞÀÇ ¸¶Áö¸· ³¯Â¥¸¦ Ãâ·ÂÇØ ÁÖ´Â ÇÔ¼ö
+NEXT_DAY() : íŠ¹ì • ë‚ ì§œë¥¼ ê¸°ì¤€ìœ¼ë¡œ ëŒì•„ì˜¤ëŠ” ìš”ì¼ì˜ ë‚ ì§œë¥¼ ì¶œë ¥í•´ ì£¼ëŠ” í•¨ìˆ˜
+LAST_DAY() : íŠ¹ì • ë‚ ì§œê°€ ì†í•œ ë‹¬ì˜ ë§ˆì§€ë§‰ ë‚ ì§œë¥¼ ì¶œë ¥í•´ ì£¼ëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-NEXT_DAY(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö), ¿äÀÏ ¹®ÀÚ(ÇÊ¼ö))
-LAST_DAY(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+NEXT_DAY(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜), ìš”ì¼ ë¬¸ìž(í•„ìˆ˜))
+LAST_DAY(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜))
 */
 
 SELECT SYSDATE
-     , NEXT_DAY(SYSDATE, '¿ù¿äÀÏ')
+     , NEXT_DAY(SYSDATE, 'ì›”ìš”ì¼')
      , LAST_DAY(SYSDATE)
   FROM DUAL;
   
--- STUDY ROUND, TRUNC II(³¯Â¥ ÇÔ¼ö¿Í »ç¿ë) --
+-- STUDY ROUND, TRUNC II(ë‚ ì§œ í•¨ìˆ˜ì™€ ì‚¬ìš©) --
 /*
-ROUND(), TRUNC() : ¼ýÀÚ µ¥ÀÌÅÍÀÇ ¹Ý¿Ã¸², ¹ö¸² Ã³¸®°¡ ¾Æ´Ñ ³¯Â¥ µ¥ÀÌÅÍ¿¡µµ »ç¿ë.
-¼Ò¼öÁ¡ À§Ä¡ Á¤º¸°¡ ¾Æ´Ñ ±âÁØ Æ÷¸Ë°ªÀ» ÁöÁ¤ÇØ ÁÜ.
+ROUND(), TRUNC() : ìˆ«ìž ë°ì´í„°ì˜ ë°˜ì˜¬ë¦¼, ë²„ë¦¼ ì²˜ë¦¬ê°€ ì•„ë‹Œ ë‚ ì§œ ë°ì´í„°ì—ë„ ì‚¬ìš©.
+ì†Œìˆ˜ì  ìœ„ì¹˜ ì •ë³´ê°€ ì•„ë‹Œ ê¸°ì¤€ í¬ë§·ê°’ì„ ì§€ì •í•´ ì¤Œ.
 
-[»ç¿ë ÇüÅÂ]
-ROUND(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö), ¹Ý¿Ã¸² ±âÁØ Æ÷¸Ë)
-TRUNC(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö), ¹ö¸² ±âÁØ Æ÷¸Ë)
+[ì‚¬ìš© í˜•íƒœ]
+ROUND(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜), ë°˜ì˜¬ë¦¼ ê¸°ì¤€ í¬ë§·)
+TRUNC(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜), ë²„ë¦¼ ê¸°ì¤€ í¬ë§·)
 
-[OracleÀÇ ³¯Â¥ µ¥ÀÌÅÍ ±âÁØ Æ÷¸Ë Á¤¸®]
-CC, SCC : ³× ÀÚ¸® ¿¬µµÀÇ ³¡ µÎÀÚ¸®¸¦ ±âÁØÀ¸·Î »ç¿ë
-¡æ 2016³âÀÌ¸é 2050³â ±âÁØ. ¹Ý¿Ã¸²ÇÒ °æ¿ì 2001³âÀ¸·Î Ã³¸®
-SYYYY, YYYY, YEAR, SYEAR, YYY, YY, Y : ³¯Â¥ µ¥ÀÌÅÍÀÇ ÇØ´ç ¿¬, ¿ù, ÀÏÀÇ 7¿ù 1ÀÏÀ» ±âÁØ
-¡æ 2016³â 7¿ù 1ÀÏÀÏ °æ¿ì, 2017³âÀ¸·Î Ã³¸®
-IYYY, IYY, IY, I : ISO 8601¿¡¼­ Á¦Á¤ÇÑ ³¯Â¥ ±âÁØ³âµµ Æ÷¸ËÀ» ±âÁØ
-Q : °¢ ºÐ±âÀÇ µÎ ¹øÂ° ´ÞÀÇ 16ÀÏ ±âÁØ
-MONTH, MON, MM, RM : °¢ ´ÞÀÇ 16ÀÏ ±âÁØ
-WW : ÇØ´ç ¿¬µµÀÇ ¸î ÁÖ(1~53¹øÂ° ÁÖ)¸¦ ±âÁØ
-IW : ISO 8601¿¡¼­ Á¦Á¤ÇÑ ³¯Â¥ ±âÁØ ÇØ´ç ¿¬µµÀÇ ÁÖ(WEEK)¸¦ ±âÁØ
-W : ÇØ´ç ¿ùÀÇ ÁÖ(1~5¹øÂ° ÁÖ)¸¦ ±âÁØ
-DDD, DD, J : ÇØ´ç ÀÏÀÇ Á¤¿À(12:00:00)¸¦ ±âÁØ
-DAY, DY, D : ÇÑ ÁÖ°¡ ½ÃÀÛµÇ´Â ³¯Â¥¸¦ ±âÁØ
-HH, HH12, HH24 : ÇØ´ç ÀÏÀÇ ½Ã°£À» ±âÁØ
-MI : ÇØ´ç ÀÏ ½Ã°£ÀÇ ºÐÀ» ±âÁØ
+[Oracleì˜ ë‚ ì§œ ë°ì´í„° ê¸°ì¤€ í¬ë§· ì •ë¦¬]
+CC, SCC : ë„¤ ìžë¦¬ ì—°ë„ì˜ ë ë‘ìžë¦¬ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì‚¬ìš©
+â†’ 2016ë…„ì´ë©´ 2050ë…„ ê¸°ì¤€. ë°˜ì˜¬ë¦¼í•  ê²½ìš° 2001ë…„ìœ¼ë¡œ ì²˜ë¦¬
+SYYYY, YYYY, YEAR, SYEAR, YYY, YY, Y : ë‚ ì§œ ë°ì´í„°ì˜ í•´ë‹¹ ì—°, ì›”, ì¼ì˜ 7ì›” 1ì¼ì„ ê¸°ì¤€
+â†’ 2016ë…„ 7ì›” 1ì¼ì¼ ê²½ìš°, 2017ë…„ìœ¼ë¡œ ì²˜ë¦¬
+IYYY, IYY, IY, I : ISO 8601ì—ì„œ ì œì •í•œ ë‚ ì§œ ê¸°ì¤€ë…„ë„ í¬ë§·ì„ ê¸°ì¤€
+Q : ê° ë¶„ê¸°ì˜ ë‘ ë²ˆì§¸ ë‹¬ì˜ 16ì¼ ê¸°ì¤€
+MONTH, MON, MM, RM : ê° ë‹¬ì˜ 16ì¼ ê¸°ì¤€
+WW : í•´ë‹¹ ì—°ë„ì˜ ëª‡ ì£¼(1~53ë²ˆì§¸ ì£¼)ë¥¼ ê¸°ì¤€
+IW : ISO 8601ì—ì„œ ì œì •í•œ ë‚ ì§œ ê¸°ì¤€ í•´ë‹¹ ì—°ë„ì˜ ì£¼(WEEK)ë¥¼ ê¸°ì¤€
+W : í•´ë‹¹ ì›”ì˜ ì£¼(1~5ë²ˆì§¸ ì£¼)ë¥¼ ê¸°ì¤€
+DDD, DD, J : í•´ë‹¹ ì¼ì˜ ì •ì˜¤(12:00:00)ë¥¼ ê¸°ì¤€
+DAY, DY, D : í•œ ì£¼ê°€ ì‹œìž‘ë˜ëŠ” ë‚ ì§œë¥¼ ê¸°ì¤€
+HH, HH12, HH24 : í•´ë‹¹ ì¼ì˜ ì‹œê°„ì„ ê¸°ì¤€
+MI : í•´ë‹¹ ì¼ ì‹œê°„ì˜ ë¶„ì„ ê¸°ì¤€
 */
 
 SELECT SYSDATE
@@ -750,48 +750,48 @@ SELECT SYSDATE
   FROM DUAL; 
   
 
-/** Çü º¯È¯ ÇÔ¼ö **/
+/** í˜• ë³€í™˜ í•¨ìˆ˜ **/
 -- STUDY TO_CHAR --
 SELECT EMPNO, ENAME, EMPNO + '500'
   FROM EMP
  WHERE ENAME = 'SMITH';
-/* ÀÚµ¿ Çü º¯È¯/¾Ï½ÃÀû Çü º¯È¯(implicit type conversion)À¸·Î ¹®ÀÚ µ¥ÀÌÅÍ '500'À»
-¼ýÀÚ·Î ÀÎ½Ä ÈÄ ¿¬»êÀ» ¼öÇàÇÔ */
+/* ìžë™ í˜• ë³€í™˜/ì•”ì‹œì  í˜• ë³€í™˜(implicit type conversion)ìœ¼ë¡œ ë¬¸ìž ë°ì´í„° '500'ì„
+ìˆ«ìžë¡œ ì¸ì‹ í›„ ì—°ì‚°ì„ ìˆ˜í–‰í•¨ */
  
 SELECT 'ABCD' + EMPNO, EMPNO
   FROM EMP
  WHERE ENAME = 'SMITH';
 /*
-¿À·ù ¹ß»ý
+ì˜¤ë¥˜ ë°œìƒ
 ORA-01722: invalid number
 01722. 00000 - "invalid number"
 */
 
 /*
-¸í½ÃÀû Çü º¯È¯(explicit type conversion) : 'ÀÚµ¿ Çü º¯È¯'ÀÌ Àû¿ëµÇÁö ¾Ê´Â °æ¿ì¿£
-'Çü º¯È¯ ÇÔ¼ö'¸¦ »ç¿ëÇÏ¿© '¸í½ÃÀû Çü º¯È¯'À» ÇØ ÁÖ¾î¾ß ÇÔ.
+ëª…ì‹œì  í˜• ë³€í™˜(explicit type conversion) : 'ìžë™ í˜• ë³€í™˜'ì´ ì ìš©ë˜ì§€ ì•ŠëŠ” ê²½ìš°ì—”
+'í˜• ë³€í™˜ í•¨ìˆ˜'ë¥¼ ì‚¬ìš©í•˜ì—¬ 'ëª…ì‹œì  í˜• ë³€í™˜'ì„ í•´ ì£¼ì–´ì•¼ í•¨.
 
-TO_CHAR() : ¼ýÀÚ ¶Ç´Â ³¯Â¥ µ¥ÀÌÅÍ¸¦ ¹®ÀÚ µ¥ÀÌÅÍ·Î º¯È¯
+TO_CHAR() : ìˆ«ìž ë˜ëŠ” ë‚ ì§œ ë°ì´í„°ë¥¼ ë¬¸ìž ë°ì´í„°ë¡œ ë³€í™˜
 
-[»ç¿ë ÇüÅÂ]
-TO_CHAR(³¯Â¥ µ¥ÀÌÅÍ(ÇÊ¼ö), 'Ãâ·ÂµÇ±æ ¿øÇÏ´Â ¹®ÀÚ ÇüÅÂ'(ÇÊ¼ö), 'NLS_DATE_LANGUAGE = language'(¼±ÅÃ)) -- ³¯Â¥ µ¥ÀÌÅÍ Çü½Ä Ãâ·Â ½Ã
-TO_CHAR(¼ýÀÚ µ¥ÀÌÅÍ(ÇÊ¼ö), 'Ãâ·ÂµÇ±æ ¿øÇÏ´Â ¹®ÀÚ ÇüÅÂ'(ÇÊ¼ö)) -- ¼ýÀÚ µ¥ÀÌÅÍ Çü½Ä Ãâ·Â ½Ã(Àß ¾È ¾¸)
+[ì‚¬ìš© í˜•íƒœ]
+TO_CHAR(ë‚ ì§œ ë°ì´í„°(í•„ìˆ˜), 'ì¶œë ¥ë˜ê¸¸ ì›í•˜ëŠ” ë¬¸ìž í˜•íƒœ'(í•„ìˆ˜), 'NLS_DATE_LANGUAGE = language'(ì„ íƒ)) -- ë‚ ì§œ ë°ì´í„° í˜•ì‹ ì¶œë ¥ ì‹œ
+TO_CHAR(ìˆ«ìž ë°ì´í„°(í•„ìˆ˜), 'ì¶œë ¥ë˜ê¸¸ ì›í•˜ëŠ” ë¬¸ìž í˜•íƒœ'(í•„ìˆ˜)) -- ìˆ«ìž ë°ì´í„° í˜•ì‹ ì¶œë ¥ ì‹œ(ìž˜ ì•ˆ ì”€)
 
-[³¯Â¥ Ç¥Çö Çü½Ä Æ÷¸Ë]
-CC : ¼¼±â
-YYYY, RRRR : ¿¬(4ÀÚ¸® ¼ýÀÚ) 
-YY, RR : ¿¬(2ÀÚ¸® ¼ýÀÚ)
-MM : ¿ù(2ÀÚ¸® ¼ýÀÚ)
-MON : ¿ù(¾ð¾îº° ¿ù ÀÌ¸§ ¾àÀÚ)
-MONTH : ¿ù(¾ð¾îº° ¿ù ÀÌ¸§ ÀüÃ¼)
-DD : ÀÏ(2ÀÚ¸® ¼ýÀÚ)
-DDD : 1³â Áß ¸çÄ¥(1~366)
-DY : ¿äÀÏ(¾ð¾îº° ¿äÀÏ ÀÌ¸§ ¾àÀÚ)
-DAY : ¿äÀÏ(¾ð¾îº° ¿äÀÏ ÀÌ¸§ ÀüÃ¼)
-W : 1³â Áß ¸î ¹øÂ° ÁÖ (1~53)
+[ë‚ ì§œ í‘œí˜„ í˜•ì‹ í¬ë§·]
+CC : ì„¸ê¸°
+YYYY, RRRR : ì—°(4ìžë¦¬ ìˆ«ìž) 
+YY, RR : ì—°(2ìžë¦¬ ìˆ«ìž)
+MM : ì›”(2ìžë¦¬ ìˆ«ìž)
+MON : ì›”(ì–¸ì–´ë³„ ì›” ì´ë¦„ ì•½ìž)
+MONTH : ì›”(ì–¸ì–´ë³„ ì›” ì´ë¦„ ì „ì²´)
+DD : ì¼(2ìžë¦¬ ìˆ«ìž)
+DDD : 1ë…„ ì¤‘ ë©°ì¹ (1~366)
+DY : ìš”ì¼(ì–¸ì–´ë³„ ìš”ì¼ ì´ë¦„ ì•½ìž)
+DAY : ìš”ì¼(ì–¸ì–´ë³„ ìš”ì¼ ì´ë¦„ ì „ì²´)
+W : 1ë…„ ì¤‘ ëª‡ ë²ˆì§¸ ì£¼ (1~53)
 */
 
-SELECT TO_CHAR(SYSDATE, 'YYYY/MM/DD HH24:MI:SS') AS ÇöÀç³¯Â¥½Ã°£
+SELECT TO_CHAR(SYSDATE, 'YYYY/MM/DD HH24:MI:SS') AS í˜„ìž¬ë‚ ì§œì‹œê°„
   FROM DUAL;
   
 SELECT SYSDATE
@@ -825,12 +825,12 @@ SELECT SYSDATE
   FROM DUAL;
 
 /*
-[½Ã°£ Ç¥Çö Çü½Ä Æ÷¸Ë]
-HH24 : 24½Ã°£À¸·Î Ç¥ÇöÇÑ ½Ã°£
-HH, HH12 : 12½Ã°£À¸·Î Ç¥ÇöÇÑ ½Ã°£
-MI : ºÐ
-SS : ÃÊ
-AM, PM, A.M., P.M. : ¿ÀÀü ¿ÀÈÄ Ç¥½Ã
+[ì‹œê°„ í‘œí˜„ í˜•ì‹ í¬ë§·]
+HH24 : 24ì‹œê°„ìœ¼ë¡œ í‘œí˜„í•œ ì‹œê°„
+HH, HH12 : 12ì‹œê°„ìœ¼ë¡œ í‘œí˜„í•œ ì‹œê°„
+MI : ë¶„
+SS : ì´ˆ
+AM, PM, A.M., P.M. : ì˜¤ì „ ì˜¤í›„ í‘œì‹œ
 */
 
 SELECT SYSDATE
@@ -840,13 +840,13 @@ SELECT SYSDATE
   FROM DUAL;
   
 /*
-[¼ýÀÚ Ç¥Çö Çü½Ä Æ÷¸Ë]
-9 : ¼ýÀÚÀÇ ÇÑ ÀÚ¸®¸¦ ÀÇ¹ÌÇÔ(ºó ÀÚ¸®¸¦ Ã¤¿ìÁö ¾ÊÀ½)
-0 : ºó ÀÚ¸®¸¦ 0À¸·Î Ã¤¿òÀ» ÀÇ¹ÌÇÔ
-$ : ´Þ·¯($) Ç¥½Ã¸¦ ºÙ¿©¼­ Ãâ·ÂÇÔ
-L : L(Locale) Áö¿ª È­Æó ´ÜÀ§ ±âÈ£¸¦ ºÙ¿©¼­ Ãâ·ÂÇÔ
-. : ¼Ò¼öÁ¡À» Ç¥½ÃÇÔ
-, : Ãµ ´ÜÀ§ÀÇ ±¸ºÐ ±âÈ£¸¦ Ç¥½ÃÇÔ
+[ìˆ«ìž í‘œí˜„ í˜•ì‹ í¬ë§·]
+9 : ìˆ«ìžì˜ í•œ ìžë¦¬ë¥¼ ì˜ë¯¸í•¨(ë¹ˆ ìžë¦¬ë¥¼ ì±„ìš°ì§€ ì•ŠìŒ)
+0 : ë¹ˆ ìžë¦¬ë¥¼ 0ìœ¼ë¡œ ì±„ì›€ì„ ì˜ë¯¸í•¨
+$ : ë‹¬ëŸ¬($) í‘œì‹œë¥¼ ë¶™ì—¬ì„œ ì¶œë ¥í•¨
+L : L(Locale) ì§€ì—­ í™”í ë‹¨ìœ„ ê¸°í˜¸ë¥¼ ë¶™ì—¬ì„œ ì¶œë ¥í•¨
+. : ì†Œìˆ˜ì ì„ í‘œì‹œí•¨
+, : ì²œ ë‹¨ìœ„ì˜ êµ¬ë¶„ ê¸°í˜¸ë¥¼ í‘œì‹œí•¨
 */
 
 SELECT SAL
@@ -861,11 +861,11 @@ SELECT SAL
   
 -- STUDY TO_NUMBER --
 /*
-TO_NUMBER() : ¹®ÀÚ µ¥ÀÌÅÍ¸¦ ¼ýÀÚ µ¥ÀÌÅÍ·Î º¯È¯. ÁÖ·Î ¼ýÀÚ µ¥ÀÌÅÍ°¡ °¡°øµÈ ¹®ÀÚ µ¥ÀÌÅÍ·Î 
-ÀúÀåµÇ¾î ÀÖ°í ±× µ¥ÀÌÅÍ¸¦ »ê¼ú ¿¬»ê¿¡ »ç¿ëÇÏ°íÀÚ ÇÒ °æ¿ì »ç¿ëÇÏ´Â ÇÔ¼ö
+TO_NUMBER() : ë¬¸ìž ë°ì´í„°ë¥¼ ìˆ«ìž ë°ì´í„°ë¡œ ë³€í™˜. ì£¼ë¡œ ìˆ«ìž ë°ì´í„°ê°€ ê°€ê³µëœ ë¬¸ìž ë°ì´í„°ë¡œ 
+ì €ìž¥ë˜ì–´ ìžˆê³  ê·¸ ë°ì´í„°ë¥¼ ì‚°ìˆ  ì—°ì‚°ì— ì‚¬ìš©í•˜ê³ ìž í•  ê²½ìš° ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-TO_NUMBER('¹®ÀÚ¿­ µ¥ÀÌÅÍ'(ÇÊ¼ö), 'ÀÎ½ÄµÉ ¼ýÀÚ ÇüÅÂ'(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+TO_NUMBER('ë¬¸ìžì—´ ë°ì´í„°'(í•„ìˆ˜), 'ì¸ì‹ë  ìˆ«ìž í˜•íƒœ'(í•„ìˆ˜))
 */
 
 SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
@@ -874,10 +874,10 @@ SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
 
 -- STUDY TO_DATE --
 /*
-TO_DATE() : ¹®ÀÚ¿­ µ¥ÀÌÅÍ¸¦ ³¯Â¥ µ¥ÀÌÅÍ·Î º¯È¯ÇÏ´Â ÇÔ¼ö
+TO_DATE() : ë¬¸ìžì—´ ë°ì´í„°ë¥¼ ë‚ ì§œ ë°ì´í„°ë¡œ ë³€í™˜í•˜ëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-TO_DATE('¹®ÀÚ¿­ µ¥ÀÌÅÍ'(ÇÊ¼ö), 'ÀÎ½ÄµÉ ³¯Â¥ ÇüÅÂ'(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+TO_DATE('ë¬¸ìžì—´ ë°ì´í„°'(í•„ìˆ˜), 'ì¸ì‹ë  ë‚ ì§œ í˜•íƒœ'(í•„ìˆ˜))
 */
 
 SELECT TO_DATE('2018-07-14', 'YYYY-MM-DD') AS TODATE1
@@ -887,7 +887,7 @@ SELECT TO_DATE('2018-07-14', 'YYYY-MM-DD') AS TODATE1
 SELECT *
   FROM EMP
  WHERE HIREDATE > TO_DATE('1981/06/01', 'YYYY/MM/DD');
- -- 1981³â 6¿ù 1ÀÏ ÀÌÈÄ¿¡ ÀÔ»çÇÑ »ç¿ø Á¤º¸ Ãâ·ÂÇÏ±â
+ -- 1981ë…„ 6ì›” 1ì¼ ì´í›„ì— ìž…ì‚¬í•œ ì‚¬ì› ì •ë³´ ì¶œë ¥í•˜ê¸°
  
 SELECT TO_DATE('49/12/10', 'YY/MM/DD') AS YY_YEAR_49
      , TO_DATE('49/12/10', 'RR/MM/DD') AS RR_YEAR_49
@@ -902,19 +902,19 @@ SELECT *
  WHERE HIREDATE > TO_DATE('1980/10/15', 'YYYY/MM/DD');
  
  
-/** NULL °ü·Ã ÇÔ¼ö **/
+/** NULL ê´€ë ¨ í•¨ìˆ˜ **/
 -- STUDY NVL, NVL2 --
 /*
-NVL() : ¿­ ¶Ç´Â µ¥ÀÌÅÍ¸¦ ÀÔ·ÂÇÏ¿© ÇØ´ç µ¥ÀÌÅÍ°¡ NULLÀÌ ¾Æ´Ò °æ¿ì µ¥ÀÌÅÍ¸¦ ±×´ë·Î ¹ÝÈ¯ÇÏ°í,
-NULLÀÎ °æ¿ì ÁöÁ¤ÇÑ µ¥ÀÌÅÍ¸¦ ¹ÝÈ¯ÇÏ´Â ÇÔ¼ö
-NVL2() : NVL() ÇÔ¼ö¿Í À¯»çÇÏÁö¸¸, µ¥ÀÌÅÍ°¡ NULLÀÌ ¾Æ´Ò °æ¿ì ¹ÝÈ¯ÇÒ µ¥ÀÌÅÍ¸¦ Ãß°¡·Î ÁöÁ¤ÇØ
-ÁÙ ¼ö ÀÖ´Â ÇÔ¼ö
+NVL() : ì—´ ë˜ëŠ” ë°ì´í„°ë¥¼ ìž…ë ¥í•˜ì—¬ í•´ë‹¹ ë°ì´í„°ê°€ NULLì´ ì•„ë‹ ê²½ìš° ë°ì´í„°ë¥¼ ê·¸ëŒ€ë¡œ ë°˜í™˜í•˜ê³ ,
+NULLì¸ ê²½ìš° ì§€ì •í•œ ë°ì´í„°ë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
+NVL2() : NVL() í•¨ìˆ˜ì™€ ìœ ì‚¬í•˜ì§€ë§Œ, ë°ì´í„°ê°€ NULLì´ ì•„ë‹ ê²½ìš° ë°˜í™˜í•  ë°ì´í„°ë¥¼ ì¶”ê°€ë¡œ ì§€ì •í•´
+ì¤„ ìˆ˜ ìžˆëŠ” í•¨ìˆ˜
 
-[»ç¿ë ÇüÅÂ]
-NVL(°Ë»çÇÒ µ¥ÀÌÅÍ ¶Ç´Â ¿­(ÇÊ¼ö), µ¥ÀÌÅÍ°¡ NULLÀÏ °æ¿ì ¹ÝÈ¯ÇÒ µ¥ÀÌÅÍ ¶Ç´Â °è»ê½Ä(ÇÊ¼ö))
-NVL2(°Ë»çÇÒ µ¥ÀÌÅÍ ¶Ç´Â ¿­(ÇÊ¼ö)
-   , µ¥ÀÌÅÍ°¡ NULLÀÌ ¾Æ´Ò °æ¿ì ¹ÝÈ¯ÇÒ µ¥ÀÌÅÍ ¶Ç´Â °è»ê½Ä(ÇÊ¼ö)
-   , µ¥ÀÌÅÍ°¡ NULLÀÏ °æ¿ì ¹ÝÈ¯ÇÒ µ¥ÀÌÅÍ ¶Ç´Â °è»ê½Ä(ÇÊ¼ö))
+[ì‚¬ìš© í˜•íƒœ]
+NVL(ê²€ì‚¬í•  ë°ì´í„° ë˜ëŠ” ì—´(í•„ìˆ˜), ë°ì´í„°ê°€ NULLì¼ ê²½ìš° ë°˜í™˜í•  ë°ì´í„° ë˜ëŠ” ê³„ì‚°ì‹(í•„ìˆ˜))
+NVL2(ê²€ì‚¬í•  ë°ì´í„° ë˜ëŠ” ì—´(í•„ìˆ˜)
+   , ë°ì´í„°ê°€ NULLì´ ì•„ë‹ ê²½ìš° ë°˜í™˜í•  ë°ì´í„° ë˜ëŠ” ê³„ì‚°ì‹(í•„ìˆ˜)
+   , ë°ì´í„°ê°€ NULLì¼ ê²½ìš° ë°˜í™˜í•  ë°ì´í„° ë˜ëŠ” ê³„ì‚°ì‹(í•„ìˆ˜))
 */
 SELECT EMPNO
      , ENAME
@@ -933,28 +933,28 @@ SELECT EMPNO
   FROM EMP;
   
   
-/** Á¶°Ç °ü·Ã ÇÔ¼ö **/
+/** ì¡°ê±´ ê´€ë ¨ í•¨ìˆ˜ **/
 -- STUDY DECODE, CASE --
 /*
-DECODE() : ÇÁ·Î±×·¡¹Ö ¾ð¾îÀÇ switch-case¹®°ú À¯»ç. ±âÁØÀÌ µÇ´Â µ¥ÀÌÅÍ¸¦ ¸ÕÀú ÁöÁ¤ÇÑ ÈÄ ÇØ´ç
-µ¥ÀÌÅÍÀÇ °ª¿¡ µû¶ó ´Ù¸¥ °á°ú°ªÀ» ³»º¸³»´Â ÇÔ¼ö
-CASE¹® : DECODE() ÇÔ¼ö¿Í ´Þ¸® °¢ Á¶°Ç¿¡ »ç¿ëÇÏ´Â µ¥ÀÌÅÍ°¡ ¼­·Î »ó°üÀÌ ¾ø¾îµµ µÊ. ¶Ç ±âÁØ
-µ¥ÀÌÅÍ°ªÀÌ °°Àº µ¥ÀÌÅÍ ¿Ü¿¡ ´Ù¾çÇÑ Á¶°ÇÀ» »ç¿ëÇÒ ¼ö ÀÖÀ½. DECODE() ÇÔ¼ö¿¡ ºñÇØ ¹ü¿ë¼ºÀÌ ´õ ³ôÀ½.
+DECODE() : í”„ë¡œê·¸ëž˜ë° ì–¸ì–´ì˜ switch-caseë¬¸ê³¼ ìœ ì‚¬. ê¸°ì¤€ì´ ë˜ëŠ” ë°ì´í„°ë¥¼ ë¨¼ì € ì§€ì •í•œ í›„ í•´ë‹¹
+ë°ì´í„°ì˜ ê°’ì— ë”°ë¼ ë‹¤ë¥¸ ê²°ê³¼ê°’ì„ ë‚´ë³´ë‚´ëŠ” í•¨ìˆ˜
+CASEë¬¸ : DECODE() í•¨ìˆ˜ì™€ ë‹¬ë¦¬ ê° ì¡°ê±´ì— ì‚¬ìš©í•˜ëŠ” ë°ì´í„°ê°€ ì„œë¡œ ìƒê´€ì´ ì—†ì–´ë„ ë¨. ë˜ ê¸°ì¤€
+ë°ì´í„°ê°’ì´ ê°™ì€ ë°ì´í„° ì™¸ì— ë‹¤ì–‘í•œ ì¡°ê±´ì„ ì‚¬ìš©í•  ìˆ˜ ìžˆìŒ. DECODE() í•¨ìˆ˜ì— ë¹„í•´ ë²”ìš©ì„±ì´ ë” ë†’ìŒ.
 
-[»ç¿ë ÇüÅÂ]
-DECODE(°Ë»çÇÒ ¿­ ¶Ç´Â µ¥ÀÌÅÍ / ¿¬»êÀÌ³ª ÇÔ¼öÀÇ °á°ú
-     , Á¶°Ç1, µ¥ÀÌÅÍ°¡ Á¶°Ç1°ú ÀÏÄ¡ÇÒ ¶§ ¹ÝÈ¯ÇÒ °á°ú
-     , Á¶°Ç2, µ¥ÀÌÅÍ°¡ Á¶°Ç2°ú ÀÏÄ¡ÇÒ ¶§ ¹ÝÈ¯ÇÒ °á°ú
+[ì‚¬ìš© í˜•íƒœ]
+DECODE(ê²€ì‚¬í•  ì—´ ë˜ëŠ” ë°ì´í„° / ì—°ì‚°ì´ë‚˜ í•¨ìˆ˜ì˜ ê²°ê³¼
+     , ì¡°ê±´1, ë°ì´í„°ê°€ ì¡°ê±´1ê³¼ ì¼ì¹˜í•  ë•Œ ë°˜í™˜í•  ê²°ê³¼
+     , ì¡°ê±´2, ë°ì´í„°ê°€ ì¡°ê±´2ê³¼ ì¼ì¹˜í•  ë•Œ ë°˜í™˜í•  ê²°ê³¼
      ...
-     , Á¶°Çn, µ¥ÀÌÅÍ°¡ Á¶°Çn°ú ÀÏÄ¡ÇÒ ¶§ ¹ÝÈ¯ÇÒ °á°ú
-     , À§ Á¶°Ç1~Á¶°ÇN°ú ÀÏÄ¡ÇÑ °æ¿ì°¡ ¾øÀ» ¶§ ¹ÝÈ¯ÇÒ °á°ú(¹ÌÁöÁ¤ ½Ã NULL ¹ÝÈ¯))
+     , ì¡°ê±´n, ë°ì´í„°ê°€ ì¡°ê±´nê³¼ ì¼ì¹˜í•  ë•Œ ë°˜í™˜í•  ê²°ê³¼
+     , ìœ„ ì¡°ê±´1~ì¡°ê±´Nê³¼ ì¼ì¹˜í•œ ê²½ìš°ê°€ ì—†ì„ ë•Œ ë°˜í™˜í•  ê²°ê³¼(ë¯¸ì§€ì • ì‹œ NULL ë°˜í™˜))
      
-CASE °Ë»çÇÒ ¿­ ¶Ç´Â µ¥ÀÌÅÍ / ¿¬»êÀÌ³ª ÇÔ¼öÀÇ °á°ú(¼±ÅÃ)
-    WHEN Á¶°Ç1 THEN Á¶°Ç1ÀÇ °á°ú°ªÀÌ trueÀÏ ¶§, ¹ÝÈ¯ÇÒ °á°ú
-    WHEN Á¶°Ç2 THEN Á¶°Ç2ÀÇ °á°ú°ªÀÌ trueÀÏ ¶§, ¹ÝÈ¯ÇÒ °á°ú
+CASE ê²€ì‚¬í•  ì—´ ë˜ëŠ” ë°ì´í„° / ì—°ì‚°ì´ë‚˜ í•¨ìˆ˜ì˜ ê²°ê³¼(ì„ íƒ)
+    WHEN ì¡°ê±´1 THEN ì¡°ê±´1ì˜ ê²°ê³¼ê°’ì´ trueì¼ ë•Œ, ë°˜í™˜í•  ê²°ê³¼
+    WHEN ì¡°ê±´2 THEN ì¡°ê±´2ì˜ ê²°ê³¼ê°’ì´ trueì¼ ë•Œ, ë°˜í™˜í•  ê²°ê³¼
     ...
-    WHEN Á¶°Çn THEN Á¶°ÇnÀÇ °á°ú°ªÀÌ trueÀÏ ¶§, ¹ÝÈ¯ÇÒ °á°ú
-    ELSE À§ Á¶°Ç1~Á¶°Çn°ú ÀÏÄ¡ÇÏ´Â °æ¿ì°¡ ¾øÀ» ¶§ ¹ÝÈ¯ÇÒ °á°ú
+    WHEN ì¡°ê±´n THEN ì¡°ê±´nì˜ ê²°ê³¼ê°’ì´ trueì¼ ë•Œ, ë°˜í™˜í•  ê²°ê³¼
+    ELSE ìœ„ ì¡°ê±´1~ì¡°ê±´nê³¼ ì¼ì¹˜í•˜ëŠ” ê²½ìš°ê°€ ì—†ì„ ë•Œ ë°˜í™˜í•  ê²°ê³¼
 END
 */
 SELECT EMPNO
@@ -984,14 +984,14 @@ SELECT EMPNO
      , ENAME
      , COMM
      , CASE 
-          WHEN COMM IS NULL THEN 'ÇØ´ç»çÇ× ¾øÀ½'
-          WHEN COMM = 0 THEN '¼ö´ç¾øÀ½'
-          WHEN COMM > 0 THEN '¼ö´ç : ' || COMM
+          WHEN COMM IS NULL THEN 'í•´ë‹¹ì‚¬í•­ ì—†ìŒ'
+          WHEN COMM = 0 THEN 'ìˆ˜ë‹¹ì—†ìŒ'
+          WHEN COMM > 0 THEN 'ìˆ˜ë‹¹ : ' || COMM
        END AS COMM_TEXT
   FROM EMP;
   
 
-/* P.174 º¹½À ¹®Á¦ */
+/* P.174 ë³µìŠµ ë¬¸ì œ */
 // Q1
 SELECT EMPNO
      , RPAD(SUBSTR(EMPNO, 0, 2), LENGTH(EMPNO), '*') AS MASKING_EMPNO
@@ -1033,7 +1033,7 @@ SELECT EMPNO
   FROM EMP;
   
   
-/** ´ÙÁßÇà ÇÔ¼ö ¹× µ¥ÀÌÅÍ ±×·ìÈ­ **/
+/** ë‹¤ì¤‘í–‰ í•¨ìˆ˜ ë° ë°ì´í„° ê·¸ë£¹í™” **/
 
 
 
