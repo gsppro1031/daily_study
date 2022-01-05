@@ -1437,17 +1437,294 @@ ORDER BY DEPTNO, JOB;
 
 -- P.212 예제
 -- Q1
-SELECT DEPTNO, ROUND(AVG(SAL), 0) AS AVG_SAL, MAX(SAL) AS MAX_SAL, MIN(SAL) AS MIN_SAL, COUNT(*) AS CNT
-FROM EMP
+  SELECT DEPTNO
+       , ROUND(AVG(SAL), 0) AS AVG_SAL
+       , MAX(SAL) AS MAX_SAL
+       , MIN(SAL) AS MIN_SAL
+       , COUNT(*) AS CNT
+    FROM EMP
 GROUP BY DEPTNO;
 
 -- Q2
-
+  SELECT JOB
+       , COUNT(*)
+    FROM EMP
+GROUP BY JOB
+  HAVING COUNT(*) >= 3;
 
 -- Q3
-
+  SELECT TO_CHAR(HIREDATE, 'YYYY') AS HIRE_YEAR
+       , DEPTNO
+       , COUNT(*) AS CNT
+    FROM EMP
+GROUP BY TO_CHAR(HIREDATE, 'YYYY'), GROUPING SETS(DEPTNO);
 
 -- Q4
-
+  SELECT CASE
+            WHEN TO_CHAR(COMM) IS NULL THEN 'X'
+            WHEN TO_CHAR(COMM) = '0' THEN 'X'
+            ELSE '0'
+         END AS EXIST_COMM
+       , COUNT(*) AS CNT
+    FROM EMP
+GROUP BY CASE
+            WHEN TO_CHAR(COMM) IS NULL THEN 'X'
+            WHEN TO_CHAR(COMM) = '0' THEN 'X'
+            ELSE '0'
+         END
+ORDER BY EXIST_COMM DESC;
 
 -- Q5
+  SELECT DEPTNO
+       , CASE 
+            WHEN TO_CHAR(HIREDATE, 'YYYY') IS NULL THEN ' '
+            ELSE TO_CHAR(HIREDATE, 'YYYY')
+         END AS HIRE_YEAR
+       , COUNT(*) AS CNT
+       , MAX(SAL) AS MAX_SAL
+       , SUM(SAL) AS SUM_SAL
+       , AVG(SAL) AS AVG_SAL
+    FROM EMP
+GROUP BY ROLLUP(
+            DEPTNO
+            , CASE 
+                WHEN TO_CHAR(HIREDATE, 'YYYY') IS NULL THEN ' '
+                ELSE TO_CHAR(HIREDATE, 'YYYY')
+              END
+         )
+ORDER BY DEPTNO;
+
+
+/** JOIN **/
+-- STUDY JOIN --
+/* JOIN : 두 개 이상의 테이블을 연결하여 하나의 테이블처럼 출력할 때 사용하는 방식. */
+  SELECT *
+    FROM EMP, DEPT
+ORDER BY EMPNO;
+-- 데이터는 출력되지만 맞아떨어지지 않는 데이터로 조합됨
+
+  SELECT *
+    FROM EMP, DEPT
+   WHERE EMP.DEPTNO = DEPT.DEPTNO
+ORDER BY EMPNO;
+
+  SELECT *
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+ORDER BY EMPNO;
+
+  SELECT E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.MGR
+       , E.HIREDATE
+       , E.SAL
+       , E.COMM
+       , E.DEPTNO
+       , D.DNAME
+       , D.LOC
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+ORDER BY EMPNO;
+
+-- P.220 예제
+  SELECT E.EMPNO, D.DNAME
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+ORDER BY EMPNO;
+
+
+-- STUDY EQUI JOIN --
+/*
+등가 조인(EQUI JOIN) = 내부 조인(INNER JOIN) = 단순 조인(SIMPLE JOIN)
+- 출력 행을 각 테이블의 특정 열에 일치한 데이터를 기준으로 선정하는 조인 방식 
+*/
+SELECT EMPNO, ENAME, DEPTNO, DNAME, LOC
+  FROM EMP E, DEPT D
+ WHERE E.DEPTNO = D.DEPTNO;
+/*
+오류 발생
+ORA-00918: column ambiguously defined
+00918. 00000 -  "column ambiguously defined"
+- 각 테이블에 같은 열 이름 DEPTNO가 있기 때문에, 테이블을 명시해 주어야 함.
+*/
+  SELECT E.EMPNO, E.ENAME, D.DEPTNO, D.DNAME, D.LOC
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+ORDER BY D.DEPTNO, E.EMPNO;
+
+SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
+  FROM EMP E, DEPT D
+ WHERE E.DEPTNO = D.DEPTNO
+   AND SAL >= 3000;
+   
+-- P.223 예제
+  SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+     AND E.SAL <= 2500
+     AND E.EMPNO <= 9999
+ORDER BY E.EMPNO;
+
+
+-- STUDY NON-EQUI JOIN --
+/* 비등가 조인(NON-EQUI JOIN) : 등가 조인 외의 조인 방식 */
+SELECT * FROM EMP;
+SELECT * FROM SALGRADE;
+
+SELECT *
+  FROM EMP E, SALGRADE S
+ WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL;
+
+
+-- STUDY SELF JOIN --
+/* 자체 조인(SELF JOIN) : 하나의 테이블을 여러 개의 테이블처럼 활용하여 조인하는 조인 방식 */
+SELECT E1.EMPNO
+     , E1.ENAME
+     , E1.MGR
+     , E2.EMPNO AS MGR_EMPNO
+     , E2.ENAME AS MGR_ENAME
+  FROM EMP E1, EMP E2
+ WHERE E1.MGR = E2.EMPNO;
+ 
+
+-- STUDY OUTER JOIN --
+/*
+외부 조인(OUTER JOIN) : 어느 한쪽의 데이터가 NULL이더라도 결과를 출력할 때 포함시켜야 
+하는 경우 강제로 출력할 때 사용하는 조인 방식
+
+LEFT OUTER JOIN : WHERE TABLE1.COL1 = TABLE2.COL1(+)
+RIGHT OUTER JOIN : WHERE TABLE1.COL1(+) = TABLE2.COL1
+*/
+-- LEFT OUTER JOIN 사용 예시
+  SELECT E1.EMPNO
+       , E1.ENAME
+       , E1.MGR
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E1, EMP E2
+   WHERE E1.MGR = E2.EMPNO(+)
+ORDER BY E1.EMPNO;
+
+-- RIGHT OUTER JOIN
+  SELECT E1.EMPNO
+       , E1.ENAME
+       , E1.MGR
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E1, EMP E2
+   WHERE E1.MGR(+) = E2.EMPNO
+ORDER BY E1.EMPNO;
+
+
+/* STUDY SQL-99 표준 문법 JOIN */
+-- STUDY NATURAL JOIN --
+/*
+NATURAL JOIN : 등가 조인을 대신해 사용할 수 있는 조인 방식. 조인 대상이 되는 두 테이블에 
+이름과 자료형이 같은 열을 찾은 후 그 열을 기준으로 등가 조인을 해 주는 방식. 기존 등가 조인과 
+다르게 조인 기준 열인 DEPTNO를 SELECT절에 명시할 때 테이블이 름을 붙이면 안 되는 특성이 있음.
+*/
+  SELECT E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.MGR
+       , E.HIREDATE
+       , E.SAL
+       , E.COMM
+       , DEPTNO
+       , D.DNAME
+       , D.LOC
+    FROM EMP E NATURAL JOIN DEPT D
+ORDER BY DEPTNO, E.EMPNO;
+
+
+-- STUDY JOIN ~ USING --
+/*
+JOIN ~ USING : 등가 조인을 대신해 사용할 수 있는 조인 방식. NATURAL JOIN과 다르게 USING 
+키워드에 조인 기준으로 사용할 열을 명시하여 사용함.
+
+[사용 형태]
+FROM TABLE1 JOIN TABLE2 USING (조인에 사용할 기준열)
+*/
+  SELECT E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.MGR
+       , E.HIREDATE
+       , E.SAL
+       , E.COMM
+       , DEPTNO
+       , D.DNAME
+       , D.LOC
+    FROM EMP E JOIN DEPT D USING (DEPTNO)
+   WHERE SAL >= 3000
+ORDER BY DEPTNO, E.EMPNO;
+
+
+-- STUDY JOIN ~ ON --
+/*
+JOIN ~ ON : 가장 범용성 있는 조인 방식. 기존 WHERE 절에 있는 조인 조건식을 ON 키워드 옆에 
+작성함. 조인 기준 조건식은 ON에 명시하고 그 밖의 출력 행을 걸러 내기 위해 WHERE 조건식을 따로 
+사용하는 조인 방식.
+
+[사용 형태]
+FROM TABLE1 JOIN TABLE2 ON (조인 조건식)
+*/
+  SELECT E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.HIREDATE
+       , E.SAL
+       , E.COMM
+       , E.DEPTNO
+       , D.DNAME
+       , D.LOC
+    FROM EMP E JOIN DEPT D ON (E.DEPTNO = D.DEPTNO)
+   WHERE SAL <= 3000
+ORDER BY E.DEPTNO, EMPNO;
+
+
+-- STUDY OUTER JOIN(SQL-99) --
+/*
+OUTER JOIN(SQL-99) : WHERE절이 아닌 FROM절에서 외부 조인을 선언함
+
+[사용 형태]
+<LEFT OUTER JOIN>
+기존 : WHERE TABLE1.COL1 = TABLE2.COL1(+)
+SQL-99 : FROM TABLE1 LEFT OUTER JOIN TABLE2 ON (조인 조건식)
+
+<RIGHT OUTER JOIN>
+기존 : WHERE TABLE1.COL1(+) = TABLE2.COL1
+SQL-99 : FROM TABLE1 RIGHT OUTER JOIN TABLE2 ON (조인 조건식)
+
+<FULL OUTER JOIN>
+기존 : UNION 집합 연산자를 활용
+SQL-99 : FROM TABLE1 FULL OUTER JOIN TABLE2 ON (조인 조건식)
+*/
+-- SQL-99 문법으로 작성한 LEFT OUTER JOIN 예시
+  SELECT E1.EMPNO
+       , E1.ENAME
+       , E1.MGR
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E1 LEFT OUTER JOIN EMP E2 ON (E1.MGR = E2.EMPNO)
+ORDER BY E1.EMPNO;
+
+-- SQL-99 문법으로 작성한 RIGHT OUTER JOIN 예시
+  SELECT E1.EMPNO
+       , E1.ENAME
+       , E1.MGR
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E1 RIGHT OUTER JOIN EMP E2 ON (E1.MGR = E2.EMPNO)
+ORDER BY E1.EMPNO, MGR_EMPNO;
+
+-- SQL-99 문법으로 작성한 FULL OUTER JOIN 예시
+  SELECT E1.EMPNO
+       , E1.ENAME
+       , E1.MGR
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E1 FULL OUTER JOIN EMP E2 ON (E1.MGR = E2.EMPNO)
+ORDER BY E1.EMPNO;
+
