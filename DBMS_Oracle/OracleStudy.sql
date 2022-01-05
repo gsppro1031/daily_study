@@ -1617,7 +1617,13 @@ ORDER BY E1.EMPNO;
 ORDER BY E1.EMPNO;
 
 
-/* STUDY SQL-99 표준 문법 JOIN */
+-- STUDY SQL-99 표준 문법 JOIN 
+/* 
+STUDY SQL-99 표준 문법 JOIN : 다른 DBMS에서도 사용 가능한 JOIN의 표준 문법. 주로 FROM절에 
+특정 키워드를 사용하여 테이블을 조인함. 조인 조건식과 출력 행을 선정하는 조건식을 구별할 수 있음.
+*/
+
+
 -- STUDY NATURAL JOIN --
 /*
 NATURAL JOIN : 등가 조인을 대신해 사용할 수 있는 조인 방식. 조인 대상이 되는 두 테이블에 
@@ -1728,3 +1734,410 @@ ORDER BY E1.EMPNO, MGR_EMPNO;
     FROM EMP E1 FULL OUTER JOIN EMP E2 ON (E1.MGR = E2.EMPNO)
 ORDER BY E1.EMPNO;
 
+-- SQL-99 조인 방식에서 세 개 이상의 테이블을 조인할 때
+  SELECT ...
+    FROM TABLE1, TABLE2, TABLE3
+   WHERE TABLE1.COL = TABLE2.COL
+     AND TABLE2.COL = TABLE3.COL;
+     
+  SELECT ...
+    FROM TABLE1 JOIN TABLE2 ON (조건식)
+    JOIN TABLE3 ON (조건식);
+    
+-- P.238 예제
+  SELECT E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.MGR
+       , E.HIREDATE
+       , E.SAL
+       , E.COMM
+       , DEPTNO
+       , D.DNAME
+       , D.LOC
+    FROM EMP E JOIN DEPT D USING (DEPTNO)
+   WHERE SAL >= 3000
+     AND E.MGR IS NOT NULL
+ORDER BY DEPTNO, E.EMPNO;
+
+
+-- PP.239-240 예제
+-- Q.1-1
+SELECT E.DEPTNO
+     , D.DNAME
+     , E.EMPNO
+     , E.ENAME
+     , E.SAL
+  FROM EMP E, DEPT D
+ WHERE SAL >= 2000
+   AND E.DEPTNO = D.DEPTNO;
+    
+-- Q.1-2   
+SELECT DEPTNO
+     , D.DNAME
+     , E.EMPNO
+     , E.ENAME
+     , E.SAL
+  FROM EMP E NATURAL JOIN DEPT D
+ WHERE SAL >= 2000;
+ 
+-- Q.2-1 
+  SELECT E.DEPTNO
+       , D.DNAME
+       , TRUNC(AVG(E.SAL), 0) AS AVG_SAL
+       , MAX(E.SAL) AS MAX_SAL
+       , MIN(E.SAL) AS MIN_SAL
+       , COUNT(*) AS CNT
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+GROUP BY E.DEPTNO, D.DNAME;
+ 
+-- Q.2-2 
+  SELECT E.DEPTNO
+       , D.DNAME
+       , TRUNC(AVG(E.SAL), 0) AS AVG_SAL
+       , MAX(E.SAL) AS MAX_SAL
+       , MIN(E.SAL) AS MIN_SAL
+       , COUNT(*) AS CNT
+    FROM EMP E JOIN DEPT D ON (E.DEPTNO = D.DEPTNO)
+GROUP BY E.DEPTNO, D.DNAME;
+
+-- Q.3-1
+  SELECT E.DEPTNO
+       , D.DNAME
+       , E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.SAL
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO(+) = D.DEPTNO
+ORDER BY E.DEPTNO ASC, D.DNAME ASC;
+
+-- Q.3-2 
+  SELECT E.DEPTNO
+       , D.DNAME
+       , E.EMPNO
+       , E.ENAME
+       , E.JOB
+       , E.SAL
+    FROM EMP E RIGHT OUTER JOIN DEPT D ON (E.DEPTNO = D.DEPTNO)
+ORDER BY E.DEPTNO ASC, D.DNAME ASC;
+
+-- Q.4-1
+  SELECT D.DEPTNO
+       , D.DNAME
+       , E.EMPNO
+       , E.ENAME
+       , E.MGR
+       , E.SAL
+       , D.DEPTNO AS DEPTNO_1
+       , S.LOSAL
+       , S.HISAL
+       , S.GRADE
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E, DEPT D, SALGRADE S, EMP E2
+   WHERE E.DEPTNO(+) = D.DEPTNO
+     AND E.SAL BETWEEN S.LOSAL(+) AND S.HISAL(+)
+     AND E.MGR = E2.EMPNO(+)
+ORDER BY D.DEPTNO, E.EMPNO;
+
+-- Q.4-2
+  SELECT D.DEPTNO
+       , D.DNAME
+       , E.EMPNO
+       , E.ENAME
+       , E.MGR
+       , E.SAL
+       , D.DEPTNO AS DEPTNO_1
+       , S.LOSAL
+       , S.HISAL
+       , S.GRADE
+       , E2.EMPNO AS MGR_EMPNO
+       , E2.ENAME AS MGR_ENAME
+    FROM EMP E RIGHT OUTER JOIN DEPT D ON (E.DEPTNO = D.DEPTNO)
+               LEFT OUTER JOIN SALGRADE S ON (E.SAL BETWEEN S.LOSAL AND S.HISAL)
+               LEFT OUTER JOIN EMP E2 ON (E.MGR = E2.EMPNO)
+ORDER BY D.DEPTNO, E.EMPNO;
+
+
+/** 서브쿼리 **/
+-- STUDY subquery --
+/*
+[NOTE] 서브쿼리의 특징
+1. 서브쿼리는 연산자와 같은 비교 또는 조회 대상의 오른쪽에 놓이며 괄호 ()로 묶어서 사용함
+2. 특수한 몇몇 경우를 제외한 대부분의 서브쿼리에서는 ORDER BY절을 사용할 수 없음
+3. 서브쿼리의 SELECT절에 명시한 열은 메인쿼리의 비교 대상과 같은 자료형과 같은 개수로 지정
+해야 함. 즉 메인쿼리의 비교 대상 데이터가 하나라면 서브쿼리의 SELECT절 역시 같은 자료형인
+열을 하나 지정해야 함
+4. 서브쿼리에 있는 SELECT문의 결과 행 수는 함께 사용하는 메인쿼리의 연산자 종류와 호환 가능
+해야 합니다. 예를 들어 메인쿼리에 사용한 연산자가 단 하나의 데이터로만 연산이 가능한 연산자라면
+서브쿼리의 결과 행 수는 반드시 하나여야 함.
+*/
+SELECT SAL
+  FROM EMP
+ WHERE ENAME = 'JONES';
+ 
+SELECT SAL
+  FROM EMP
+ WHERE SAL > 2975;
+
+SELECT *
+  FROM EMP
+ WHERE SAL > (SELECT SAL
+                FROM EMP
+               WHERE ENAME = 'JONES');
+               
+-- P.245 예제
+SELECT *
+  FROM EMP
+ WHERE COMM > (SELECT COMM
+               FROM EMP
+               WHERE ENAME = 'ALLEN');
+               
+
+-- STUDY 단일행 서브쿼리 --
+/*
+[NOTE] 테이블에 비교 대상에 해당하는 데이터가 여럿 있으면 오류가 발생하여 실행되지 못함
+
+EX) JONES의 급여보다 높은 급여를 받는 사원 목록
+- 만약 JONES라는 이름을 가진 사람이 두 명 이상일 경우 오류 발생
+*/
+SELECT *
+  FROM EMP
+ WHERE HIREDATE < (SELECT HIREDATE
+                     FROM EMP
+                    WHERE ENAME = 'WARD');
+                    
+SELECT E.EMPNO
+     , E.ENAME
+     , E.JOB
+     , E.SAL
+     , D.DEPTNO
+     , D.DNAME
+     , D.LOC
+  FROM EMP E, DEPT D
+ WHERE E.DEPTNO = D.DEPTNO
+   AND E.DEPTNO = 20
+   AND E.SAL > (SELECT AVG(SAL)
+                  FROM EMP);
+
+-- P.248 예제      
+SELECT E.EMPNO
+     , E.ENAME
+     , E.JOB
+     , E.SAL
+     , D.DEPTNO
+     , D.DNAME
+     , D.LOC
+  FROM EMP E, DEPT D
+ WHERE E.DEPTNO = D.DEPTNO
+   AND E.DEPTNO = 20
+   AND E.SAL <= (SELECT AVG(E.SAL)
+                   FROM EMP);
+                   
+
+-- STUDY 다중행 서브쿼리 --
+/*
+[NOTE] 서브쿼리 결과가 여러 개이므로 단잉행 연산자 사용 불가. 다중행 연산자를 사용해야 
+메인쿼리와 비교를 할 수 있음.
+
+[다중행 연산자]         [설명]
+IN                    메인쿼리의 데이터가 서브쿼리의 결과 중 하나라도 일치한 데이터가 있다면 true
+ANY, SOME             메인쿼리의 조건식을 만족하는 서브쿼리의 결과가 하나 이상이면 true
+ALL                   메인쿼리의 조건식을 서브쿼리의 결과 모두가 만족하면 true
+EXISTS                서브쿼리의 결과가 존재하면(즉, 행이 1개 이상일 경우) true
+*/
+-- STUDY IN --
+SELECT *
+  FROM EMP
+ WHERE DEPTNO IN (20, 30);
+ 
+SELECT *
+  FROM EMP
+ WHERE SAL IN (  SELECT MAX(SAL)
+                   FROM EMP
+               GROUP BY DEPTNO);
+
+
+-- STUDY ANY, SOME --
+SELECT *
+  FROM EMP
+ WHERE SAL = ANY (  SELECT MAX(SAL)
+                      FROM EMP
+                  GROUP BY DEPTNO);
+                  
+SELECT *
+  FROM EMP
+ WHERE SAL = SOME (  SELECT MAX(SAL)
+                       FROM EMP
+                   GROUP BY DEPTNO);
+
+  SELECT *
+    FROM EMP
+   WHERE SAL < ANY (SELECT SAL
+                      FROM EMP
+                     WHERE DEPTNO = 30)
+ORDER BY SAL, EMPNO;
+
+  SELECT *
+    FROM EMP
+   WHERE SAL < ANY (SELECT SAL
+                      FROM EMP
+                     WHERE DEPTNO = 30)
+ORDER BY SAL, EMPNO;
+
+  SELECT *
+    FROM EMP
+   WHERE SAL < (SELECT MAX(SAL)
+                  FROM EMP
+                 WHERE DEPTNO = 30)
+ORDER BY SAL, EMPNO;
+
+SELECT *
+  FROM EMP
+ WHERE SAL > ANY (SELECT SAL
+                    FROM EMP
+                   WHERE DEPTNO = 30);
+     
+                   
+-- STUDY ALL --
+SELECT *
+  FROM EMP
+ WHERE SAL < ALL (SELECT SAL
+                    FROM EMP
+                   WHERE DEPTNO = 30);
+                   
+SELECT *
+  FROM EMP
+ WHERE SAL > ALL (SELECT SAL
+                    FROM EMP
+                   WHERE DEPTNO = 30);
+                   
+                   
+-- STUDY EXISTS --
+SELECT *
+  FROM EMP
+ WHERE EXISTS (SELECT DNAME
+                 FROM DEPT
+                WHERE DEPTNO = 10);
+                
+SELECT *
+  FROM EMP
+ WHERE EXISTS (SELECT DNAME
+                 FROM DEPT
+                WHERE DEPTNO = 50);
+                
+-- P.257 예제
+SELECT *
+  FROM EMP
+ WHERE HIREDATE < ALL (SELECT HIREDATE
+                         FROM EMP
+                        WHERE DEPTNO = 10);
+                        
+                        
+-- STUDY 다중열 서브쿼리 --
+/*
+다중열 서브쿼리 = 복수열 서브쿼리
+SELECT절에 비교할 데이터를 여러 개 지정하는 방식. 메인쿼리에 비교할 열을 괄호로 묶어 명시하고 
+서브쿼리에서는 괄호로 묶은 데이터와 같은 자료형 데이터를 SELECT절에 명시하여 사용함.
+*/
+SELECT *
+  FROM EMP
+ WHERE (DEPTNO, SAL) IN ( SELECT DEPTNO, MAX(SAL)
+                            FROM EMP
+                        GROUP BY DEPTNO);
+
+
+-- FROM절에 사용하는 서브쿼리와 WITH절 --             
+/* FROM절에 사용하는 서브쿼리를 인라인 뷰(inline view)라고도 함. */
+
+SELECT E10.EMPNO, E10.ENAME, E10.DEPTNO, D.DNAME, D.LOC
+  FROM (SELECT * FROM EMP WHERE DEPTNO = 10) E10,
+       (SELECT * FROM DEPT) D
+ WHERE E10.DEPTNO = D.DEPTNO;
+/*
+FROM절에 너무 많은 서브쿼리를 지정하면 가독성이나 성능이 떨어질 수 있음. WITH절을 통해 
+메인쿼리가 될 SELECT문 안에서 사용할 서브쿼리와 별칭을 먼저 지정한 후 메인쿼리에서 사용함. 
+
+[사용 형태]
+WITH
+  [별칭1] AS (SELECT문 1),
+  [별칭2] AS (SELECT문 2),
+  ...
+  [별칭n] AS (SELECT문 n)
+SELECT
+  FROM 별칭1, 별칭2, 별칭3
+...
+*/
+WITH
+E10 AS (SELECT * FROM EMP WHERE DEPTNO = 10),
+D   AS (SELECT * FROM DEPT)
+SELECT E10.EMPNO, E10.ENAME, E10.DEPTNO, D.DNAME, D.LOC
+  FROM E10, D
+ WHERE E10.DEPTNO = D.DEPTNO;
+ 
+/* [참고] 상호연관 쿼리(correlated subquery)
+(성능을 떨어뜨리는 원인이 될 수 있고, 사용 빈도가 낮음) */
+  SELECT *
+    FROM EMP E1
+   WHERE SAL > (SELECT MIN(SAL)
+                  FROM EMP E2
+                 WHERE E2.DEPTNO = E1.DEPTNO)
+ORDER BY DEPTNO, SAL;
+
+
+-- SELECT절에 사용하는 서브쿼리 --
+/* SELECT절에 사용하는 서브쿼리를 스칼라 서브쿼리(scalar subquery)라고도 함. */
+SELECT EMPNO
+     , ENAME
+     , JOB
+     , SAL
+     , (SELECT GRADE
+          FROM SALGRADE
+         WHERE E.SAL BETWEEN LOSAL AND HISAL) AS SALGRADE
+     , DEPTNO
+     , (SELECT DNAME
+          FROM DEPT
+         WHERE E.DEPTNO = DEPT.DEPTNO) AS DNAME
+  FROM EMP E;
+  
+-- P.262 예제
+-- Q.1
+SELECT JOB
+     , EMPNO
+     , ENAME
+     , SAL
+     , DEPTNO
+     , (SELECT DNAME
+          FROM DEPT
+         WHERE E.DEPTNO = DEPT.DEPTNO) AS DNAME
+  FROM EMP E
+ WHERE JOB = (SELECT JOB
+                FROM EMP
+               WHERE ENAME = 'ALLEN');
+  
+-- Q.2
+  SELECT EMPNO
+       , ENAME
+       , (SELECT DNAME
+            FROM DEPT
+           WHERE E.DEPTNO = DEPT.DEPTNO) AS DNAME
+       , HIREDATE
+       , (SELECT LOC
+            FROM DEPT
+           WHERE E.DEPTNO = DEPT.DEPTNO) AS LOC
+       , SAL
+       , (SELECT GRADE
+            FROM SALGRADE
+           WHERE E.SAL BETWEEN LOSAL AND HISAL) AS GRADE
+    FROM EMP E
+   WHERE SAL > (SELECT AVG(SAL)
+                FROM EMP)
+ORDER BY SAL DESC, DEPTNO ASC;
+
+-- Q.3
+
+
+-- Q.4
+    
