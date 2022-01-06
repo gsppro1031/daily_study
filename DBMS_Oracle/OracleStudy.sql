@@ -2137,7 +2137,437 @@ SELECT JOB
 ORDER BY SAL DESC, DEPTNO ASC;
 
 -- Q.3
-
+SELECT EMPNO
+     , ENAME
+     , JOB
+     , DEPTNO
+     , (SELECT DNAME
+          FROM DEPT
+         WHERE E.DEPTNO = DEPT.DEPTNO) AS DNAME
+     , (SELECT LOC
+          FROM DEPT
+         WHERE E.DEPTNO = DEPT.DEPTNO) AS LOC
+  FROM EMP E
+ WHERE DEPTNO = 10
+   AND JOB NOT IN (SELECT JOB FROM EMP WHERE DEPTNO = 30);
 
 -- Q.4
+SELECT EMPNO
+     , ENAME
+     , SAL
+     , (SELECT GRADE
+          FROM SALGRADE
+         WHERE E.SAL BETWEEN LOSAL AND HISAL) AS GRADE
+  FROM EMP E 
+ WHERE SAL > (SELECT MAX(SAL) FROM EMP WHERE JOB = 'SALESMAN');
+
+
+/** 데이터 조작어(DML, Data Manipulation Language) **/
+-- STUDY CREATE TABLE --
+CREATE TABLE DEPT_TEMP
+    AS SELECT * FROM DEPT;
+-- DEPT 테이블을 복사해서 DEPT_TEMP 테이블 만들기
+
+SELECT * FROM DEPT_TEMP;
+
+DROP TABLE DEPT_TEMP;   -- 테이블을 지울 때
+
+-- P.267 예제
+CREATE TABLE EMP_TEMP10
+    AS SELECT * FROM EMP;
+
+
+/* STUDY INSERT */
+/*
+[사용 형태]
+INSERT INTO 테이블명 (열1, 열2, ... , 열n)
+     VALUES (값1, 값2, ... , 값n);
+*/
+INSERT INTO DEPT_TEMP (DEPTNO, DNAME, LOC)
+     VALUES (50, 'DATABASE', 'SEOUL');
+
+SELECT * FROM DEPT_TEMP;
+
+/* 열 지정을 생략하고 INSERT. 열 개수와 자료형 및 길이를 반드시 맞춰 주어야 함. 실무에서는 
+열 지정을 직접 해 주는 방식을 더 선호함. 여러 개발자들이 자료를 따로 찾지 않아도 되기 때문. */
+INSERT INTO DEPT_TEMP
+     VALUES (60, 'NETWORK', 'BUSAN');
+
+SELECT * FROM DEPT_TEMP;
+
+INSERT INTO DEPT_TEMP (DEPTNO, DNAME, LOC)
+     VALUES (70, 'WEB', NULL);
+     
+SELECT * FROM DEPT_TEMP;
+
+INSERT INTO DEPT_TEMP (DEPTNO, DNAME, LOC)
+     VALUES (80, 'MOBILE', '');
+     
+SELECT * FROM DEPT_TEMP;
+/* 해당 열의 자료형이 문자열 또는 날짜형일 경우 빈 공백 문자열('')을 사용해도 NULL을 입력할 
+수 있음. 실무에서는 NULL로 정확히 입력하는 것이 더 선호됨. */
+
+INSERT INTO DEPT_TEMP (DEPTNO, LOC)
+     VALUES (90, 'INCHEON');
+     
+SELECT * FROM DEPT_TEMP;
+-- INSERT문에 열 이름을 아예 입력하지 않으면 자동으로 NULL이 입력됨(NULL의 암시적 입력)
+
+CREATE TABLE EMP_TEMP
+   AS SELECT *
+        FROM EMP
+       WHERE 1 <> 1;  -- 테이블의 데이터를 가져오지 않고 열 구조만 가져오고 싶을 때 추가함
+       
+SELECT * FROM EMP_TEMP;
+
+
+-- INSERT로 날짜 데이터 입력하기 --
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (9999, '홍길동', 'PRESIDENT', NULL, '2001/01/01', 5000, 1000, 10);
+     
+SELECT * FROM EMP_TEMP;
+
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (1111, '성춘향', 'MANAGER', 9999, '2001-01-05', 4000, NULL, 20);
+
+SELECT * FROM EMP_TEMP;
+
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (2111, '이순신', 'MANAGER', 9999, '07/01/2001', 4000, NULL, 20);
+/*
+오류 발생
+SQL 오류: ORA-01830: date format picture ends before converting entire input string
+01830. 00000 -  "date format picture ends before converting entire input string"
+운영체제의 종류나 사용하는 기본 언어군에 따라 날짜 표기 방식이 다르기 때문에 날짜 데이터를 INSERT
+할 때에는 TO_DATE 함수를 사용하는 것이 좋음.
+*/
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (2111, '이순신', 'MANAGER', 9999, TO_DATE('07/01/2001', 'DD/MM/YYYY'), 4000, NULL, 20);
+     
+SELECT * FROM EMP_TEMP;
+
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (3111, '심청이', 'MANAGER', 9999, SYSDATE, 4000, NULL, 30);
+     
+SELECT * FROM EMP_TEMP;
+
+
+-- STUDY 서브쿼리를 사용하여 한 번에 여러 데이터 추가하기 --
+/*
+[NOTE] INSERT문에서 서브쿼리 사용할 때 유의할 점
+1. VALUES절을 사용하지 않는다.
+2. 데이터가 추가되는 테이블의 열 개수와 서브쿼리의 열 개수가 일치해야 한다.
+3. 데이터가 추가되는 테이블의 자료형과 서브쿼리의 자료형이 일치해야 한다.
+*/
+INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE, E.SAL, E.COMM, E.DEPTNO
+       FROM EMP E, SALGRADE S
+      WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+        AND S.GRADE = 1;
+        
+SELECT * FROM EMP_TEMP;
+
+
+/* STUDY UPDATE */
+/*
+[사용 형태]
+UPDATE 변경할 테이블
+   SET 변경할 열1=데이터1, 변경할 열2=데이터2, ... , 변경할 열n=데이터n
+ WHERE 변경할 대상 행을 선별할 조건
+*/
+CREATE TABLE DEPT_TEMP2
+    AS SELECT * FROM DEPT;
     
+SELECT * FROM DEPT_TEMP2;
+
+UPDATE DEPT_TEMP2
+   SET LOC = 'SEOUL';
+  
+SELECT * FROM DEPT_TEMP2;
+
+ROLLBACK; -- 실행한 INSERT, UPDATE, DELETE 내용을 되돌리고 싶을 때
+
+SELECT * FROM DEPT_TEMP2;
+
+UPDATE DEPT_TEMP2
+   SET DNAME = 'DATABASE'
+     , LOC = 'SEOUL'
+ WHERE DEPTNO = 40;
+ 
+SELECT * FROM DEPT_TEMP2;
+
+-- P.279 예제
+UPDATE EMP_TEMP
+   SET COMM = 50
+ WHERE SAL <= 2500;
+ 
+SELECT * FROM EMP_TEMP;
+
+
+-- STUDY 서브쿼리를 사용하여 데이터 수정하기 --
+-- 여러 열을 한 번에 수정하는 경우
+UPDATE DEPT_TEMP2
+   SET (DNAME, LOC) = (SELECT DNAME, LOC
+                         FROM DEPT
+                        WHERE DEPTNO = 40)
+ WHERE DEPTNO = 40;
+ 
+SELECT * FROM DEPT_TEMP2;
+
+-- 열 하나하나를 수정하는 경우
+UPDATE DEPT_TEMP2
+   SET DNAME = (SELECT DNAME
+                  FROM DEPT
+                 WHERE DEPTNO = 40)
+     , LOC   = (SELECT LOC
+                  FROM DEPT
+                 WHERE DEPTNO = 40)
+ WHERE DEPTNO = 40;
+ 
+SELECT * FROM DEPT_TEMP2;
+
+-- WHERE절에 서브쿼리를 사용하여 데이터를 수정하는 경우
+UPDATE DEPT_TEMP2
+   SET LOC = 'SEOUL'
+ WHERE DEPTNO = (SELECT DEPTNO
+                   FROM DEPT_TEMP2
+                  WHERE DNAME = 'OPERATIONS');
+
+SELECT * FROM DEPT_TEMP2;
+
+/* UPDATE/DELETE문은 위험성이 큰 명령어이므로, SELECT문으로 먼저 수정 및 삭제할 대상을 
+잘 살펴본 후 사용하는 것이 좋음 */
+
+
+/* STUDY DELETE */
+/*
+[사용 형태]
+DELETE [FROM] 대상 테이블
+[WHERE 대상 행을 선별할 조건]
+
+[NOTE] WHERE절을 사용하지 않을 경우 테이블의 전체 데이터가 모두 삭제됨!!
+*/ 
+CREATE TABLE EMP_TEMP2
+    AS SELECT * FROM EMP;
+    
+SELECT * FROM EMP_TEMP2;
+
+DELETE FROM EMP_TEMP2
+ WHERE JOB = 'MANAGER';
+ 
+SELECT * FROM EMP_TEMP2;
+
+DELETE FROM EMP_TEMP2
+ WHERE EMPNO IN (SELECT E.EMPNO
+                   FROM EMP_TEMP2 E, SALGRADE S
+                  WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL
+                    AND S.GRADE = 3
+                    AND DEPTNO = 30);
+                    
+SELECT * FROM EMP_TEMP2;
+
+-- P.285
+DELETE FROM EMP_TEMP
+ WHERE SAL >= 3000;
+ 
+SELECT * FROM EMP_TEMP;
+
+DELETE FROM EMP_TEMP2;  -- 조건 없이 DELETE를 사용하면 테이블의 전체 데이터가 삭제됨.
+
+SELECT * FROM EMP_TEMP2;
+
+
+-- PP.287-288 예제
+CREATE TABLE CHAP10HW_EMP AS SELECT * FROM EMP;
+CREATE TABLE CHAP10HW_DEPT AS SELECT * FROM DEPT;
+CREATE TABLE CHAP10HW_SALGRADE AS SELECT * FROM SALGRADE;
+
+SELECT * FROM CHAP10HW_EMP;
+SELECT * FROM CHAP10HW_DEPT;
+SELECT * FROM CHAP10HW_SALGRADE;
+
+-- Q.1
+INSERT INTO CHAP10HW_DEPT (DEPTNO, DNAME, LOC)
+     VALUES (50, 'ORACLE', 'BUSAN');
+     
+INSERT INTO CHAP10HW_DEPT (DEPTNO, DNAME, LOC)
+     VALUES (60, 'SQL', 'ILSAN');
+     
+INSERT INTO CHAP10HW_DEPT (DEPTNO, DNAME, LOC)
+     VALUES (70, 'SELECT', 'INCHOEN');
+     
+INSERT INTO CHAP10HW_DEPT (DEPTNO, DNAME, LOC)
+     VALUES (80, 'DML', 'BUNDANG');
+     
+SELECT * FROM CHAP10HW_DEPT;
+
+-- Q.2
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7201, 'TEST_USER1', 'MANAGER', 7788, '2016-01-02', 4500, NULL, 50);
+
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7202, 'TEST_USER2', 'CLERK', 7201, '2016-02-21', 1800, NULL, 50);
+     
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7203, 'TEST_USER3', 'ANALYST', 7201, '2016-04-11', 3400, NULL, 60);
+     
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7204, 'TEST_USER4', 'SALESMAN', 7201, '2016-05-31', 2700, 300, 60);
+
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7205, 'TEST_USER5', 'CLERK', 7201, '2016-07-20', 2600, NULL, 70);
+
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7206, 'TEST_USER6', 'CLERK', 7201, '2016-09-08', 2600, NULL, 70);
+     
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7207, 'TEST_USER7', 'LECTURER', 7201, '2016-10-28', 2300, NULL, 80);
+     
+INSERT INTO CHAP10HW_EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+     VALUES (7208, 'TEST_USER8', 'STUDENT', 7201, '2018-03-09', 1200, NULL, 80);
+
+SELECT * FROM CHAP10HW_EMP;
+
+-- Q.3
+UPDATE CHAP10HW_EMP
+   SET DEPTNO = 70
+ WHERE SAL > (SELECT AVG(SAL)
+                FROM CHAP10HW_EMP
+               WHERE DEPTNO = 50);
+
+SELECT * FROM CHAP10HW_EMP ORDER BY DEPTNO;
+
+-- Q.4
+UPDATE CHAP10HW_EMP
+   SET SAL = SAL*1.1
+     , DEPTNO = 80
+ WHERE HIREDATE > (SELECT MIN(HIREDATE) FROM CHAP10HW_EMP WHERE DEPTNO = 60);
+
+SELECT * FROM CHAP10HW_EMP;
+
+-- Q.5
+DELETE FROM CHAP10HW_EMP
+ WHERE SAL BETWEEN (SELECT LOSAL FROM SALGRADE WHERE GRADE = 5) AND (SELECT HISAL FROM SALGRADE WHERE GRADE = 5);
+
+SELECT * FROM CHAP10HW_EMP;
+SELECT * FROM SALGRADE;
+
+
+/** 트랜잭션 제어와 세션 **/
+/*
+트랜잭션(transaction) : 더 이상 분할할 수 없는 최소 수행 단위를 뜻함. 하나의 트랜잭션 내에 
+있는 여러 명령어를 한 번에 수행하여 작업을 완료하거나 아예 모두 수행하지 않는 상태. 이를 제어
+하는 명령어를 TCL이라고 함. "ALL OR NOTHING"
+
+EX) 100만원이 들어 있는 A계좌에서 0원이 들어 있는 B계좌로 계좌이체
+1. A계좌 잔액을 0원으로 변경하는 UPDATE문 실행
+UPDATE ACCOUNT
+   SET BALANCE = 0
+ WHERE ACCNO = A계좌번호;
+ 
+2.B계좌 잔액을 100만 원으로 변경하는 UPDATE문 실행
+UPDATE ACCOUNT
+   SET BALANCE = 1000000
+ WHERE ACCNO = B계좌번호;
+ 
+1번 UPDATE문이 실행된 후 2번 UPDATE문 실행 중 문제가 생겨 실행이 되지 않을 경우 100만 원이 
+날아가 버림.
+*/
+-- P.293 예제 
+/*
+1. 트랜잭션 / 2. TCL
+*/
+
+
+-- STUDY TCL(Transaction Control Language) --
+CREATE TABLE DEPT_TCL
+    AS SELECT *
+         FROM DEPT;
+         
+SELECT * FROM DEPT_TCL;
+
+INSERT INTO DEPT_TCL VALUES(50, 'DATABASE', 'SEOUL');
+UPDATE DEPT_TCL SET LOC = 'BUSAN' WHERE DEPTNO = 40;
+DELETE FROM DEPT_TCL WHERE DNAME = 'RESEARCH';
+SELECT * FROM DEPT_TCL;
+
+ROLLBACK; -- 트랜잭션을 취소하고 싶을 때 사용
+SELECT * FROM DEPT_TCL;
+
+INSERT INTO DEPT_TCL VALUES(50, 'NETWORK', 'SEOUL');
+UPDATE DEPT_TCL SET LOC = 'BUSAN' WHERE DEPTNO = 20;
+DELETE FROM DEPT_TCL WHERE DEPTNO = 40;
+SELECT * FROM DEPT_TCL;
+
+COMMIT; -- 트랜잭션을 반영하고 싶을 때 사용
+SELECT * FROM DEPT_TCL;
+
+
+/** 세션(Session) **/
+/*
+오라클 데이터베이스에서의 세션 : 데이터베이스 접속을 시작으로 여러 데이터베이스에서 관련 작업을 
+수행한 후 접속을 종료하기까지 전체 기간을 의미함.
+
+만약 다른 툴로 같은 데이터베이스에 접속하면 2개의 세션으로 접속을 한 것.
+ex) Toad로 접속 / SQL Developer로 접속
+
+한 세션에서 INSERT, UPDATE, DELETE한 것을 COMMIT하기 전까지는 다른 세션에서 현 세션의 
+데이터 변화를 확인할 수 없음.
+
+즉, 데이터 조작이 포함된 트랜잭션이 완료되기 전까지 데이터를 직접 조작하는 세션 외 다른 세션에
+서는 데이터 조작 전 상태의 내용이 일관적으로 조회, 출력, 검색됨. 이러한 특성을 읽기 일관성
+(read consistency)이라고 함.
+*/
+-- P.302 예제 문제
+/*
+1. 세션 / 2. COMMIT / 3. ROLLBACK / 4. 읽기 일관성
+*/
+
+
+/* STUDY LOCK */
+/*
+LOCK : 특정 세션에서 조작 중인 데이터는 트랜잭션이 완료되기 전까지 다른 세션에서 조작할 수 
+없는 상태가 됨. 조작 중인 데이터를 다른 세션은 조작할 수 없도록 접근을 보류하는 것.
+HANG : 특정 세션에서 데이터 조작이 완료될 때까지 다른 세션에서 해당 데이터 조작을 기다리는 
+현상. 작업을 대기하고 있던 세션의 명령어는 먼저 작업 중이던 데이터 LOCK이 풀리자마자 수행됨.
+
+LOCK이 발생하는 SQL문을 사용하고 COMMIT, ROLLBACK을 하지 않으면 다른 사용자의 작업 수행에 
+피해를 줄 수 있음!!
+*/
+
+-- P.309 예제
+/*
+① 1.DATABASE / 2.SEOUL / 3.SALES / 4.CHICAGO
+② HANG
+③ 1.SALES / 2.CHICAGO / 3.DATABASE / 4.SEOUL
+④ 1.DATABASE / 2.SEOUL / 3.DATABASE / 4.SEOUL
+*/
+
+
+/** STUDY 데이터 정의어(DDL : Data Definition Language) **/
+/* [NOTE] DDL은 수행할 경우 바로 COMMIT이 됨(즉 ROLLBACK을 통한 실행 취소가 불가함) */
+-- STUDY CREATE --
+/*
+CREATE TABLE [소유 계정.]테이블명(
+  열1이름 열1자료형,
+  열2이름 열2자료형,
+  ...
+  열n이름 열n자료형
+);
+
+[NOTE] 테이블 이름 생성 규칙
+1.테이블 이름은 문자로 시작해야 한다(한글도 가능하며 숫자로 시작할 수 없음).
+  EX) EMP90(O), 90EMP(X)
+2.테이블 이름은 30byte 이하여야 한다(즉 영어는 30자, 한글은 15자까지 사용 가능).
+3.같은 사용자 소유의 테이블 이름은 중복될 수 없다(SCOTT 계정에 두 EMP 테이블은 존재할 수 없음).
+4.테이블 이름은 영문자(한글 가능), 숫자(0-9)와 특수 문자 $, #, _를 사용할 수 있다.
+  EX) EMP#90_OB
+5.SQL 키워드는 테이블 이름으로 사용할 수 없다(SELECT, FROM 등은 테이블 이름으로 사용 불가).
+
+[NOTE] 열 이름 생성 규칙
+1.열 이름은 문자로 시작해야 한다.
+2.열 이름은 30byte 이하여야 한다.
+3.한 테이블의 열 이름은 중복될 수 없다(EMP 테이블에 EMPNO 열이 두 개 존재할 수 없음).
+4.열 이름은 영문자(한글 가능), 숫자(0-9)와 특수 문자 $, #, _를 사용할 수 있다.
+5.SQL 키워드는 열 이름으로 사용할 수 없다.
+*/
