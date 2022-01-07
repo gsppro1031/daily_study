@@ -2571,3 +2571,155 @@ CREATE TABLE [소유 계정.]테이블명(
 4.열 이름은 영문자(한글 가능), 숫자(0-9)와 특수 문자 $, #, _를 사용할 수 있다.
 5.SQL 키워드는 열 이름으로 사용할 수 없다.
 */
+CREATE TABLE EMP_DDL (
+  EMPNO NUMBER(4),
+  ENAME VARCHAR2(10),
+  JOB VARCHAR2(9),
+  MGR NUMBER(4),
+  HIREDATE DATE,
+  SAL NUMBER(7,2),
+  COMM NUMBER(7,2),
+  DEPTNO NUMBER(2)
+);
+
+DESC EMP_DDL;
+  
+CREATE TABLE DEPT_DDL
+  AS SELECT * FROM DEPT;
+  
+DESC DEPT_DDL;
+
+SELECT * FROM DEPT_DDL;
+
+-- 기존 테이블의 열 구조와 일부 데이터만 복사하여 테이블 생성하기 --
+CREATE TABLE EMP_DDL_30
+    AS SELECT *
+         FROM EMP
+        WHERE DEPTNO = 30;
+        
+SELECT * FROM EMP_DDL_30;
+
+-- 기존 테이블의 열 구조만 복사하여 테이블 생성하기 --
+CREATE TABLE EMPDEPT_DDL
+  AS SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE,
+            E.SAL, E.COMM, D.DEPTNO, D.DNAME, D.LOC
+       FROM EMP E, DEPT D
+      WHERE 1 <> 1;
+      
+SELECT * FROM EMPDEPT_DDL;
+
+-- P.316 예제
+/*
+1.거짓 / 2.참 / 3.거짓 / 4.참 / 5.참
+*/
+
+
+-- STUDY ALTER:ADD, RENAME, MODIFY, DROP --
+/*
+ALTER : 테이블에 새 열을 추가 또는 삭제하거나 열의 자료형 또는 길이를 변경하는 등 테이블 구조 
+변경과 관련된 기능을 수행하는 명령어
+
+ADD : 테이블에 새 열을 추가하는 명령어.
+RENAME : 테이블의 열 이름을 변경하는 명령어.
+MODIFY : 테이블의 열에 설정된 자료형과 길이를 변경하는 명령어.
+DROP : 테이블의 특정 열을 삭제할 때 사용하는 명령어.
+*/
+CREATE TABLE EMP_ALTER
+  AS SELECT * FROM EMP;
+  
+SELECT * FROM EMP_ALTER;
+
+ALTER TABLE EMP_ALTER
+  ADD HP VARCHAR2(20);
+  
+SELECT * FROM EMP_ALTER;
+
+
+ALTER TABLE EMP_ALTER
+  RENAME COLUMN HP TO TEL;
+  
+SELECT * FROM EMP_ALTER;
+
+ALTER TABLE EMP_ALTER
+  MODIFY EMPNO NUMBER(5);
+  
+DESC EMP_ALTER;
+
+ALTER TABLE EMP_ALTER
+  DROP COLUMN TEL;
+  
+SELECT * FROM EMP_ALTER;
+
+-- P.320 예제
+/* 1.CREATE TABLE / 2.ALTER TABLE / 3.RENAME COLUMN */
+
+
+-- STUDY RENAME, TRUNCATE, DROP
+/*
+RENAME : 테이블의 이름을 변경함.
+TRUNCATE : 특정 테이블의 모든 데이터를 삭제함. 데이터 정의어이기 때문에 ROLLBACK이 되지 않으
+므로 사용에 주의를 요함.
+DROP : 데이터베이스 객체를 삭제하는 데 사용함. 데이터 정의어이기 때문에 ROLLBACK이 되지 않으
+므로 사용에 주의를 요함.
+*/
+RENAME EMP_ALTER TO EMP_RENAME;
+
+DESC EMP_ALTER;
+SELECT * FROM EMP_RENAME;
+
+TRUNCATE TABLE EMP_RENAME;
+
+SELECT * FROM EMP_RENAME;
+
+DROP TABLE EMP_RENAME;
+
+DESC EMP_RENAME;
+
+-- PP.324-325 예제
+-- Q.1
+CREATE TABLE EMP_HW (
+  EMPNO NUMBER(4),
+  ENAME VARCHAR2(10),
+  JOB VARCHAR2(9),
+  MGR NUMBER(4),
+  HIREDATE DATE,
+  SAL NUMBER(7,2),
+  COMM NUMBER(7,2),
+  DEPTNO NUMBER(2)
+);
+
+DESC EMP_HW;
+
+-- Q.2
+ALTER TABLE EMP_HW
+  ADD BIGO VARCHAR2(20);
+  
+DESC EMP_HW;
+
+-- Q.3
+ALTER TABLE EMP_HW
+  MODIFY BIGO VARCHAR2(30);
+  
+DESC EMP_HW;
+
+-- Q.4
+ALTER TABLE EMP_HW
+  RENAME COLUMN BIGO TO REMARK;
+  
+DESC EMP_HW;
+
+-- Q.5  
+INSERT INTO EMP_HW
+SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO, NULL 
+  FROM EMP; 
+  
+SELECT * FROM EMP_HW;
+
+-- Q.6
+DROP TABLE EMP_HW;
+
+
+/** 객체 종류 **/
+/* STUDY data dictionary */
+
+
