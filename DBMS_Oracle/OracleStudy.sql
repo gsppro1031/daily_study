@@ -3139,3 +3139,241 @@ INSERT INTO DEPTSEQ (DEPTNO, DNAME, LOC)
      VALUES (SEQ_DEPTSEQ.NEXTVAL, 'MOBILE', 'ILSAN');
      
 SELECT * FROM DEPTSEQ;
+
+
+/** STUDY 제약 조건(constraint) **/
+/*
+제약 조건(constraint) : 테이블에 저장할 데이터를 제약하는 특수한 규칙.
+
+[종류]            [설명]
+NOT NULL         지정한 열에 NULL을 허용하지 않음. NULL을 제외한 데이터의 중복은 허용됨.
+UNIQUE           지정한 열이 유일한 값을 가져야 함. 즉 중복될 수 없음. 단 NULL은 값의 중복
+                  에서 제외.
+PRIMARY KEY      지정한 열이 유일한 값이면서 NULL을 허용하지 않음. PRIMARY KEY는 테이블에 
+                  하나만 지정 가능.
+FOREIGN KEY      다른 테이블의 열을 참조하여 존재하는 값만 입력할 수 있음.
+CHECK            설정한 조건식을 만족하는 데이터만 입력 가능.
+
+데이터 무결성(data integrity) : 데이터베이스에 저장되는 데이터의 정확성과 일관성을 보장한다
+는 의미.
+
+- 영역 무결성(domain integrity) : 열에 저장되는 값의 적정 여부를 확인. 자료형, 적절한 형식
+의 데이터, NULL 여부 같은 정해 놓은 범위를 만족하는 데이터임을 규정.
+- 개체 무결성(entity integrity) : 테이블 데이터를 유일하게 식별할 수 있는 기본키는 반드시 
+값을 가지고 있어야 하며 NULL이 될 수 없고 중복될 수도 없음을 규정
+- 참조 무결성(referential integrity) : 참조 테이블의 외래키 값은 참조 테이블의 기본키로서 
+존재해야 하며 NULL이 가능
+*/
+
+/* STUDY NOT NULL */
+CREATE TABLE TABLE_NOTNULL (
+  LOGIN_ID VARCHAR2(20) NOT NULL,
+  LOGIN_PWD VARCHAR2(20) NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_NOTNULL;
+
+INSERT INTO TABLE_NOTNULL (LOGIN_ID, LOGIN_PWD, TEL)
+     VALUES ('TEST_ID_01', NULL, '010-1234-5678');
+/*
+오류 발생
+SQL 오류: ORA-01400: cannot insert NULL into ("SCOTT"."TABLE_NOTNULL"."LOGIN_PWD")
+01400. 00000 -  "cannot insert NULL into (%s)"
+*Cause:    An attempt was made to insert NULL into previously listed objects.
+*Action:   These objects cannot accept NULL values.
+제약 조건이 NOT NULL인 열에 NULL값을 삽입하여 오류 발생.
+*/
+-- 제약 조건 없는 TEL 열에 NULL값 입력
+INSERT INTO TABLE_NOTNULL (LOGIN_ID, LOGIN_PWD)
+     VALUES ('TEST_ID_01', '1234');
+     
+SELECT * FROM TABLE_NOTNULL;
+
+
+/* 제약 조건 확인 */
+/*
+USER_CONSTRAINTS 데이터 사전을 활용하여 지정한 제약 조건 정보를 확인함.
+
+[열 이름]                [설명]
+OWNER                   제약 조건 소유 계정
+CONSTRAINT_NAME         제약 조건 이름(직접 지정하지 않을 경우 오라클이 자동으로 지정함)
+CONSTRAINT_TYPE         제약 조건 종류(C : CHECK, NOT NULL / U : UNIQUE /
+                        P : PRIMARY KEY / R : FOREIGN KEY)
+TABLE_NAME              제약 조건을 지정한 테이블 이름
+*/
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS;
+
+-- 제약 조건 이름을 직접 지정하여 제약 조건 걸기
+CREATE TABLE TABLE_NOTNULL2(
+  LOGIN_ID VARCHAR2(20) CONSTRAINT TBLNN2_LGNID_NN NOT NULL,
+  LOGIN_PWD VARCHAR2(20) CONSTRAINT TBLNN2_LGNPW_NN NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS;
+/* 오라클이 자동으로 지정해 주는 이름은 제약 조건이 많아진 후 찾기 어려워질 수 있으므로 실무에
+서는 이름 붙이는 규칙을 정하여 제약 조건 이름을 직접 지정하는 경우가 많음. */
+
+-- TEL열에 NOT NULL 제약 조건 추가하기
+ALTER TABLE TABLE_NOTNULL
+MODIFY(TEL NOT NULL);
+/*
+오류 발생
+SQL 오류: ORA-02296: cannot enable (SCOTT.) - null values found
+02296. 00000 - "cannot enable (%s.%s) - null values found"
+*Cause:    an alter table enable constraint failed because the table
+           contains values that do not satisfy the constraint.
+*Action:   Obvious
+TABLE_NOTNULL 테이블의 TEL 열에 이미 NULL 데이터가 들어가 있기 때문임
+*/
+SELECT * FROM TABLE_NOTNULL;
+
+UPDATE TABLE_NOTNULL
+   SET TEL = '010-1234-5678'
+ WHERE LOGIN_ID = 'TEST_ID_01';
+ 
+ALTER TABLE TABLE_NOTNULL
+MODIFY(TEL NOT NULL);
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS;
+  
+ALTER TABLE TABLE_NOTNULL2
+MODIFY(TEL CONSTRAINT TBLNN_TEL_NN NOT NULL);
+
+DESC TABLE_NOTNULL2;
+
+-- 제약 조건 이름 변경하기
+ALTER TABLE TABLE_NOTNULL2
+RENAME CONSTRAINT TBLNN_TEL_NN TO TBLNN2_TEL_NN;
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS;
+  
+
+-- 제약 조건 삭제 --
+ALTER TABLE TABLE_NOTNULL2
+DROP CONSTRAINT TBLNN2_TEL_NN;
+
+DESC TABLE_NOTNULL2;
+
+-- P.369 예제
+/*
+1.ALTER TABLE 2.MODIFY 3.NOT NULL
+*/
+
+
+/* STUDY UNIQUE */
+/*
+UNIQUE : 열에 저장할 데이터의 중복을 허용하지 않고자 할 때 사용.
+*/
+CREATE TABLE TABLE_UNIQUE(
+  LOGIN_ID VARCHAR2(20) UNIQUE,
+  LOGIN_PWD VARCHAR2(20) NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_UNIQUE;
+
+-- 데이터 사전 뷰로 제약 조건 확인하기
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME = 'TABLE_UNIQUE';
+ 
+INSERT INTO TABLE_UNIQUE(LOGIN_ID, LOGIN_PWD, TEL)
+     VALUES ('TEST_ID_01', 'PWD01', '010-1234-5678');
+     
+SELECT * FROM TABLE_UNIQUE;
+
+INSERT INTO TABLE_UNIQUE(LOGIN_ID, LOGIN_PWD, TEL)
+     VALUES ('TEST_ID_01', 'PWD01', '010-1234-5678');
+/*
+오류 발생
+SQL 오류: ORA-00001: unique constraint (SCOTT.SYS_C007013) violated
+00001. 00000 -  "unique constraint (%s.%s) violated"
+*Cause:    An UPDATE or INSERT statement attempted to insert a duplicate key.
+           For Trusted Oracle configured in DBMS MAC mode, you may see
+           this message if a duplicate entry exists at a different level.
+*Action:   Either remove the unique restriction or do not insert the key.
+UNIQUE 제약 조건을 가진 열에 중복된 데이터 INSERT를 시도했기 때문
+*/
+INSERT INTO TABLE_UNIQUE(LOGIN_ID, LOGIN_PWD, TEL)
+     VALUES ('TEST_ID_02', 'PWD01', '010-1234-5678');
+
+/* UNIQUE 제약 조건은 중복되는 값은 허용하지 않지만 NULL 저장은 가능하다. NULL은 존재하지 
+않은 값 또는 해당 사항이 없다는 의미로 사용되는 특수한 값이므로 NULL에 데이터 중복의 의미를 
+부여할 수 없다. */
+INSERT INTO TABLE_UNIQUE(LOGIN_ID, LOGIN_PWD, TEL)
+     VALUES (NULL, 'PWD01', '010-2345-6789');
+     
+SELECT * FROM TABLE_UNIQUE;
+
+UPDATE TABLE_UNIQUE
+   SET LOGIN_ID = 'TEST_ID_01'
+ WHERE LOGIN_ID IS NULL;
+/*
+UPDATE문 또한 UNIQUE 제약 조건에 걸린다.
+*/
+
+-- 테이블 생성 시 제약 조건 이름 직접 지정
+CREATE TABLE TABLE_UNIQUE2(
+  LOGIN_ID VARCHAR2(20) CONSTRAINT TBLUNQ2_LGNID_UNQ UNIQUE,
+  LOGIN_PWD VARCHAR2(20) CONSTRAINT TBLUNQ2_LGNPW_NN NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_UNIQUE%';
+ 
+-- 이미 생성한 테이블에 제약 조건 지정
+ALTER TABLE TABLE_UNIQUE
+MODIFY(TEL UNIQUE);
+/*
+오류 발생
+SQL 오류: ORA-02299: cannot validate (SCOTT.SYS_C007016) - duplicate keys found
+02299. 00000 - "cannot validate (%s.%s) - duplicate keys found"
+*Cause:    an alter table validating constraint failed because the table has
+           duplicate key values.
+*Action:   Obvious
+'TEL' 열에 이미 중복된 데이터가 있기 때문
+*/
+UPDATE TABLE_UNIQUE
+   SET TEL = NULL;
+   
+SELECT * FROM TABLE_UNIQUE;
+
+ALTER TABLE TABLE_UNIQUE
+MODIFY(TEL UNIQUE);
+
+-- 제약 조건 이름 직접 지정하여 바꾸기
+ALTER TABLE TABLE_UNIQUE2
+MODIFY(TEL CONSTRAINT TBLUNQ_TEL_UNQ UNIQUE);
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_UNIQUE%';
+ 
+-- 이미 만들어진 UNIQUE 제약 조건 이름 수정하기
+ALTER TABLE TABLE_UNIQUE2
+RENAME CONSTRAINT TBLUNQ_TEL_UNQ TO TBLUNQ2_TEL_UNQ;
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_UNIQUE%';
+ 
+-- 제약 조건 삭제
+ALTER TABLE TABLE_UNIQUE2
+DROP CONSTRAINT TBLUNQ2_TEL_UNQ;
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_UNIQUE%';
+ 
+-- P.376 예제
+/*
+1.ALTER TABLE / 2.MODIFY / 3.UNIQUE
+*/
