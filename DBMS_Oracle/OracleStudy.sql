@@ -2849,3 +2849,293 @@ SELECT문의 FROM절에 사용하면 특정 테이블을 조회하는 것과 같은 효과를 얻을 수 있�
 1. 편리성 : SELECT문의 복잡도를 완화
 2. 보안성 : 테이블의 특정 열을 노출하고 싶지 않을 경우
 */
+GRANT CREATE VIEW TO SCOTT; -- SCOTT 계정에 뷰 생성 권한 부여
+
+/*
+[NOTE]뷰 생성
+CREATE [OR REPLACE] [FORCE | NOFORCE] VIEW 뷰이름 (열이름1, 열이름2, ...)
+    AS (저장할SELECT문)
+[WITH CHECK OPTION [CONSTRAINT 제약 조건]]
+[WITH READ ONLY [CONSTRAINT 제약 조건]];
+
+OR REPLACE : 같은 이름의 뷰가 이미 존재할 경우에 현재 생성할 뷰로 대체하여 생성(선택)
+FORCE : 뷰가 저장할 SELECT문의 기반 테이블이 존재하지 않아도 강제로 생성(선택)
+NOFORCE : 뷰가 저장할 SELECT문의 기반 테이블이 존재할 경우에만 생성(기본값)(선택)
+열이름 : SELECT문에 명시된 이름 대신 사용할 열 이름 지정(생략 가능)(선택)
+WITH CHECK OPTION : 지정한 제약 조건을 만족하는 데이터에 한해 DML 작업이 가능하도록 뷰 생성(선택)
+WITH READ ONLY : 뷰의 열람, 즉 SELECT만 가능하도록 뷰 생성(선택)
+*/
+CREATE VIEW VW_EMP20
+    AS (SELECT EMPNO, ENAME, JOB, DEPTNO
+          FROM EMP
+         WHERE DEPTNO = 20);
+         
+SELECT *
+  FROM USER_VIEWS;
+  
+SELECT VIEW_NAME, TEXT_LENGTH, TEXT
+  FROM USER_VIEWS;
+  
+SELECT *
+  FROM VW_EMP20;
+  
+-- P.343 예제
+CREATE VIEW VM_EMP30ALL
+    AS (SELECT *
+          FROM EMP
+         WHERE DEPTNO = 30);
+         
+SELECT *
+  FROM VM_EMP30ALL;
+ 
+/* VW_EMP20 뷰 삭제 : 실제 데이터가 아닌 SELECT문이 저장된 뷰를 삭제하는 것이므로 테이블이나 
+데이터가 삭제되는 것은 아님 */
+DROP VIEW VW_EMP20;
+
+
+/* STUDY 인라인 뷰(inline view)를 사용한 TOP-N SQL문 */
+/*
+인라인 뷰(inline view) : CREATE문을 통해 객체로 만들어지는 뷰 외에 SQL문에서 일회성으로 
+만들어서 사용하는 뷰를 인라인 뷰라고 함. SELECT문에서 사용되는 서브쿼리, WITH절에서 미리 
+이름을 정의해 두고 사용하는 SELECT문 등이 이에 해당함.
+*/
+SELECT ROWNUM, E.*
+  FROM EMP E;
+/*
+여기서 ROWNUM은 의사 열(pseudo column)이라고 하는 특수 열에 해당함. 의사 열은 데이터가 저장
+되는 실제 테이블에 존재하지는 않지만 특정 목적을 위해 테이블에 저장되어 있는 열처럼 사용 가능한 
+열을 뜻함.
+
+ROWNUM : 테이블에 저장된 행이 조회된 순서대로 매겨진 일련번호
+*/
+  SELECT ROWNUM, E.*
+    FROM EMP E
+ORDER BY SAL DESC;
+
+  SELECT ROWNUM, E.*
+    FROM (SELECT *
+            FROM EMP E
+        ORDER BY SAL DESC) E;
+
+WITH E AS (SELECT * FROM EMP ORDER BY SAL DESC)
+   SELECT ROWNUM, E.*
+     FROM E;
+     
+-- 인라인 뷰로 TOP-N 추출하기(서브쿼리 사용)
+SELECT ROWNUM, E.*
+  FROM (SELECT *
+          FROM EMP E
+      ORDER BY SAL DESC) E
+ WHERE ROWNUM <= 3;
+
+-- 인라인 뷰로 TOP-N 추출하기(WITH절 사용)
+WITH E AS (SELECT * FROM EMP ORDER BY SAL DESC)
+   SELECT ROWNUM, E.*
+     FROM E
+    WHERE ROWNUM <= 3;
+    
+
+/* STUDY 시퀀스(Sequence) */
+/*
+시퀀스(Sequence) : 데이터베이스에서 특정 규칙에 맞는 연속 숫자를 생성하는 객체. 번호를 사용
+해야 하는 사용자에게 계속 다음 번호를 만들어 주는 역할.
+
+SELECT MAX(글 번호) + 1
+  FROM 게시판 테이블;
+
+위와 같은 방식은 테이블 데이터가 많아질수록 가장 큰 데이터를 찾고 새로운 번호를 계산하는 시간이 
+함께 늘어나므로 아쉬운 부분이 있음. 또한 동시에 여러 곳에서 새로운 번호를 요구했을 경우에 
+SELECT문의 결과값이 같게 나와 번호가 중복될 수도 있음.
+이와 비교할 때 시퀀스는 단순히 번호 생성을 위한 객체이지만 지속적이고 효율적인 번호 생성이 가능
+하므로 여러모로 자주 사용하는 객체임.
+
+[NOTE]시퀀스 생성
+CREATE SEQUENCE 시퀀스명(아래 절들을 지정하지 않을 경우 1부터 1만큼 계속 증가하는 시퀀스 생성)
+[INCREMENT BY n]
+[START WITH n]
+[MAXVALUE n | NOMAXVALUE]
+[MINVALUE n | NOMINVALUE]
+[CYCLE | NOCYCLE]
+[CACHE n | NOCACHE]
+
+INCREMENT BY n : 시퀀스에서 생성할 번호의 증가값(기본값은 1)(선택).
+START WITH n : 시퀀스에서 생성할 번호의 시작값(기본값은 1)(선택).
+MAXVALUE n | NOMAXVALUE : 시퀀스에서 생성할 번호의 최댓값 지정. 최댓값은 START WITH 값 이상, 
+MINVALUE 초괏값으로 지정. NOMAXVALUE로 지정하였을 경우 오름차순이면 10의 27승, 내림차순일 경우 
+-1로 설정(선택).
+MINVALUE n | NOMINVALUE : 시퀀스에서 생성할 번호의 최솟값 지정. 최솟값은 START WITH 값 이하, 
+MAXVALUE 미만 값으로 지정. NOMINVALUE로 지정하였을 경우 오름차순이면 1, 내림차순일 경우 10의 
+-26승으로 설정(선택).
+CYCLE | NOCYCLE : 시퀀스에서 생성할 번호가 MAXVALUE에 도달했을 경우 CYCLE이면 START WITH 
+값에서 다시 시작, NOCYCLE이면 번호 생성이 중단되고, 추가 번호 생성을 요청하면 오류 발생(선택).
+CACHE n | NOCACHE : 시퀀스가 생성할 번호를 메모리에 미리 할당해 놓은 수를 지정, NOCACHE는 
+미리 생성하지 않도록 설정. 옵션을 모두 생략하면 기본값은 20(선택).
+*/
+CREATE TABLE DEPT_SEQUENCE
+    AS SELECT *
+         FROM DEPT
+        WHERE 1 <> 1;
+        
+SELECT * FROM DEPT_SEQUENCE;
+
+CREATE SEQUENCE SEQ_DEPT_SEQUENCE
+  INCREMENT BY 10
+  START WITH 10
+  MAXVALUE 90
+  MINVALUE 0
+  NOCYCLE
+  CACHE 2;
+  
+-- 생성한 시퀀스 확인하기
+SELECT *
+  FROM USER_SEQUENCES;
+  
+/*
+[NOTE]시퀀스 사용
+시퀀스명.CURRVAL : 시퀀스에서 마지막으로 생성한 번호를 반환. 시퀀스를 생성하고 바로 사용하면 
+번호가 만들어진 적이 없으므로 오류 발생.
+시퀀스명.NEXTVAL : 다음 번호를 생성.
+*/
+INSERT INTO DEPT_SEQUENCE (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPT_SEQUENCE.NEXTVAL, 'DATABASE', 'SEOUL');
+
+SELECT * FROM DEPT_SEQUENCE ORDER BY DEPTNO;
+
+SELECT SEQ_DEPT_SEQUENCE.CURRVAL
+  FROM DUAL;
+  
+INSERT INTO DEPT_SEQUENCE (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPT_SEQUENCE.NEXTVAL, 'DATABASE', 'SEOUL');
+/*
+부서 번호 90까지 실행 후 한 번 더 실행하면 오류 발생
+SQL 오류: ORA-08004: sequence SEQ_DEPT_SEQUENCE.NEXTVAL exceeds MAXVALUE and cannot be instantiated
+08004. 00000 -  "sequence %s.NEXTVAL %s %sVALUE and cannot be instantiated"
+*Cause:    instantiating NEXTVAL would violate one of MAX/MINVALUE
+*Action:   alter the sequence so that a new value can be requested
+최댓값(MAXVALUE)가 이미 생성되었고 NOCYCLE 옵션으로 순환되지 않도록 설정하였으므로 오류 발생
+*/  
+SELECT * FROM DEPT_SEQUENCE ORDER BY DEPTNO;
+
+/*
+[NOTE]시퀀스 수정
+ALTER SEQUENCE 시퀀스명
+[INCREMENT BY n]
+[MAXVALUE n | NOMAXVALUE]
+[MINVALUE n | NOMINVALUE]
+[CYCLE | NOCYCLE]
+[CACHE n | NOCACHE]
+*/
+ALTER SEQUENCE SEQ_DEPT_SEQUENCE
+  INCREMENT BY 3
+  MAXVALUE 99
+  CYCLE;
+  
+SELECT *
+  FROM USER_SEQUENCES;
+  
+INSERT INTO DEPT_SEQUENCE (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPT_SEQUENCE.NEXTVAL, 'DATABASE', 'SEOUL');
+     
+SELECT * FROM DEPT_SEQUENCE ORDER BY DEPTNO;
+-- 3씩 늘어나는 DEPTNO와 CYCLE 활성화 확인
+
+/*
+[NOTE]시퀀스 삭제
+DROP SEQUENCE 시퀀스명
+*/
+DROP SEQUENCE SEQ_DEPT_SEQUENCE;
+SELECT *
+  FROM USER_SEQUENCES;
+  
+
+/** STUDY 동의어(synonym) **/
+/*
+동의어(synonym) : 테이블, 뷰, 시퀀스 등 객체 이름 대신 사용할 수 있는 다른 이름을 부여하는 
+객체. 주로 테이블 이름이 너무 길어 사용이 불편할 때 좀 더 간단하고 짧은 이름을 하나 더 만들어 
+주기 위해 사용.
+synonym은 ALIAS와 다르게 일회성이 아니며 데이터베이스에 저장되는 객체이며, 동의어 생성에는 
+별도 권한 부여가 필요하다.
+
+[NOTE]동의어 만들기
+CREATE [PUBLIC] SYNONYM 동의어명
+   FOR [사용자.][객체명];
+   
+PUBLIC : 동의어를 데이터베이스 내 모든 사용자가 사용할 수 있도록 설정. 생략할 경우 동의어를 
+생성한 사용자만 사용 가능(PUBLIC으로 생성되어도 본래 객체의 사용 권한이 있어야 사용 가능)(선택)
+동의어명 : 생성할 동의어 이름(필수)
+사용자. : 생성할 동의어의 본래 객체 소유 사용자를 지정. 생략할 경우 현재 접속한 사용자로 지정(선택)
+객체명 : 동의어를 생성할 대상 객체 이름(필수)
+*/
+GRANT CREATE SYNONYM TO SCOTT;
+GRANT CREATE PUBLIC SYNONYM TO SCOTT;
+-- SCOTT 계정에 SYNONYM과 PUBLIC SYNONYM 권한 부여
+
+-- EMP 테이블의 동의어 생성하기
+CREATE SYNONYM E
+   FOR EMP;
+  
+-- EMP 테이블의 전체 내용 조회하기
+SELECT * FROM E;
+
+
+/*
+[NOTE]동의어 삭제
+DROP SYNONYM 동의어명;
+*/
+DROP SYNONYM E;
+-- 동의어만 삭제될 뿐 실제 EMP 테이블에는 영향을 주지 않음.
+
+-- PP.357-358 예제
+-- Q.1
+CREATE TABLE EMPIDX
+    AS (SELECT *
+          FROM EMP);
+         
+SELECT * FROM EMPIDX;
+
+CREATE INDEX IDX_EMPIDX_EMPNO
+    ON EMPIDX(EMPNO);
+
+SELECT * FROM USER_IND_COLUMNS;
+
+-- Q.2
+CREATE VIEW EMPIDX_OVER15K
+    AS (SELECT EMPNO
+     , ENAME
+     , JOB
+     , DEPTNO
+     , SAL
+     , CASE 
+          WHEN TO_CHAR(COMM) IS NULL THEN 'X'
+          WHEN TO_CHAR(COMM) = 0 THEN 'X'
+          ELSE 'O'
+       END AS COMM
+          FROM EMPIDX
+         WHERE SAL > 1500);
+         
+SELECT * FROM EMPIDX_OVER15K;
+         
+-- Q.3
+CREATE TABLE DEPTSEQ
+    AS (SELECT * FROM DEPT);
+    
+SELECT * FROM DEPTSEQ;
+
+CREATE SEQUENCE SEQ_DEPTSEQ
+  INCREMENT BY 1
+  START WITH 1
+  MAXVALUE 99
+  MINVALUE 1
+  NOCYCLE
+  NOCACHE;
+  
+INSERT INTO DEPTSEQ (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPTSEQ.NEXTVAL, 'DATABASE', 'SEOUL');
+     
+INSERT INTO DEPTSEQ (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPTSEQ.NEXTVAL, 'WEB', 'BUSAN');
+     
+INSERT INTO DEPTSEQ (DEPTNO, DNAME, LOC)
+     VALUES (SEQ_DEPTSEQ.NEXTVAL, 'MOBILE', 'ILSAN');
+     
+SELECT * FROM DEPTSEQ;
