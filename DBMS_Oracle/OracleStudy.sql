@@ -2721,5 +2721,131 @@ DROP TABLE EMP_HW;
 
 /** 객체 종류 **/
 /* STUDY data dictionary */
+/*
+데이터 사전(data dictionary) : 데이터 사전에는 데이터베이스 메모리, 성능, 사용자, 권한, 객체 등
+오라클 데이터베이스 운영에 중요한 데이터가 보관되어 있음. 만약 이 데이터에 문제가 발생한다면 
+오라클 데이터베이스 사용이 불가능해짐. 때문에 이 정보에 직접 접근하거나 작업하는 것을 허용하지 않고 
+데이터 사전 뷰(data dictionary view)를 제공하여 SELECT문으로 정보 열람을 할 수 있음.
+
+[NOTE]데이터 사전 뷰
+[접두어]       [설명]
+USER_XXXX     현재 데이터베이스에 접속한 사용자가 소유한 객체 정보
+ALL_XXXX      현재 데이터베이스에 접속한 사용자가 소유한 객체 또는 다른 사용자가 소유한 객체 
+              중 사용 허가를 받은 객체, 즉 사용 가능한 모든 객체 정보
+DBA_XXXX      데이터베이스 관리를 위한 정보(데이터베이스 관리 권한을 가진 SYSTEM, SYS 사용
+              자만 열람 가능)
+V$_XXXX       데이터베이스 성능 관련 정보(X$_XXXX 테이블의 뷰)
+*/
+-- 데이터 사전 조회 명령어
+SELECT * FROM DICT;
+SELECT * FROM DICTIONARY;
+
+-- SCOTT 계정이 소유한 테이블 정보 조회
+SELECT TABLE_NAME
+  FROM USER_TABLES;
+
+-- SCOTT 계정이 사용할 수 있는 객체 정보 조회
+SELECT OWNER, TABLE_NAME
+  FROM ALL_TABLES;
+
+/*
+[NOTE]USER_TABLES와 ALL_TABLES의 열 일부
+[열 이름]          [자료형]         [NULL 여부]       [설명]
+OWNER             VARCHAR2(30)    NOT NULL          테이블을 소유한 사용자(ALL_TABLES에만 존재)
+TABLE_NAME        VARCHAR(30)     NOT NULL          테이블 이름
+TABLESPACE_NAME   VARCHAR(30)                       테이블 스페이스 이름
+NUM_ROWS          NUMBER                            테이블에 저장된 행 수
+*/
+
+-- SCOTT 계정으로 DBA_ 접두어 사용
+SELECT * FROM DBA_TABLES;
+/*
+오류 발생
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+DBA_ 접두어를 가진 데이터 사전은 데이터베이스 관리 권한을 가진 사용자만 조회할 수 있는 테이블임
+SYSTEM으로 로그인 뒤 조회하면 조회 가능.
+*/
+
+-- DBA_USERS로 사용자 정보 살펴보기
+SELECT *
+  FROM DBA_USERS
+ WHERE USERNAME = 'SCOTT';
+ 
+-- P.333 예제
+/*
+1.데이터 사전 뷰 / 2.USER / 3.ALL
+*/
 
 
+/** STUDY 인덱스(index) **/
+/*
+인덱스(index) : 데이터베이스에서 데이터 검색 성능의 향상을 위해 테이블 열에 사용하는 객체. 
+테이블에 보관된 특정 열 데이터의 주소, 즉 위치 정보를 책 페이지처럼 목록으로 만들어 놓은 것.
+*/
+-- SCOTT 계정이 소유한 인덱스 정보 알아보기(SCOTT 계정일 때)
+SELECT *
+  FROM USER_INDEXES;
+  
+-- SCOTT 계정이 소유한 인덱스 컬럼 정보 알아보기(SCOTT 계정일 때)
+SELECT *
+  FROM USER_IND_COLUMNS;
+  
+/*
+[NOTE]인덱스 생성
+CREATE INDEX 인덱스명
+    ON 테이블명(열이름1 ASC or DESC,
+              열이름2 ASC or DESC,
+              ...                 );
+*/
+CREATE INDEX IDX_EMP_SAL
+    ON EMP(SAL);
+
+/*
+[NOTE]인덱스 종류
+[방식]                                      [사용]
+단일 인덱스(single index)                    CREATE INDEX_IDX_NAME
+                                               ON EMP(SAL);
+
+복합 인덱스(concatenated index)              CREATE INDEX_IDX_NAME
+결합 인덱스(composite index)                     ON EMP(SAL, ENAME, ...);
+- 두 개 이상 열로 만들어지는 인덱스
+- WHERE절의 두 열이 AND 연산으로 묶이는 경우
+
+고유 인덱스(unique index)                    CREATE UNIQUE INDEX IDX_NAME
+- 열에 중복 데이터가 없을 때 사용                   ON EMP(EMPNO);
+- UNIQUE 키워드를 지정하지 않으면 비고유 
+인덱스(non unique index)가 기본값
+
+함수 기반 인덱스(function based index)       CREATE INDEX IDX_NAME
+- 열에 산술식 같은 데이터 가공이 진행된             ON EMP(SAL*12 + COMM);
+결과로 인덱스 생성
+
+비트맵 인덱스(bitmap index)                  CREATE BITMAP INDEX IDX_NAME
+- 데이터 종류가 적고 같은 데이터가 많이 존재할        ON EMP(JOB);
+때 주로 사용
+*/
+
+/*
+[NOTE]인덱스 삭제
+DROP INDEX 인덱스명;
+*/
+DROP INDEX IDX_EMP_SAL;
+
+SELECT * FROM USER_IND_COLUMNS;
+
+-- P.337 예제
+/*
+1.CREATE INDEX / 2.ON
+*/
+
+
+/** 뷰(view) **/
+/*
+하나 이상의 테이블을 조회하는 SELECT문을 저장한 객체. 물리적 데이터를 따로 저장하지 않음. 
+SELECT문의 FROM절에 사용하면 특정 테이블을 조회하는 것과 같은 효과를 얻을 수 있음.
+
+[NOTE]뷰의 사용 목적
+1. 편리성 : SELECT문의 복잡도를 완화
+2. 보안성 : 테이블의 특정 열을 노출하고 싶지 않을 경우
+*/
