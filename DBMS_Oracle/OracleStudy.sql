@@ -204,12 +204,9 @@ SELECT *
 SELECT *
   FROM SOME_TABLE
  WHERE SOME_COLUMN LIKE 'A\_A' ESCAPE '\';
-
-
 -- STUDY NULL --
 SELECT ENAME, SAL, SAL*12+COMM AS ANNSAL, COMM
   FROM EMP;
-
 SELECT *
   FROM EMP
  WHERE COMM = NULL; -- NULL은 특정 값이 없으므로 '=' 연산자로는 구별 불가능!! 
@@ -231,8 +228,6 @@ SELECT *
   FROM EMP
  WHERE SAL > NULL
     OR COMM IS NULL;
-
-
 -- STUDY UNION --
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
@@ -252,7 +247,6 @@ SELECT EMPNO, ENAME, SAL
   -- ORA-01789: query block has incorrect number of result columns
   -- 01789. 00000 -  "query block has incorrect number of result columns"
   -- 부정확한 수의 결과 컬럼을 가지고 있어서 발생하는 오류
-
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -263,7 +257,6 @@ SELECT ENAME, EMPNO, DEPTNO, SAL
   -- ORA-01790: expression must have same datatype as corresponding expression
   -- 01790. 00000 -  "expression must have same datatype as corresponding expression"
   -- 서로 다른 데이터 유형이라 발생하는 오류
-
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -273,7 +266,6 @@ SELECT SAL, JOB, DEPTNO, SAL
  WHERE DEPTNO = 20;
 -- 결과는 이상하지만 오류는 발생하지 않음
 -- 최종 출력되는 열 이름은 먼저 작성한 SELECT문의 열 이름으로 표기됨
-
 -- EXAMPLE 'UNION ALL' --
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
@@ -283,7 +275,6 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10;
  
-
 -- STUDY MINUS --
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
@@ -315,7 +306,6 @@ AND
 OR
 ↓ 우선순위 낮음
 */
-
 SELECT *
   FROM EMP
  WHERE ENAME LIKE '%S';
@@ -357,11 +347,8 @@ SELECT *
    AND MGR IS NOT NULL
    AND JOB IN ('MANAGER', 'CLERK')
    AND ENAME NOT LIKE '_L%';
-
-
 /** STUDY ORACLE FUNCTION **/
 -- 문자열 관련 함수 --
-
 -- STUDY UPPER, LOWER, INITCAP --
 SELECT ENAME, UPPER(ENAME), LOWER(ENAME), INITCAP(ENAME)
   FROM EMP;
@@ -373,7 +360,6 @@ SELECT *
     OR 게시판 본문 열 LIKE '%Oracle%';
 /* 위 쿼리 사용 시 대소문자가 다른 여러 가지 경우의 'Oracle' 단어를 찾을 수 없음.
 이때 아래 예시처럼 조건식 양쪽 항목의 문자열 데이터를 모두 대문자나 소문자로 바꿔서 비교해 줌. */
-
 SELECT *
   FROM EMP
  WHERE UPPER(ENAME) = UPPER('sMItH');
@@ -385,7 +371,6 @@ SELECT *
 SELECT UPPER(ENAME)
   FROM EMP;
   
-
 -- STUDY LENGTH, LENGTHB --
 /*
 LENGTH() : 문자열 데이터 길이 리턴하는 함수
@@ -400,7 +385,6 @@ SELECT ENAME, LENGTH(ENAME)
  
 SELECT LENGTH('한글'), LENGTHB('한글')
   FROM DUAL;
-
 SELECT *
   FROM EMP
  WHERE LENGTH(JOB) >= 6;
@@ -409,13 +393,11 @@ SELECT *
 -- STUDY SUBSTR --
 /*
 SUBSTR() : 문자열 중 일부를 추출할 때 사용하는 함수
-
 [사용 형태]
 SUBSTR(문자열 데이터, 시작 위치, 추출 길이)
 SUBSTR(문자열 데이터, 시작 위치)
 [NOTE] 시작 위치가 음수일 경우, 문자열의 끝에서 역으로 순서 계산
 */
-
 SELECT JOB, SUBSTR(JOB, 1, 2), SUBSTR(JOB, 3, 2), SUBSTR(JOB, 5)
   FROM EMP;
   
@@ -427,62 +409,48 @@ SELECT JOB
      , SUBSTR(JOB, -LENGTH(JOB), 2)
      , SUBSTR(JOB, -3)
   FROM EMP;
-
-
 -- STUDY INSTR --
 /*
 INSTR() : 문자열 데이터에서 특정 문자열 찾기
-
 [사용 형태]
 INSTR(검색 대상 문자열 데이터(필수)
     , 검색 기준 문자열(필수)
     , 검색 시작 위치(선택, 기본값 1)
     , 시작 위치에서 찾으려는 문자가 몇 번째인지 지정(선택, 기본값 1))
 */
-
 SELECT INSTR('HELLO, ORACLE!', 'L') AS INSTR_1
      , INSTR('HELLO, ORACLE!', 'L', 5) AS INSTR_2
      , INSTR('HELLO, ORACLE!', 'L', 2, 2) AS INSTR_3
   FROM DUAL;
-
 /* [INSTR 활용] 특정 문자를 포함하고 있는 행 찾기 */
 SELECT *
   FROM EMP
  WHERE INSTR(ENAME, 'S') > 0;
 -- INSTR로 사원 이름에 문자 S가 있는 행 구하기
-
 SELECT *
   FROM EMP
  WHERE ENAME LIKE '%S%';
 -- LIKE 연산자로 사원 이름에 문자 S가 있는 행 구하기
-
-
 -- STUDY REPLACE --
 /*
 REPLACE() : 특정 문자열 데이터에 포함된 문자를 다른 문자로 대체하는 함수
-
 [사용 형태]
 INSTR(대상 문자열 데이터 또는 열 이름(필수)
     , 찾는 기준 문자열(필수)
     , 대체할 문자(선택))
 */
-
 SELECT '010-1234-5678' AS REPLACE_BEFORE 
      , REPLACE('010-1234-5678', '-', ' ') AS REPLACE_1
      , REPLACE('010-1234-5678', '-') AS REPLACE_2
   FROM DUAL;
-
-
 -- STUDY LPAD, RPAD --
 /*
 LPAD() : 대상 문자열 데이터 길이가 지정한 자릿수보다 작을 경우에 왼쪽 나머지 공간을 특정 문자로 채우는 함수.
 RPAD() : 대상 문자열 데이터 길이가 지정한 자릿수보다 작을 경우에 오른쪽 나머지 공간을 특정 문자로 채우는 함수.
-
 [사용 형태]
 LPAD(대상 문자열 데이터 또는 열 이름(필수), 데이터의 자릿수(필수), 빈 공간에 채울 문자(선택))
 RPAD(대상 문자열 데이터 또는 열 이름(필수), 데이터의 자릿수(필수), 빈 공간에 채울 문자(선택))
 */
-
 SELECT 'Oracle'
      , LPAD('Oracle', 10, '#') AS LPAD_1
      , RPAD('Oracle', 10, '*') AS RPAD_1
@@ -516,9 +484,7 @@ SELECT EMPNO || ENAME
 TRIM() : 문자열 데이터 내에서 특정 문자를 지우기 위해 사용하는 함수.
 LTRIM() : 왼쪽 지정 문자를 삭제하는 데 사용하는 함수. TRIM()과 다르게 문자를 여럿 지정 가능
 RTRIM() : 오른쪽 지정 문자를 삭제하는 데 사용하는 함수. TRIM()과 다르게 문자를 여럿 지정 가능
-
 [NOTE] 위 세 함수에서 지울 문자를 지정하지 않으면 기본적으로 공백을 제거함.
-
 TRIM(삭제 옵션(선택), 삭제할 문자(선택), FROM 원본 문자열 데이터(필수))
 LTRIM(원본 문자열 데이터(필수), 삭제할 문자 집합(선택))
 RTRIM(원본 문자열 데이터(필수), 삭제할 문자 집합(선택))
@@ -551,7 +517,6 @@ ROUND() : 지정된 숫자의 특정 위치에서 반올림한 값을 반환.
 반올림 위치를 지정하지 않으면 소수점 첫 번째 자리에서 반올림함.
 TRUNC() : 지정된 숫자의 특정 위치에서 버림한 값을 반환.
 버림 위치를 지정하지 않으면 소수점 첫 번째 자리에서 버림함.
-
 [사용 형태]
 ROUND(숫자(필수), 반올림 위치(선택))
 TRUNC(숫자(필수), 버림 위치(선택))
@@ -583,7 +548,6 @@ SELECT TRUNC(1539.125023, 4) AS TRUNC_EX1
 /*
 CEIL() : 지정된 숫자보다 큰 정수 중 가장 작은 정수를 반환
 FLOOR() : 지정된 숫자보다 작은 정수 중 가장 큰 정수를 반환
-
 [사용 형태]
 CEIL(숫자(필수))
 FLOOR(숫자(필수))
@@ -599,7 +563,6 @@ SELECT CEIL(3.14)
 -- STUDY MOD --
 /*
 MOD() : 지정된 숫자를 나눈 나머지 값을 반환
-
 [사용 형태]
 MOD(나눗셈 될 숫자(필수), 나눌 숫자(필수))
 */
@@ -613,18 +576,14 @@ SELECT MOD(15, 6)
 /** 날짜 데이터 관련 함수 **/
 /*
 [NOTE] DATE형끼리의 간단한 연산 참고
-
 날짜 데이터 + 숫자 = 날짜 데이터보다 숫자만큼 일수 이후의 날짜
 날짜 데이터 - 숫자 = 날짜 데이터보다 숫자만큼 일수 이전의 날짜
 날짜 데이터 - 날짜 데이터 = 두 날짜 데이터 간의 일수 차이
 날짜 데이터 + 날짜 데이터 = 연산 불가, 지원하지 않음***
 /*
-
-
 -- STUDY SYSDATE --
 /*
 SYSDATE() : 오라클 데이터베이스 서버가 놓인 OS의 현재 날짜와 시간을 보여 줌
-
 [사용 형태]
 SYSDATE(나눗셈 될 숫자(필수), 나눌 숫자(필수))
 */
@@ -644,7 +603,6 @@ ORA-00975: date + date not allowed
 -- STUDY ADD_MONTHS --
 /*
 ADD_MONTHS() : 특정 날짜에 지정한 개월 수 이후 날짜 데이터를 반환하는 함수.
-
 [사용 형태]
 ADD_MONTHS(날짜 데이터(필수), 더할 개월 수(정수)(필수))
 */
@@ -677,7 +635,6 @@ SELECT SYSDATE
 /*
 MONTHS_BETWEEN() : 두 날짜 간의 개월 수 차이를 구하는 MONTHS_BETWEEN 함수
 [NOTE] 소수점 단위까지 결과값이 나오므로 TRUNC 함수를 활용해 정수로 출력할 수 있음.
-
 [사용 형태]
 MONTHS_BETWEEN(날짜 데이터1(필수), 날짜 데이터2(필수))
 */ 
@@ -696,7 +653,6 @@ SELECT EMPNO
 /*
 NEXT_DAY() : 특정 날짜를 기준으로 돌아오는 요일의 날짜를 출력해 주는 함수
 LAST_DAY() : 특정 날짜가 속한 달의 마지막 날짜를 출력해 주는 함수
-
 [사용 형태]
 NEXT_DAY(날짜 데이터(필수), 요일 문자(필수))
 LAST_DAY(날짜 데이터(필수))
@@ -711,11 +667,9 @@ SELECT SYSDATE
 /*
 ROUND(), TRUNC() : 숫자 데이터의 반올림, 버림 처리가 아닌 날짜 데이터에도 사용.
 소수점 위치 정보가 아닌 기준 포맷값을 지정해 줌.
-
 [사용 형태]
 ROUND(날짜 데이터(필수), 반올림 기준 포맷)
 TRUNC(날짜 데이터(필수), 버림 기준 포맷)
-
 [Oracle의 날짜 데이터 기준 포맷 정리]
 CC, SCC : 네 자리 연도의 끝 두자리를 기준으로 사용
 → 2016년이면 2050년 기준. 반올림할 경우 2001년으로 처리
@@ -770,13 +724,10 @@ ORA-01722: invalid number
 /*
 명시적 형 변환(explicit type conversion) : '자동 형 변환'이 적용되지 않는 경우엔
 '형 변환 함수'를 사용하여 '명시적 형 변환'을 해 주어야 함.
-
 TO_CHAR() : 숫자 또는 날짜 데이터를 문자 데이터로 변환
-
 [사용 형태]
 TO_CHAR(날짜 데이터(필수), '출력되길 원하는 문자 형태'(필수), 'NLS_DATE_LANGUAGE = language'(선택)) -- 날짜 데이터 형식 출력 시
 TO_CHAR(숫자 데이터(필수), '출력되길 원하는 문자 형태'(필수)) -- 숫자 데이터 형식 출력 시(잘 안 씀)
-
 [날짜 표현 형식 포맷]
 CC : 세기
 YYYY, RRRR : 연(4자리 숫자) 
@@ -863,7 +814,6 @@ SELECT SAL
 /*
 TO_NUMBER() : 문자 데이터를 숫자 데이터로 변환. 주로 숫자 데이터가 가공된 문자 데이터로 
 저장되어 있고 그 데이터를 산술 연산에 사용하고자 할 경우 사용하는 함수
-
 [사용 형태]
 TO_NUMBER('문자열 데이터'(필수), '인식될 숫자 형태'(필수))
 */
@@ -875,7 +825,6 @@ SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
 -- STUDY TO_DATE --
 /*
 TO_DATE() : 문자열 데이터를 날짜 데이터로 변환하는 함수
-
 [사용 형태]
 TO_DATE('문자열 데이터'(필수), '인식될 날짜 형태'(필수))
 */
@@ -909,7 +858,6 @@ NVL() : 열 또는 데이터를 입력하여 해당 데이터가 NULL이 아닐 경우 데이터를 그대로
 NULL인 경우 지정한 데이터를 반환하는 함수
 NVL2() : NVL() 함수와 유사하지만, 데이터가 NULL이 아닐 경우 반환할 데이터를 추가로 지정해
 줄 수 있는 함수
-
 [사용 형태]
 NVL(검사할 데이터 또는 열(필수), 데이터가 NULL일 경우 반환할 데이터 또는 계산식(필수))
 NVL2(검사할 데이터 또는 열(필수)
@@ -940,7 +888,6 @@ DECODE() : 프로그래밍 언어의 switch-case문과 유사. 기준이 되는 데이터를 먼저 지�
 데이터의 값에 따라 다른 결과값을 내보내는 함수
 CASE문 : DECODE() 함수와 달리 각 조건에 사용하는 데이터가 서로 상관이 없어도 됨. 또 기준
 데이터값이 같은 데이터 외에 다양한 조건을 사용할 수 있음. DECODE() 함수에 비해 범용성이 더 높음.
-
 [사용 형태]
 DECODE(검사할 열 또는 데이터 / 연산이나 함수의 결과
      , 조건1, 데이터가 조건1과 일치할 때 반환할 결과
@@ -1041,7 +988,6 @@ COUNT() : 지정한 데이터의 개수 반환. NULL데이터는 개수에서 제외됨.
 MAX() : 지정한 데이터의 최댓값 반환
 MIN() : 지정한 데이터의 최솟값 반환
 AVG() : 지정한 데이터의 평균값 반환
-
 [사용 형태]
 SUM(DISTINCT/ALL(선택), 합계를 구할 열/연산자/함수를 사용한 데이터(필수)) OVER(분석을 위한 문법)(선택)
 COUNT(DISTINCT/ALL(선택), 개수를 구할 열/연산자/함수를 사용한 데이터(필수)) OVER(분석을 위한 문법)(선택)
@@ -1229,7 +1175,6 @@ ROLLUP(), CUBE() : 그룹화 데이터의 합계를 함께 출력하는 데 사용하는 함수.
 2. A 그룹별 B 그룹에 해당하는 결과 출력
 3. A 그룹에 해당하는 결과 출력
 4. 전체 데이터 결과 출력
-
 [CUBE()]
 1. A 그룹별 B 그룹별 C 그룹에 해당하는 결과 출력
 2. A 그룹별 B 그룹의 결과 출력
@@ -1305,7 +1250,6 @@ a, b             0 0                 0
 a                0 1                 1
 b                1 0                 2
 없음              1 1                 3
-
 [사용 형태]
 - GROUPING()
   SELECT ...
@@ -1317,7 +1261,6 @@ b                1 0                 2
    WHERE ...
 GROUP BY ROLLUP/CUBE(열1, 열2, ... , 열n)
 ORDER BY ...
-
 -- GROUPING_ID()
   SELECT ...
       GROUPING_ID(그룹화할 열 이름(여러 개 지정 가능))
@@ -1353,7 +1296,6 @@ ORDER BY DEPTNO, JOB;
 /*
 LISTAGG() : 오라클 11g 버전부터 사용 가능한 함수. 그룹에 속해 있는 데이터를 가로로 나열할 때
 사용함.
-
 [사용 형태]
   SELECT ...
       LISTAGG(나열할 열(필수), 각 데이터를 구분하는 구분자(선택))
@@ -1592,7 +1534,6 @@ SELECT E1.EMPNO
 /*
 외부 조인(OUTER JOIN) : 어느 한쪽의 데이터가 NULL이더라도 결과를 출력할 때 포함시켜야 
 하는 경우 강제로 출력할 때 사용하는 조인 방식
-
 LEFT OUTER JOIN : WHERE TABLE1.COL1 = TABLE2.COL1(+)
 RIGHT OUTER JOIN : WHERE TABLE1.COL1(+) = TABLE2.COL1
 */
@@ -1648,7 +1589,6 @@ ORDER BY DEPTNO, E.EMPNO;
 /*
 JOIN ~ USING : 등가 조인을 대신해 사용할 수 있는 조인 방식. NATURAL JOIN과 다르게 USING 
 키워드에 조인 기준으로 사용할 열을 명시하여 사용함.
-
 [사용 형태]
 FROM TABLE1 JOIN TABLE2 USING (조인에 사용할 기준열)
 */
@@ -1672,7 +1612,6 @@ ORDER BY DEPTNO, E.EMPNO;
 JOIN ~ ON : 가장 범용성 있는 조인 방식. 기존 WHERE 절에 있는 조인 조건식을 ON 키워드 옆에 
 작성함. 조인 기준 조건식은 ON에 명시하고 그 밖의 출력 행을 걸러 내기 위해 WHERE 조건식을 따로 
 사용하는 조인 방식.
-
 [사용 형태]
 FROM TABLE1 JOIN TABLE2 ON (조인 조건식)
 */
@@ -1693,16 +1632,13 @@ ORDER BY E.DEPTNO, EMPNO;
 -- STUDY OUTER JOIN(SQL-99) --
 /*
 OUTER JOIN(SQL-99) : WHERE절이 아닌 FROM절에서 외부 조인을 선언함
-
 [사용 형태]
 <LEFT OUTER JOIN>
 기존 : WHERE TABLE1.COL1 = TABLE2.COL1(+)
 SQL-99 : FROM TABLE1 LEFT OUTER JOIN TABLE2 ON (조인 조건식)
-
 <RIGHT OUTER JOIN>
 기존 : WHERE TABLE1.COL1(+) = TABLE2.COL1
 SQL-99 : FROM TABLE1 RIGHT OUTER JOIN TABLE2 ON (조인 조건식)
-
 <FULL OUTER JOIN>
 기존 : UNION 집합 연산자를 활용
 SQL-99 : FROM TABLE1 FULL OUTER JOIN TABLE2 ON (조인 조건식)
@@ -1899,7 +1835,6 @@ SELECT *
 -- STUDY 단일행 서브쿼리 --
 /*
 [NOTE] 테이블에 비교 대상에 해당하는 데이터가 여럿 있으면 오류가 발생하여 실행되지 못함
-
 EX) JONES의 급여보다 높은 급여를 받는 사원 목록
 - 만약 JONES라는 이름을 가진 사람이 두 명 이상일 경우 오류 발생
 */
@@ -1941,7 +1876,6 @@ SELECT E.EMPNO
 /*
 [NOTE] 서브쿼리 결과가 여러 개이므로 단잉행 연산자 사용 불가. 다중행 연산자를 사용해야 
 메인쿼리와 비교를 할 수 있음.
-
 [다중행 연산자]         [설명]
 IN                    메인쿼리의 데이터가 서브쿼리의 결과 중 하나라도 일치한 데이터가 있다면 true
 ANY, SOME             메인쿼리의 조건식을 만족하는 서브쿼리의 결과가 하나 이상이면 true
@@ -2059,7 +1993,6 @@ SELECT E10.EMPNO, E10.ENAME, E10.DEPTNO, D.DNAME, D.LOC
 /*
 FROM절에 너무 많은 서브쿼리를 지정하면 가독성이나 성능이 떨어질 수 있음. WITH절을 통해 
 메인쿼리가 될 SELECT문 안에서 사용할 서브쿼리와 별칭을 먼저 지정한 후 메인쿼리에서 사용함. 
-
 [사용 형태]
 WITH
   [별칭1] AS (SELECT문 1),
@@ -2344,7 +2277,6 @@ SELECT * FROM DEPT_TEMP2;
 [사용 형태]
 DELETE [FROM] 대상 테이블
 [WHERE 대상 행을 선별할 조건]
-
 [NOTE] WHERE절을 사용하지 않을 경우 테이블의 전체 데이터가 모두 삭제됨!!
 */ 
 CREATE TABLE EMP_TEMP2
@@ -2458,7 +2390,6 @@ SELECT * FROM SALGRADE;
 트랜잭션(transaction) : 더 이상 분할할 수 없는 최소 수행 단위를 뜻함. 하나의 트랜잭션 내에 
 있는 여러 명령어를 한 번에 수행하여 작업을 완료하거나 아예 모두 수행하지 않는 상태. 이를 제어
 하는 명령어를 TCL이라고 함. "ALL OR NOTHING"
-
 EX) 100만원이 들어 있는 A계좌에서 0원이 들어 있는 B계좌로 계좌이체
 1. A계좌 잔액을 0원으로 변경하는 UPDATE문 실행
 UPDATE ACCOUNT
@@ -2507,13 +2438,10 @@ SELECT * FROM DEPT_TCL;
 /*
 오라클 데이터베이스에서의 세션 : 데이터베이스 접속을 시작으로 여러 데이터베이스에서 관련 작업을 
 수행한 후 접속을 종료하기까지 전체 기간을 의미함.
-
 만약 다른 툴로 같은 데이터베이스에 접속하면 2개의 세션으로 접속을 한 것.
 ex) Toad로 접속 / SQL Developer로 접속
-
 한 세션에서 INSERT, UPDATE, DELETE한 것을 COMMIT하기 전까지는 다른 세션에서 현 세션의 
 데이터 변화를 확인할 수 없음.
-
 즉, 데이터 조작이 포함된 트랜잭션이 완료되기 전까지 데이터를 직접 조작하는 세션 외 다른 세션에
 서는 데이터 조작 전 상태의 내용이 일관적으로 조회, 출력, 검색됨. 이러한 특성을 읽기 일관성
 (read consistency)이라고 함.
@@ -2530,7 +2458,6 @@ LOCK : 특정 세션에서 조작 중인 데이터는 트랜잭션이 완료되기 전까지 다른 세션에서
 없는 상태가 됨. 조작 중인 데이터를 다른 세션은 조작할 수 없도록 접근을 보류하는 것.
 HANG : 특정 세션에서 데이터 조작이 완료될 때까지 다른 세션에서 해당 데이터 조작을 기다리는 
 현상. 작업을 대기하고 있던 세션의 명령어는 먼저 작업 중이던 데이터 LOCK이 풀리자마자 수행됨.
-
 LOCK이 발생하는 SQL문을 사용하고 COMMIT, ROLLBACK을 하지 않으면 다른 사용자의 작업 수행에 
 피해를 줄 수 있음!!
 */
@@ -2554,7 +2481,6 @@ CREATE TABLE [소유 계정.]테이블명(
   ...
   열n이름 열n자료형
 );
-
 [NOTE] 테이블 이름 생성 규칙
 1.테이블 이름은 문자로 시작해야 한다(한글도 가능하며 숫자로 시작할 수 없음).
   EX) EMP90(O), 90EMP(X)
@@ -2563,7 +2489,6 @@ CREATE TABLE [소유 계정.]테이블명(
 4.테이블 이름은 영문자(한글 가능), 숫자(0-9)와 특수 문자 $, #, _를 사용할 수 있다.
   EX) EMP#90_OB
 5.SQL 키워드는 테이블 이름으로 사용할 수 없다(SELECT, FROM 등은 테이블 이름으로 사용 불가).
-
 [NOTE] 열 이름 생성 규칙
 1.열 이름은 문자로 시작해야 한다.
 2.열 이름은 30byte 이하여야 한다.
@@ -2618,7 +2543,6 @@ SELECT * FROM EMPDEPT_DDL;
 /*
 ALTER : 테이블에 새 열을 추가 또는 삭제하거나 열의 자료형 또는 길이를 변경하는 등 테이블 구조 
 변경과 관련된 기능을 수행하는 명령어
-
 ADD : 테이블에 새 열을 추가하는 명령어.
 RENAME : 테이블의 열 이름을 변경하는 명령어.
 MODIFY : 테이블의 열에 설정된 자료형과 길이를 변경하는 명령어.
@@ -2726,7 +2650,6 @@ DROP TABLE EMP_HW;
 오라클 데이터베이스 운영에 중요한 데이터가 보관되어 있음. 만약 이 데이터에 문제가 발생한다면 
 오라클 데이터베이스 사용이 불가능해짐. 때문에 이 정보에 직접 접근하거나 작업하는 것을 허용하지 않고 
 데이터 사전 뷰(data dictionary view)를 제공하여 SELECT문으로 정보 열람을 할 수 있음.
-
 [NOTE]데이터 사전 뷰
 [접두어]       [설명]
 USER_XXXX     현재 데이터베이스에 접속한 사용자가 소유한 객체 정보
@@ -2806,21 +2729,17 @@ CREATE INDEX IDX_EMP_SAL
 [방식]                                      [사용]
 단일 인덱스(single index)                    CREATE INDEX_IDX_NAME
                                                ON EMP(SAL);
-
 복합 인덱스(concatenated index)              CREATE INDEX_IDX_NAME
 결합 인덱스(composite index)                     ON EMP(SAL, ENAME, ...);
 - 두 개 이상 열로 만들어지는 인덱스
 - WHERE절의 두 열이 AND 연산으로 묶이는 경우
-
 고유 인덱스(unique index)                    CREATE UNIQUE INDEX IDX_NAME
 - 열에 중복 데이터가 없을 때 사용                   ON EMP(EMPNO);
 - UNIQUE 키워드를 지정하지 않으면 비고유 
 인덱스(non unique index)가 기본값
-
 함수 기반 인덱스(function based index)       CREATE INDEX IDX_NAME
 - 열에 산술식 같은 데이터 가공이 진행된             ON EMP(SAL*12 + COMM);
 결과로 인덱스 생성
-
 비트맵 인덱스(bitmap index)                  CREATE BITMAP INDEX IDX_NAME
 - 데이터 종류가 적고 같은 데이터가 많이 존재할        ON EMP(JOB);
 때 주로 사용
@@ -2844,7 +2763,6 @@ SELECT * FROM USER_IND_COLUMNS;
 /*
 하나 이상의 테이블을 조회하는 SELECT문을 저장한 객체. 물리적 데이터를 따로 저장하지 않음. 
 SELECT문의 FROM절에 사용하면 특정 테이블을 조회하는 것과 같은 효과를 얻을 수 있음.
-
 [NOTE]뷰의 사용 목적
 1. 편리성 : SELECT문의 복잡도를 완화
 2. 보안성 : 테이블의 특정 열을 노출하고 싶지 않을 경우
@@ -2857,7 +2775,6 @@ CREATE [OR REPLACE] [FORCE | NOFORCE] VIEW 뷰이름 (열이름1, 열이름2, ...)
     AS (저장할SELECT문)
 [WITH CHECK OPTION [CONSTRAINT 제약 조건]]
 [WITH READ ONLY [CONSTRAINT 제약 조건]];
-
 OR REPLACE : 같은 이름의 뷰가 이미 존재할 경우에 현재 생성할 뷰로 대체하여 생성(선택)
 FORCE : 뷰가 저장할 SELECT문의 기반 테이블이 존재하지 않아도 강제로 생성(선택)
 NOFORCE : 뷰가 저장할 SELECT문의 기반 테이블이 존재할 경우에만 생성(기본값)(선택)
@@ -2905,7 +2822,6 @@ SELECT ROWNUM, E.*
 여기서 ROWNUM은 의사 열(pseudo column)이라고 하는 특수 열에 해당함. 의사 열은 데이터가 저장
 되는 실제 테이블에 존재하지는 않지만 특정 목적을 위해 테이블에 저장되어 있는 열처럼 사용 가능한 
 열을 뜻함.
-
 ROWNUM : 테이블에 저장된 행이 조회된 순서대로 매겨진 일련번호
 */
   SELECT ROWNUM, E.*
@@ -2939,16 +2855,13 @@ WITH E AS (SELECT * FROM EMP ORDER BY SAL DESC)
 /*
 시퀀스(Sequence) : 데이터베이스에서 특정 규칙에 맞는 연속 숫자를 생성하는 객체. 번호를 사용
 해야 하는 사용자에게 계속 다음 번호를 만들어 주는 역할.
-
 SELECT MAX(글 번호) + 1
   FROM 게시판 테이블;
-
 위와 같은 방식은 테이블 데이터가 많아질수록 가장 큰 데이터를 찾고 새로운 번호를 계산하는 시간이 
 함께 늘어나므로 아쉬운 부분이 있음. 또한 동시에 여러 곳에서 새로운 번호를 요구했을 경우에 
 SELECT문의 결과값이 같게 나와 번호가 중복될 수도 있음.
 이와 비교할 때 시퀀스는 단순히 번호 생성을 위한 객체이지만 지속적이고 효율적인 번호 생성이 가능
 하므로 여러모로 자주 사용하는 객체임.
-
 [NOTE]시퀀스 생성
 CREATE SEQUENCE 시퀀스명(아래 절들을 지정하지 않을 경우 1부터 1만큼 계속 증가하는 시퀀스 생성)
 [INCREMENT BY n]
@@ -2957,7 +2870,6 @@ CREATE SEQUENCE 시퀀스명(아래 절들을 지정하지 않을 경우 1부터 1만큼 계속 증가하�
 [MINVALUE n | NOMINVALUE]
 [CYCLE | NOCYCLE]
 [CACHE n | NOCACHE]
-
 INCREMENT BY n : 시퀀스에서 생성할 번호의 증가값(기본값은 1)(선택).
 START WITH n : 시퀀스에서 생성할 번호의 시작값(기본값은 1)(선택).
 MAXVALUE n | NOMAXVALUE : 시퀀스에서 생성할 번호의 최댓값 지정. 최댓값은 START WITH 값 이상, 
@@ -3055,7 +2967,6 @@ SELECT *
 주기 위해 사용.
 synonym은 ALIAS와 다르게 일회성이 아니며 데이터베이스에 저장되는 객체이며, 동의어 생성에는 
 별도 권한 부여가 필요하다.
-
 [NOTE]동의어 만들기
 CREATE [PUBLIC] SYNONYM 동의어명
    FOR [사용자.][객체명];
@@ -3144,7 +3055,6 @@ SELECT * FROM DEPTSEQ;
 /** STUDY 제약 조건(constraint) **/
 /*
 제약 조건(constraint) : 테이블에 저장할 데이터를 제약하는 특수한 규칙.
-
 [종류]            [설명]
 NOT NULL         지정한 열에 NULL을 허용하지 않음. NULL을 제외한 데이터의 중복은 허용됨.
 UNIQUE           지정한 열이 유일한 값을 가져야 함. 즉 중복될 수 없음. 단 NULL은 값의 중복
@@ -3153,10 +3063,8 @@ PRIMARY KEY      지정한 열이 유일한 값이면서 NULL을 허용하지 않음. PRIMARY KEY는
                   하나만 지정 가능.
 FOREIGN KEY      다른 테이블의 열을 참조하여 존재하는 값만 입력할 수 있음.
 CHECK            설정한 조건식을 만족하는 데이터만 입력 가능.
-
 데이터 무결성(data integrity) : 데이터베이스에 저장되는 데이터의 정확성과 일관성을 보장한다
 는 의미.
-
 - 영역 무결성(domain integrity) : 열에 저장되는 값의 적정 여부를 확인. 자료형, 적절한 형식
 의 데이터, NULL 여부 같은 정해 놓은 범위를 만족하는 데이터임을 규정.
 - 개체 무결성(entity integrity) : 테이블 데이터를 유일하게 식별할 수 있는 기본키는 반드시 
@@ -3194,7 +3102,6 @@ SELECT * FROM TABLE_NOTNULL;
 /* 제약 조건 확인 */
 /*
 USER_CONSTRAINTS 데이터 사전을 활용하여 지정한 제약 조건 정보를 확인함.
-
 [열 이름]                [설명]
 OWNER                   제약 조건 소유 계정
 CONSTRAINT_NAME         제약 조건 이름(직접 지정하지 않을 경우 오라클이 자동으로 지정함)
@@ -3376,4 +3283,276 @@ SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
 -- P.376 예제
 /*
 1.ALTER TABLE / 2.MODIFY / 3.UNIQUE
+*/
+
+
+/* STUDY PRIMARY KEY */
+CREATE TABLE TABLE_PK(
+  LOGIN_ID VARCHAR2(20) PRIMARY KEY,
+  LOGIN_PWD VARCHAR2(20) NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_PK;
+
+-- 생성한 PRIMARY KEY 확인
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_PK%';
+ 
+-- 생성한 PRIMARY KEY를 통해 자동 생성된 INDEX 확인하기
+SELECT INDEX_NAME, TABLE_OWNER, TABLE_NAME
+  FROM USER_INDEXES
+ WHERE TABLE_NAME LIKE 'TABLE_PK%';
+ 
+-- 테이블을 생성하며 제약 조건 이름 직접 지정하기
+CREATE TABLE TABLE_PK2(
+  LOGIN_ID VARCHAR2(20) CONSTRAINT TBLPK2_LGNID_PK PRIMARY KEY,
+  LOGIN_PWD VARCHAR2(20) CONSTRAINT TBLPK2_LGNPW_NN NOT NULL,
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_PK2;
+
+-- PRIMARY KEY 제약 조건을 지정한 열 확인(중복 값을 입력했을 때)
+INSERT INTO TABLE_PK(LOGIN_ID, LOGIN_PWD, TEL)
+VALUES('TEST_ID_01', 'PWD01', '010-1234-5678');
+
+SELECT * FROM TABLE_PK;
+
+-- 중복되는 값 입력
+INSERT INTO TABLE_PK(LOGIN_ID, LOGIN_PWD, TEL)
+VALUES('TEST_ID_01', 'PWD02', '010-2345-6789');
+
+/*
+오류 발생
+ORA-00001: unique constraint (SCOTT.SYS_C007056) violated
+00001. 00000 -  "unique constraint (%s.%s) violated"
+*/
+
+-- NULL 값을 명시적으로 입력하기
+INSERT INTO TABLE_PK(LOGIN_ID, LOGIN_PWD, TEL)
+VALUES(NULL, 'PWD02', '010-2345-6789');
+
+/*
+오류 발생
+ORA-01400: cannot insert NULL into ("SCOTT"."TABLE_PK"."LOGIN_ID")
+01400. 00000 -  "cannot insert NULL into (%s)"
+*/
+
+-- NULL 값을 암시적으로 입력하기
+INSERT INTO TABLE_PK(LOGIN_PWD, TEL)
+VALUES('PWD02', '010-2345-6789');
+
+/*
+오류 발생
+ORA-01400: cannot insert NULL into ("SCOTT"."TABLE_PK"."LOGIN_ID")
+01400. 00000 -  "cannot insert NULL into (%s)"
+*/
+
+/* 제약 조건 지정 방법 두 가지 */
+/*
+인라인(inline)(열 레벨(column-level)) 제약 조건 정의 :
+-> 열 바로 옆에 제약 조건을 지정하는 형식.
+
+아웃오브라인(out-of-line)(테이블 레벨(table-level)) 제약 조건 정의 :
+-> 열을 명시한 후 제약 조건을 테이블 단위에 지정하는 방식.
+*/
+-- 인라인(inline)(열 레벨(column-level)) 제약 조건 정의
+CREATE TABLE TABLE_NAME(
+  COL1 VARCHAR2(20) CONSTRAINT CONSTRAINT_NAME PRIMARY KEY,
+  COL2 VARCHAR2(20) NOT NULL,
+  COL3 VARCHAR2(20)
+);
+
+-- 아웃오브라인(out-of-line)(테이블 레벨(table-level)) 제약 조건 정의
+CREATE TABLE TABLE_NAME(
+  COL1 VARCHAR2(20),
+  COL2 VARCHAR2(20),
+  COL3 VARCHAR2(20),
+  PRIMARY KEY (COL1),
+  CONSTRAINT CONSTRAINT_NAME UNIQUE (COL2)
+);
+
+
+/* STUDY FOREIGN KEY */
+-- EMP 테이블과 DEPT 테이블의 제약 조건 살펴보기
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME, R_OWNER, R_CONSTRAINT_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME IN ('EMP', 'DEPT');
+/*
+CONSTRAINT_TYPE => R은 외래키임을 의미
+R_CONSTRAINT_NAME => 참조하는 테이블의 제약 조건 이름을 의미
+*/
+
+-- FOREIGN KEY가 참조하는 열에 존재하지 않는 데이터 입력하기
+INSERT INTO EMP(EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+VALUES(9999, '홍길동', 'CLERK', '7788', TO_DATE('2017/04/30', 'YYYY/MM/DD'), 1200, NULL, 50);
+
+/*
+오류 발생
+ORA-02291: integrity constraint (SCOTT.FK_DEPTNO) violated - parent key not found
+02291. 00000 - "integrity constraint (%s.%s) violated - parent key not found"
+-> 부모 키가 없다.
+참조 대상 테이블 = 부모
+참조하는 테이블 = 자식
+*/
+
+/* FOREIGN KEY 지정하기
+CREATE TABLE 테이블 이름(
+  ...(다른 열 정의),
+  열 자료형 CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열)
+);
+
+CREATE TABLE 테이블 이름(
+  ...(다른 열 정의),
+  열 자료형 REFERENCES 참조 테이블(참조할 열)
+);
+
+CREATE TABLE 테이블 이름(
+  ...(다른 열 정의),
+  CONSTRAINT [제약 조건 이름] FOREIGN KEY (열)
+  REFERENCES 참조 테이블(참조할 열)
+);
+*/
+
+-- DEPT_FK 테이블 생성하기
+CREATE TABLE DEPT_FK(
+  DEPTNO NUMBER(2) CONSTRAINT DEPTFK_DEPTNO_PK PRIMARY KEY,
+  DNAME VARCHAR2(14),
+  LOC VARCHAR2(13)
+);
+
+DESC DEPT_FK;
+
+-- EMP_FK 테이블 생성하기
+CREATE TABLE EMP_FK(
+  EMPNO NUMBER(4) CONSTRAINT EMPFK_EMPNO_PK PRIMARY KEY,
+  ENAME VARCHAR(10),
+  JOB VARCHAR(9),
+  MGR NUMBER(4),
+  HIREDATE DATE,
+  SAL NUMBER(7,2),
+  COMM NUMBER(7,2),
+  DEPTNO NUMBER(2) CONSTRAINT EMPFK_DEPTNO_FK REFERENCES DEPT_FK (DEPTNO)
+);
+
+DESC EMP_FK;
+
+-- EMP_FK 테이블에 데이터 삽입하기(DEPTNO 데이터가 아직 DEPT_FK 테이블에 없을 때)
+INSERT INTO EMP_FK
+VALUES(9999, 'TEST_NMAME', 'TEST_JOB', NULL, TO_DATE('2001/01/01', 'YYYY/MM/DD'), 3000, NULL, 10);
+/*
+오류 발생
+ORA-02291: integrity constraint (SCOTT.EMPFK_DEPTNO_FK) violated - parent key not found
+02291. 00000 - "integrity constraint (%s.%s) violated - parent key not found"
+*/
+
+-- DEPT_FK에 데이터 삽입하기
+INSERT INTO DEPT_FK
+VALUES(10, 'TEST_DNAME', 'TEST_LOC');
+
+SELECT * FROM DEPT_FK;
+
+-- EMP_FK 테이블에 데이터 삽입하기
+INSERT INTO EMP_FK
+VALUES(9999, 'TEST_NMAME', 'TEST_JOB', NULL, TO_DATE('2001/01/01', 'YYYY/MM/DD'), 3000, NULL, 10);
+
+SELECT * FROM EMP_FK;
+
+-- DEPT_FK 테이블의 10번 부서 데이터 삭제하기
+DELETE FROM DEPT_FK
+WHERE DEPTNO = 10;
+
+/*
+오류 발생
+ORA-02292: integrity constraint (SCOTT.EMPFK_DEPTNO_FK) violated - child record found
+02292. 00000 - "integrity constraint (%s.%s) violated - child record found"
+-> 값을 참조하는 자식 레코드 데이터가 존재하기 때문에 삭제 불가
+
+위 데이터를 삭제하려면 다음 방법 중 하나를 사용해야 함.
+
+1. 현재 삭제하려는 열 값을 참조하는 데이터를 먼저 삭제한다.
+EX) EMP_FK 테이블의 DEPTNO가 10번인 데이터를 삭제한 후 DEPT_FK 테이블의 10번 부서 삭제
+
+2. 현재 삭제하려는 열 값을 참조하는 데이터를 수정한다.
+EX) EMP_FK 테이블의 DEPTNO가 10번인 데이터를 다른 부서 번호 또는 NULL로 변경한 후 DEPT_FK 
+테이블의 10번 부서 삭제
+
+3. 현재 삭제하려는 열을 참조하는 자식 테이블의 FOREIGN KEY 제약 조건을 해제한다.
+*/
+
+/*
+- 열 데이터를 삭제할 때 이 데이터를 참조하는 데이터도 함께 삭제
+CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열) ON DELETE CASCADE
+
+- 열 데이터를 삭제할 때 이 데이터를 참조하는 데이터를 NULL로 수정
+CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열) ON DELETE SET NULL
+*/
+
+-- P.389 예제
+/*
+1. 제약 조건 / 2. UNIQUE / 3.NOT NULL / 4. FOREIGN KEY / 5. PRIMARY KEY
+*/
+
+
+/* STUDY CHECK */
+/*
+CHECK 제약 조건은 값의 범위 또는 패턴을 정의할 때 사용함.
+EX) 시간을 저장할 열 데이터는 0에서 23까지의 숫자만 허용.
+*/
+-- 테이블을 생성할 때 CHECK 제약 조건 설정하기
+-- EX) 비밀번호를 3자리 이상만 저장 가능하게 설정
+CREATE TABLE TABLE_CHECK(
+  LOGIN_ID VARCHAR2(20) CONSTRAINT TBLCK_LOGINID_PK PRIMARY KEY,
+  LOGIN_PWD VARCHAR2(20) CONSTRAINT TBLCK_LOGINPWD_CK CHECK (LENGTH(LOGIN_PWD) > 3),
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_CHECK;
+
+-- CHECK 제약 조건에 맞지 않는 예
+INSERT INTO TABLE_CHECK
+VALUES ('TEST_ID', '123', '010-1234-5678');
+
+/*
+오류 발생
+ORA-02290: check constraint (SCOTT.TBLCK_LOGINPWD_CK) violated
+02290. 00000 -  "check constraint (%s.%s) violated"
+*/
+
+-- CHECK 제약 조건에 맞는 예
+INSERT INTO TABLE_CHECK
+VALUES ('TEST_ID', '1234', '010-1234-5678');
+
+SELECT * FROM TABLE_CHECK;
+
+-- USER_CONSTRAINTS 데이터 사전에서 CHECK 제약 조건 확인하기
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS
+ WHERE TABLE_NAME LIKE 'TABLE_CHECK';
+ 
+
+/* STUDY DEFAULT */
+-- DEFAULT 제약 조건 설정하기
+CREATE TABLE TABLE_DEFAULT(
+  LOGIN_ID VARCHAR2(20) CONSTRAINT TBLCK2_LOGINID_PK PRIMARY KEY,
+  LOGIN_PWD VARCHAR2(20) DEFAULT '1234',
+  TEL VARCHAR2(20)
+);
+
+DESC TABLE_DEFAULT;
+
+INSERT INTO TABLE_DEFAULT VALUES ('TEST_ID', NULL, '010-1234-5678');
+
+INSERT INTO TABLE_DEFAULT (LOGIN_ID, TEL) VALUES ('TEST_ID2', '010-1234-5678');
+
+SELECT * FROM TABLE_DEFAULT;
+
+/* 제약 조건 (일시적) 비활성화, 활성화 명령어
+ALTER TABLE 테이블 이름
+DISABLE [NOVALIDATE / VALIDATE(선택)] CONSTRAINT 제약조건이름;
+
+ALTER TABLE 테이블 이름
+ENABLE [NOVALIDATE / VALIDATE(선택)] CONSTRAINT 제약조건이름;
 */
