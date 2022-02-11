@@ -1,5 +1,11 @@
 /*** Do it! 오라클로 배우는 데이터베이스 입문 ***/
 
+-- SCOTT 계정 생성
+CREATE USER SCOTT IDENTIFIED BY tiger;
+
+-- 접속 권한 부여
+GRANT RESOURCE, CONNECT TO SCOTT;
+
 -- ***구글에 'ANSI SQL' 검색하여 참고할 것
 
 DESC EMP;
@@ -3565,20 +3571,293 @@ CREATE TABLE EMP_CONST(
   JOB VARCHAR2(9),
   TEL VARCHAR2(20) CONSTRAINT EMPCONST_TEL_UNQ UNIQUE,
   HIREDATE DATE,
-  SAL NUMBER(7, 2) CONSTRAINT EMPCONST_SAL_CHK CHECK (LENGTH(LOGIN_PWD) > 3),
-  COMM VARCHAR2(13) CONSTRAINT DEPTCONST_LOC_NN NOT NULL,
-  DEPTNO NUMBER(2) CONSTRAINT EMPCONST_DEPTNO_FK FOREIGN KEY
-  REFERENCES 참조 테이블(참조할 열)
+  SAL NUMBER(7, 2) CONSTRAINT EMPCONST_SAL_CHK CHECK (SAL BETWEEN 1000 AND 9999),
+  COMM NUMBER(7, 2),
+  DEPTNO NUMBER(2) CONSTRAINT EMPCONST_DEPTNO_FK REFERENCES DEPT_CONST (DEPTNO)
 );
 
+DESC EMP_CONST;
+
+SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
+  FROM USER_CONSTRAINTS;
+  
+
+/** 사용자, 권한, 롤 관리 **/
+/* STUDY 사용자
+[사용자 관리가 필요한 이유]
+실무에서 사용하는 여러 종류의 서비스는 한 사용자가 관리하기에는 데이터 분량이 너무 방대하거나
+구조가 복잡해지는 경우가 많다. 따라서 업무 분할과 효율, 보안을 고려하여 업무에 따라 여러
+사용자들을 나눈다.
+*/
+
+/* 사용자 생성
+CREATE USER 사용자 이름(필수)
+IDENTIFIED BY 패스워드(필수)
+DEFAULT TABLESPACE 테이블 스페이스 이름(선택)
+TEMPORARY TABLESPACE 테이블 스페이스(그룹) 이름(선택)
+QUOTA 테이블 스페이스크기 ON 테이블 스페이스 이름(선택)
+PROFILE 프로파일 이름(선택)
+PASSWORD EXPIRE(선택)
+ACCOUNT [LOCK/UNLOCK](선택);
+*/
+
+-- SCOTT 계정으로 사용자 생성하기
+CREATE USER ORCLSTUDY
+IDENTIFIED BY ORACLE;
+
+/*
+오류 발생
+ORA-01031: insufficient privileges
+01031. 00000 -  "insufficient privileges"
+-> 사용자 SCOTT는 사용자를 생성할 권한이 없기 때문에 오류 발생 
+*/
+
+-- SYSTEM 계정으로 사용자 생성하기
+CREATE USER ORCLSTUDY
+IDENTIFIED BY ORACLE;
+-- 사용자는 추가했지만 CREATE SESSION 권한을 부여받지 못했기 때문에 데이터베이스 접속 불가
+
+GRANT CREATE SESSION TO ORCLSTUDY;
+
+-- 사용자 정보 조회
+SELECT * FROM ALL_USERS
+ WHERE USERNAME = 'ORCLSTUDY';
+ 
+SELECT * FROM DBA_USERS
+ WHERE USERNAME = 'ORCLSTUDY';
+
+SELECT * FROM DBA_OBJECTS
+ WHERE OWNER = 'ORCLSTUDY';
+ 
+-- 사용자 정보(패스워드) 변경하기
+ALTER USER ORCLSTUDY
+IDENTIFIED BY ORCL;
+
+-- 오라클 사용자 삭제
+DROP USER ORCLSTUDY;
+
+-- 오라클 사용자와 객체 모두 삭제
+DROP USER ORCLSTUDY CASCADE;
+
+-- P.401 예제
+ALTER ORCLSTUDY
+IDENTIFIED BY ORASTDY;
+
+
+/* STUDY 권한 관리
+- 시스템 권한(system privilege) : 사용자 생성과 정보 수정 및 삭제. 데이터베이스 접근, 오라클
+데이터베이스의 여러 자원과 객체 생성 및 관리 등의 권한을 포함하는 권한. 데이터베이스 관리 권한이
+있는 사용자가 부여할 수 있는 권한.
+
+- 객체 권한(object privilege) : 특정 사용자가 생성한 테이블, 인덱스, 뷰, 시퀀스 등과 관련된 
+권한. 예를 들면 사용자 소유 테이블에 다른 사용자가 SELECT나 INSERT 등의 작업이 가능하도록 허용
+가능.
+
+시스템 권한 부여
+GRANT [시스템 권한] TO [사용자 이름/롤(Role)이름/PUBLIC]
+[WITH ADMIN OPTION];
+
+시스템 권한 : 시스템 권한을 지정. 여러 종류의 권한을 부여하려면 쉼표(,)로 구분하여 권한
+이름을 여러 개 명시해 줌
+PUBLIC : 모든 사용자에게 권한을 부여하겠다는 의미
+WITH ADMIN OPTION : 현재 GRANT문으로 부여받은 권한을 다른 사용자에게 부여할 수 있는 권한을
+함께 부여받음
+*/
+-- ORCLSTUDY 사용자 재생성
+CREATE USER ORCLSTUDY
+IDENTIFIED BY ORACLE;
+
+-- 권한 부여하기
+GRANT RESOURCE, CREATE SESSION, CREATE TABLE TO ORCLSTUDY;
+
+/* RESOURCE
+오라클 데이터베이스에서 제공하는 롤(role) 중 하나. 롤은 여러 권한을 하나의 이름으로 묶어 권한
+부여 관련 작업을 간편하게 하려고 사용함. 롤에는 테이블 스페이스 영역 권한도 설정되어 있음.
+때문에 GRANT문으로 테이블 생성 권한을 부여해도 ORA-01950 에러가 발생할 수 있음. 이에 GRANT
+시 RESOURCE 롤을 입력해 권한을 부여하면 문제없이 사용자가 테이블을 생성하고 신규 데이터를 저장
+할 수 있음. RESOURCE는 UNLIMITED TABLESPACE가 포함되어 있기 때문에, 엄밀한 관리가 필요한
+경우 QUOTA절로 사용 영역에 제한을 두기도 함.
+
+ALTER USER ORCLSTUDY
+QUOTA 2M ON USERS;
+
+이러한 이슈 때문에 오라클 데이터베이스 12C 버전에서는 RESOURCE 롤에 UNLIMITED TABLESPACE
+권한을 부여하지 않음.
+*/
+
+
+/* 시스템 권한 취소
+REVOKE [시스템 권한] FROM [사용자 이름/롤(Role)이름/PUBLIC];
+*/
+
+/*
+객체 권한 부여
+GRANT [객체 권한/ALL PRIVILEGES] ON [스키마, 객체 이름] TO [사용자 이름/롤(Role)이름/PUBLIC]
+[WITH GRANT OPTION];
+*/
+CONN SCOTT/tiger;
+
+CREATE TABLE TEMP(
+  COL1 VARCHAR(20),
+  COL2 VARCHAR(20)
+);
+
+GRANT SELECT ON TEMP TO ORCLSTUDY;
+
+GRANT INSERT ON TEMP TO ORCLSTUDY;
+
+GRANT SELECT, INSERT ON TEMP TO ORCLSTUDY;
+
+CONN ORCLSTUDY/ORACLE;
+
+SELECT * FROM SCOTT.TEMP;
+
+INSERT INTO SCOTT.TEMP VALUES('TEXT', 'FROM ORCLSTUDY');
+
+SELECT * FROM SCOTT.TEMP;
+
+
+/* 객체 권한 취소
+REVOKE [객체 권한/ALL PRIVILEGES](필수)
+    ON [스키마.객체 이름](필수)
+  FROM [사용자 이름/롤(Role) 이름/PUBLIC](필수)
+  [CASCADE CONSTRAINTS/FORCE](선택);
+*/
+CONN SCOTT/tiger;
+
+REVOKE SELECT, INSERT ON TEMP FROM ORCLSTUDY;
+
+CONN ORCLSTUDY/ORACLE;
+
+-- 권한 철회 후 SELECT 시도
+SELECT * FROM SCOTT.TEMP;
+/*
+오류 발생
+ORA-00942: table or view does not exist
+00942. 00000 -  "table or view does not exist"
+*/
+
+-- P.411 예제
+/*
+1. CREATE USER / 2. GRANT / 3. REVOKE
+*/
+
+
+/* STUDY Role
+- Role : 여러 권한을 묶어 놓은 그룹. 롤을 사용하면 여러 권한을 한 번에 부여하고 해제할 수 
+있으므로 권한 관리 효율을 높일 수 있다.
+- predefined roles : 오라클 데이터베이스를 설치할 때 기본으로 제공되는 사전 정의된 롤
+- user roles : 사용자 정의 롤
+*/
+
+/* predefined roles
+- CONNECT
+9i 버전까지 : ALTER SESSION, CREATE CLUSTER, CREATE DATABASE LINK, CREATE SEQUENCE, 
+CREATE SESSION, CREATE SYNONYM, CREATE TABLE, CREATE VIEW
+10g 버전부터 : CREATE SESSION
+
+- RESOURCE
+CREATE TRIGGER, CREATE SEQUENCE, CREATE PROCEDURE, CREATE CLUSTER, CREATE OPERATOR, 
+CREATE INDEXTYPE, CREATE TABLE
+
+- DBA
+데이터베이스를 관리하는 시스템 권한 대부분
+*/
+
+/* user roles
+1. CREATE ROLE 문으로 롤 생성
+2. GRANT 명령어로 생성한 롤에 권한을 포함시킴
+3. GRANT 명령어로 권한이 포함된 롤을 특정 사용자에게 부여
+4. REVOKE 명령어로 롤을 취소시킴
+*/
+
+-- role 생성 및 권한 부여하기
+CONN SYSTEM/1234;
+
+CREATE ROLE ROLESTUDY;
+
+GRANT CONNECT, RESOURCE, CREATE VIEW, CREATE SYNONYM
+  TO ROLESTUDY;
+  
+GRANT ROLESTUDY TO ORCLSTUDY;
+
+-- 부여된 롤과 권한 확인하기
+CONN ORCLSTUDY/ORACLE;
+
+SELECT * FROM USER_SYS_PRIVS;
+
+SELECT * FROM USER_ROLE_PRIVS;
+
+-- 부여된 롤 취소
+CONN SYSTEM/1234;
+
+REVOKE ROLESTUDY FROM ORCLSTUDY;
+
+- 롤 삭제
+DROP ROLE ROLESTUDY;
+
+-- P.416 예제
+-- Q1
+CONN SYSTEM/1234;
+CREATE USER PREV_HW IDENTIFIED BY ORCL;
+GRANT CONNECT TO PREV_HW;
+CONN PREV_HW/ORCL;
 
 -- Q2
+CONN SYSTEM/1234;
+GRANT SELECT ON EMP TO SCOTT WITH GRANT OPTION;
+GRANT SELECT ON DEPT TO SCOTT WITH GRANT OPTION;
+GRANT SELECT ON SALGRADE TO SCOTT WITH GRANT OPTION;
 
+CONN SCOTT/tiger;
+GRANT SELECT ON SCOTT.EMP TO PREV_HW;
+GRANT SELECT ON SCOTT.DEPT TO PREV_HW;
+GRANT SELECT ON SCOTT.SALGRADE TO PREV_HW;
+
+CONN PREV_HW/ORCL;
+SELECT * FROM SCOTT.EMP;
+SELECT * FROM SCOTT.DEPT;
+SELECT * FROM SCOTT.SALGRADE;
 
 -- Q3
+CONN SCOTT/tiger;
+REVOKE SELECT ON SCOTT.SALGRADE FROM PREV_HW;
+
+CONN PREV_HW/ORCL;
+SELECT * FROM SCOTT.SALGRADE;
 
 
+/* STUDY PL/SQL */
+/* 블록(block)
+PL/SQL은 데이터베이스 관련 특정 작업을 수행하는 명령어와 실행에 필요한 여러 요소를 정의하는 
+명령어 등으로 구성되며, 이러한 명령어를 모아 둔 PL/SQL 프로그램의 기본 단위를 블록(block)이
+라고 함.
 
+<PL/SQL 블록의 기본 형식>
+DECLARE(선택)
+[실행에 필요한 여러 요소 선언];
+BEGIN
+[작업을 위해 실제 실행하는 명령어];
+EXCEPTION(선택)
+[PL/SQL 수행 도중 발생하는 오류 처리];
+END;
 
+DECLARE : 선언부. 실행에 사용될 변수, 상수, 커서 등을 선언.
+BEGIN : 조건문, 반복문, SELECT, DML, 함수 등을 정의.
+EXCEPTION : PL/SQL 실행 도중 발생하는 오류(예외 상황)을 해결하는 문장 기술.
 
+필요에 따라 PL/SQL 블록 안에 다른 블록을 포함할 수도 있음. 이를 중첩 불록(nested block)
+이라고 함.
+*/
 
+-- PL/SQL 출력하기
+SET SERVEROUTPUT ON;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('Hello, PL/SQL');
+END;
+/
+/* 
+SERVEROUTPUT : 실행 결과를 화면에 출력하기 위해 해당 환경 변수 값을 ON으로 변경해 주어야 함.
+PUT_LINE : 화면 출력을 위해 오라클에서 기본으로 제공하며 DBMS_OUTPUT 패키지에 속해 있음.
+
+*/
