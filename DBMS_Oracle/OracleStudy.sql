@@ -2768,7 +2768,8 @@ SELECT문의 FROM절에 사용하면 특정 테이블을 조회하는 것과 같은 효과를 얻을 수 있�
 2. 보안성 : 테이블의 특정 열을 노출하고 싶지 않을 경우
 */
 GRANT CREATE VIEW TO SCOTT; -- SCOTT 계정에 뷰 생성 권한 부여
-
+GRANT CREATE TABLE TO SCOTT; 
+GRANT UNLIMITED TABLESPACE TO SCOTT;
 /*
 [NOTE]뷰 생성
 CREATE [OR REPLACE] [FORCE | NOFORCE] VIEW 뷰이름 (열이름1, 열이름2, ...)
@@ -3354,7 +3355,6 @@ ORA-01400: cannot insert NULL into ("SCOTT"."TABLE_PK"."LOGIN_ID")
 /*
 인라인(inline)(열 레벨(column-level)) 제약 조건 정의 :
 -> 열 바로 옆에 제약 조건을 지정하는 형식.
-
 아웃오브라인(out-of-line)(테이블 레벨(table-level)) 제약 조건 정의 :
 -> 열을 명시한 후 제약 조건을 테이블 단위에 지정하는 방식.
 */
@@ -3403,12 +3403,10 @@ CREATE TABLE 테이블 이름(
   ...(다른 열 정의),
   열 자료형 CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열)
 );
-
 CREATE TABLE 테이블 이름(
   ...(다른 열 정의),
   열 자료형 REFERENCES 참조 테이블(참조할 열)
 );
-
 CREATE TABLE 테이블 이름(
   ...(다른 열 정의),
   CONSTRAINT [제약 조건 이름] FOREIGN KEY (열)
@@ -3469,23 +3467,18 @@ WHERE DEPTNO = 10;
 ORA-02292: integrity constraint (SCOTT.EMPFK_DEPTNO_FK) violated - child record found
 02292. 00000 - "integrity constraint (%s.%s) violated - child record found"
 -> 값을 참조하는 자식 레코드 데이터가 존재하기 때문에 삭제 불가
-
 위 데이터를 삭제하려면 다음 방법 중 하나를 사용해야 함.
-
 1. 현재 삭제하려는 열 값을 참조하는 데이터를 먼저 삭제한다.
 EX) EMP_FK 테이블의 DEPTNO가 10번인 데이터를 삭제한 후 DEPT_FK 테이블의 10번 부서 삭제
-
 2. 현재 삭제하려는 열 값을 참조하는 데이터를 수정한다.
 EX) EMP_FK 테이블의 DEPTNO가 10번인 데이터를 다른 부서 번호 또는 NULL로 변경한 후 DEPT_FK 
 테이블의 10번 부서 삭제
-
 3. 현재 삭제하려는 열을 참조하는 자식 테이블의 FOREIGN KEY 제약 조건을 해제한다.
 */
 
 /*
 - 열 데이터를 삭제할 때 이 데이터를 참조하는 데이터도 함께 삭제
 CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열) ON DELETE CASCADE
-
 - 열 데이터를 삭제할 때 이 데이터를 참조하는 데이터를 NULL로 수정
 CONSTRAINT [제약 조건 이름] REFERENCES 참조 테이블(참조할 열) ON DELETE SET NULL
 */
@@ -3552,7 +3545,40 @@ SELECT * FROM TABLE_DEFAULT;
 /* 제약 조건 (일시적) 비활성화, 활성화 명령어
 ALTER TABLE 테이블 이름
 DISABLE [NOVALIDATE / VALIDATE(선택)] CONSTRAINT 제약조건이름;
-
 ALTER TABLE 테이블 이름
 ENABLE [NOVALIDATE / VALIDATE(선택)] CONSTRAINT 제약조건이름;
 */
+
+/* P.394 예제 */
+-- Q1
+CREATE TABLE DEPT_CONST(
+  DEPTNO NUMBER(2) CONSTRAINT DEPTCONST_DEPTNO_PK PRIMARY KEY,
+  DNAME VARCHAR2(14) CONSTRAINT DEPTCONST_DNAME_UNQ UNIQUE,
+  LOC VARCHAR2(13) CONSTRAINT DEPTCONST_LOC_NN NOT NULL
+);
+
+DESC DEPT_CONST;
+
+CREATE TABLE EMP_CONST(
+  EMPNO NUMBER(4) CONSTRAINT EMPCONST_EMPNO_PK PRIMARY KEY,
+  ENAME VARCHAR2(10) CONSTRAINT EMPCONST_ENAME_NN NOT NULL,
+  JOB VARCHAR2(9),
+  TEL VARCHAR2(20) CONSTRAINT EMPCONST_TEL_UNQ UNIQUE,
+  HIREDATE DATE,
+  SAL NUMBER(7, 2) CONSTRAINT EMPCONST_SAL_CHK CHECK (LENGTH(LOGIN_PWD) > 3),
+  COMM VARCHAR2(13) CONSTRAINT DEPTCONST_LOC_NN NOT NULL,
+  DEPTNO NUMBER(2) CONSTRAINT EMPCONST_DEPTNO_FK FOREIGN KEY
+  REFERENCES 참조 테이블(참조할 열)
+);
+
+
+-- Q2
+
+
+-- Q3
+
+
+
+
+
+
