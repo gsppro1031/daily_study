@@ -81,7 +81,7 @@ DESC EMP;
 ORDER BY EMPLOYEE_NO DESC, EMPLOYEE_NAME ASC;
 
 
--- STUDY WHERE --
+-- STUDY WHERE
 SELECT *
   FROM EMP;
   
@@ -151,7 +151,7 @@ SELECT *
  WHERE NOT SAL = 3000;
 
 
--- STUDY IN --
+-- STUDY IN
 SELECT *
   FROM EMP
  WHERE JOB = 'MANAGER'
@@ -177,7 +177,7 @@ SELECT *
  WHERE DEPTNO IN (10, 20);
 
 
--- STUDY BETWEEN --
+-- STUDY BETWEEN
 SELECT *
   FROM EMP
  WHERE SAL >= 2000
@@ -192,7 +192,7 @@ SELECT *
  WHERE SAL NOT BETWEEN 2000 AND 3000;
  
  
--- STUDY LIKE --
+-- STUDY LIKE
 SELECT *
   FROM EMP
  WHERE ENAME LIKE 'S%';
@@ -206,11 +206,12 @@ SELECT *
  WHERE ENAME NOT LIKE '%AM%';
 
 
--- STUDY ESCAPE --
+-- STUDY ESCAPE
 SELECT *
   FROM SOME_TABLE
  WHERE SOME_COLUMN LIKE 'A\_A' ESCAPE '\';
--- STUDY NULL --
+ 
+-- STUDY NULL
 SELECT ENAME, SAL, SAL*12+COMM AS ANNSAL, COMM
   FROM EMP;
 SELECT *
@@ -234,7 +235,8 @@ SELECT *
   FROM EMP
  WHERE SAL > NULL
     OR COMM IS NULL;
--- STUDY UNION --
+    
+-- STUDY UNION
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -250,9 +252,13 @@ UNION
 SELECT EMPNO, ENAME, SAL
   FROM EMP
  WHERE DEPTNO = 20;
-  -- ORA-01789: query block has incorrect number of result columns
-  -- 01789. 00000 -  "query block has incorrect number of result columns"
-  -- 부정확한 수의 결과 컬럼을 가지고 있어서 발생하는 오류
+ 
+/*
+ORA-01789: query block has incorrect number of result columns
+01789. 00000 -  "query block has incorrect number of result columns"
+-> 부정확한 수의 결과 컬럼을 가지고 있어서 발생하는 오류
+*/
+  
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -260,9 +266,11 @@ UNION
 SELECT ENAME, EMPNO, DEPTNO, SAL
   FROM EMP
  WHERE DEPTNO = 20;
-  -- ORA-01790: expression must have same datatype as corresponding expression
-  -- 01790. 00000 -  "expression must have same datatype as corresponding expression"
-  -- 서로 다른 데이터 유형이라 발생하는 오류
+/*
+ORA-01790: expression must have same datatype as corresponding expression
+01790. 00000 -  "expression must have same datatype as corresponding expression"
+-> 서로 다른 데이터 유형이라 발생하는 오류
+*/
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -272,7 +280,8 @@ SELECT SAL, JOB, DEPTNO, SAL
  WHERE DEPTNO = 20;
 -- 결과는 이상하지만 오류는 발생하지 않음
 -- 최종 출력되는 열 이름은 먼저 작성한 SELECT문의 열 이름으로 표기됨
--- EXAMPLE 'UNION ALL' --
+
+-- EXAMPLE 'UNION ALL'
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10
@@ -281,7 +290,7 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
  WHERE DEPTNO = 10;
  
--- STUDY MINUS --
+-- STUDY MINUS
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
 MINUS
@@ -290,7 +299,7 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
  WHERE DEPTNO = 10;
  
  
--- STUDY INTERSECT --
+-- STUDY INTERSECT
 SELECT EMPNO, ENAME, SAL, DEPTNO
   FROM EMP
 INTERSECT
@@ -299,7 +308,7 @@ SELECT EMPNO, ENAME, SAL, DEPTNO
  WHERE DEPTNO = 10;
  
  
--- STUDY 연산자 우선순위 --
+-- STUDY 연산자 우선순위
 /*
 ↑ 우선순위 높음
 *, /
@@ -354,12 +363,12 @@ SELECT *
    AND JOB IN ('MANAGER', 'CLERK')
    AND ENAME NOT LIKE '_L%';
 /** STUDY ORACLE FUNCTION **/
--- 문자열 관련 함수 --
--- STUDY UPPER, LOWER, INITCAP --
+-- 문자열 관련 함수
+-- STUDY UPPER, LOWER, INITCAP
 SELECT ENAME, UPPER(ENAME), LOWER(ENAME), INITCAP(ENAME)
   FROM EMP;
   
--- UPPER, LOWER, INITCAP 실무 사용 예시 --
+-- UPPER, LOWER, INITCAP 실무 사용 예시
 SELECT *
   FROM 게시판테이블
  WHERE 게시판 제목 열 LIKE '%Oracle%'
@@ -377,7 +386,7 @@ SELECT *
 SELECT UPPER(ENAME)
   FROM EMP;
   
--- STUDY LENGTH, LENGTHB --
+-- STUDY LENGTH, LENGTHB
 /*
 LENGTH() : 문자열 데이터 길이 리턴하는 함수
 LENGTHB() : 문자열 데이터의 바이트 수를 리턴하는 함수
@@ -396,7 +405,7 @@ SELECT *
  WHERE LENGTH(JOB) >= 6;
  
  
--- STUDY SUBSTR --
+-- STUDY SUBSTR
 /*
 SUBSTR() : 문자열 중 일부를 추출할 때 사용하는 함수
 [사용 형태]
@@ -415,7 +424,7 @@ SELECT JOB
      , SUBSTR(JOB, -LENGTH(JOB), 2)
      , SUBSTR(JOB, -3)
   FROM EMP;
--- STUDY INSTR --
+-- STUDY INSTR
 /*
 INSTR() : 문자열 데이터에서 특정 문자열 찾기
 [사용 형태]
@@ -437,7 +446,7 @@ SELECT *
   FROM EMP
  WHERE ENAME LIKE '%S%';
 -- LIKE 연산자로 사원 이름에 문자 S가 있는 행 구하기
--- STUDY REPLACE --
+-- STUDY REPLACE
 /*
 REPLACE() : 특정 문자열 데이터에 포함된 문자를 다른 문자로 대체하는 함수
 [사용 형태]
@@ -449,7 +458,7 @@ SELECT '010-1234-5678' AS REPLACE_BEFORE
      , REPLACE('010-1234-5678', '-', ' ') AS REPLACE_1
      , REPLACE('010-1234-5678', '-') AS REPLACE_2
   FROM DUAL;
--- STUDY LPAD, RPAD --
+-- STUDY LPAD, RPAD
 /*
 LPAD() : 대상 문자열 데이터 길이가 지정한 자릿수보다 작을 경우에 왼쪽 나머지 공간을 특정 문자로 채우는 함수.
 RPAD() : 대상 문자열 데이터 길이가 지정한 자릿수보다 작을 경우에 오른쪽 나머지 공간을 특정 문자로 채우는 함수.
@@ -464,13 +473,13 @@ SELECT 'Oracle'
      , RPAD('Oracle', 10) AS RPAD_2
   FROM DUAL;
   
--- [RPAD() 활용] 개인정보 뒷자리 *표시로 출력하기 --
+-- [RPAD() 활용] 개인정보 뒷자리 *표시로 출력하기
 SELECT RPAD('971225-', 14, '*') AS RPAD_JMNO
      , RPAD('010-1234-', 13, '*') AS RPAD_PHONE
   FROM DUAL;
 
      
--- STUDY CONCAT --
+-- STUDY CONCAT
 SELECT CONCAT(EMPNO, ENAME)
      , CONCAT(EMPNO, CONCAT(' : ', ENAME))
   FROM EMP
@@ -485,7 +494,7 @@ SELECT EMPNO || ENAME
  WHERE ENAME = 'SMITH';
  
  
--- STUDY TRIM, LTRIM, RTRIM --
+-- STUDY TRIM, LTRIM, RTRIM
 /*
 TRIM() : 문자열 데이터 내에서 특정 문자를 지우기 위해 사용하는 함수.
 LTRIM() : 왼쪽 지정 문자를 삭제하는 데 사용하는 함수. TRIM()과 다르게 문자를 여럿 지정 가능
@@ -517,7 +526,7 @@ SELECT '[' || TRIM(' _Oracle_ ') || ']' AS TRIM
      
 
 /** 숫자, 수치 관련 함수 **/
--- STUDY ROUND, TRUNC --
+-- STUDY ROUND, TRUNC
 /*
 ROUND() : 지정된 숫자의 특정 위치에서 반올림한 값을 반환.
 반올림 위치를 지정하지 않으면 소수점 첫 번째 자리에서 반올림함.
@@ -550,7 +559,7 @@ SELECT TRUNC(1539.125023, 4) AS TRUNC_EX1
   FROM DUAL;
 
 
--- STUDY CEIL, FLOOR --
+-- STUDY CEIL, FLOOR
 /*
 CEIL() : 지정된 숫자보다 큰 정수 중 가장 작은 정수를 반환
 FLOOR() : 지정된 숫자보다 작은 정수 중 가장 큰 정수를 반환
@@ -566,7 +575,7 @@ SELECT CEIL(3.14)
   FROM DUAL;
   
 
--- STUDY MOD --
+-- STUDY MOD
 /*
 MOD() : 지정된 숫자를 나눈 나머지 값을 반환
 [사용 형태]
@@ -587,7 +596,7 @@ SELECT MOD(15, 6)
 날짜 데이터 - 날짜 데이터 = 두 날짜 데이터 간의 일수 차이
 날짜 데이터 + 날짜 데이터 = 연산 불가, 지원하지 않음***
 /*
--- STUDY SYSDATE --
+-- STUDY SYSDATE
 /*
 SYSDATE() : 오라클 데이터베이스 서버가 놓인 OS의 현재 날짜와 시간을 보여 줌
 [사용 형태]
@@ -606,7 +615,7 @@ ORA-00975: date + date not allowed
   FROM DUAL;
   
   
--- STUDY ADD_MONTHS --
+-- STUDY ADD_MONTHS
 /*
 ADD_MONTHS() : 특정 날짜에 지정한 개월 수 이후 날짜 데이터를 반환하는 함수.
 [사용 형태]
@@ -637,7 +646,7 @@ SELECT SYSDATE
   FROM DUAL;
 
 
--- STUDY MONTHS_BETWEEN --
+-- STUDY MONTHS_BETWEEN
 /*
 MONTHS_BETWEEN() : 두 날짜 간의 개월 수 차이를 구하는 MONTHS_BETWEEN 함수
 [NOTE] 소수점 단위까지 결과값이 나오므로 TRUNC 함수를 활용해 정수로 출력할 수 있음.
@@ -655,7 +664,7 @@ SELECT EMPNO
   FROM EMP;
   
 
--- STUDY NEXT_DAY, LAST_DAY --
+-- STUDY NEXT_DAY, LAST_DAY
 /*
 NEXT_DAY() : 특정 날짜를 기준으로 돌아오는 요일의 날짜를 출력해 주는 함수
 LAST_DAY() : 특정 날짜가 속한 달의 마지막 날짜를 출력해 주는 함수
@@ -669,7 +678,7 @@ SELECT SYSDATE
      , LAST_DAY(SYSDATE)
   FROM DUAL;
   
--- STUDY ROUND, TRUNC II(날짜 함수와 사용) --
+-- STUDY ROUND, TRUNC II(날짜 함수와 사용)
 /*
 ROUND(), TRUNC() : 숫자 데이터의 반올림, 버림 처리가 아닌 날짜 데이터에도 사용.
 소수점 위치 정보가 아닌 기준 포맷값을 지정해 줌.
@@ -711,7 +720,7 @@ SELECT SYSDATE
   
 
 /** 형 변환 함수 **/
--- STUDY TO_CHAR --
+-- STUDY TO_CHAR
 SELECT EMPNO, ENAME, EMPNO + '500'
   FROM EMP
  WHERE ENAME = 'SMITH';
@@ -816,7 +825,7 @@ SELECT SAL
   FROM EMP;
   
   
--- STUDY TO_NUMBER --
+-- STUDY TO_NUMBER
 /*
 TO_NUMBER() : 문자 데이터를 숫자 데이터로 변환. 주로 숫자 데이터가 가공된 문자 데이터로 
 저장되어 있고 그 데이터를 산술 연산에 사용하고자 할 경우 사용하는 함수
@@ -828,7 +837,7 @@ SELECT TO_NUMBER('1,300', '999,999') - TO_NUMBER('1,500', '999,999')
   FROM DUAL;
   
 
--- STUDY TO_DATE --
+-- STUDY TO_DATE
 /*
 TO_DATE() : 문자열 데이터를 날짜 데이터로 변환하는 함수
 [사용 형태]
@@ -858,7 +867,7 @@ SELECT *
  
  
 /** NULL 관련 함수 **/
--- STUDY NVL, NVL2 --
+-- STUDY NVL, NVL2
 /*
 NVL() : 열 또는 데이터를 입력하여 해당 데이터가 NULL이 아닐 경우 데이터를 그대로 반환하고,
 NULL인 경우 지정한 데이터를 반환하는 함수
@@ -888,7 +897,7 @@ SELECT EMPNO
   
   
 /** 조건 관련 함수 **/
--- STUDY DECODE, CASE --
+-- STUDY DECODE, CASE
 /*
 DECODE() : 프로그래밍 언어의 switch-case문과 유사. 기준이 되는 데이터를 먼저 지정한 후 해당
 데이터의 값에 따라 다른 결과값을 내보내는 함수
@@ -1001,7 +1010,7 @@ MAX(DISTINCT/ALL(선택), 최댓값을 구할 열/연산자/함수를 사용한 데이터(필수)) OVER
 MIN(DISTINCT/ALL(선택), 최솟값을 구할 열/연산자/함수를 사용한 데이터(필수)) OVER(분석을 위한 문법)(선택)
 AVG(DISTINCT/ALL(선택), 평균값을 구할 열/연산자/함수를 사용한 데이터(필수)) OVER(분석을 위한 문법)(선택)
 */
--- STUDY SUM --
+-- STUDY SUM
 SELECT SUM(SAL)
   FROM EMP;
   
@@ -1027,7 +1036,7 @@ SELECT SUM(SAL)
   FROM EMP;
 
 
--- STUDY COUNT --
+-- STUDY COUNT
 SELECT COUNT(*)
   FROM EMP;
   
@@ -1048,7 +1057,7 @@ SELECT COUNT(COMM)
  WHERE COMM IS NOT NULL;
 
 
--- STUDY MAX, MIN --
+-- STUDY MAX, MIN
 SELECT MAX(SAL)
   FROM EMP
  WHERE DEPTNO = 10;
@@ -1069,7 +1078,7 @@ SELECT MIN(HIREDATE)
  WHERE DEPTNO = 20;
  
  
--- STUDY AVG --
+-- STUDY AVG
 SELECT AVG(SAL)
   FROM EMP
  WHERE DEPTNO = 30;
@@ -1084,7 +1093,7 @@ SELECT AVG(COMM)
  WHERE DEPTNO = 30;
 
 
--- STUDY GROUP BY --
+-- STUDY GROUP BY
 -- 각 부서별 평균 급여 출력하기
 SELECT AVG(SAL) FROM EMP WHERE DEPTNO = 10
 UNION ALL
@@ -1118,7 +1127,7 @@ ORA-00979: not a GROUP BY expression
 */
 
 
--- STUDY HAVING --
+-- STUDY HAVING
 /*
 HAVING : 출력 그룹을 제한하는 조건식. GROUP BY절에 조건을 줄 때 사용함. 즉, GROUP BY가 
 있을 때만 사용 가능
@@ -1173,7 +1182,7 @@ ORDER BY DEPTNO, JOB;
 
 
 /** 그룹화와 관련된 여러 함수 **/
--- STUDY ROLLUP, CUBE --
+-- STUDY ROLLUP, CUBE
 /*
 ROLLUP(), CUBE() : 그룹화 데이터의 합계를 함께 출력하는 데 사용하는 함수.
 [ROLLUP()]
@@ -1224,7 +1233,7 @@ GROUP BY DEPTNO, ROLLUP(JOB);
 GROUP BY JOB, ROLLUP(DEPTNO);
 
 
--- STUDY GROUPING SETS --
+-- STUDY GROUPING SETS
 /*
 GROUPING SETS() : 같은 수준의 그룹화 열이 여러 개일 때 각 열별 그룹화를 통해 결과값을 출력
 하는 데 사용하는 함수. 지정한 모든 열을 각각 대그룹으로 처리하여 출력.
@@ -1242,7 +1251,7 @@ GROUP BY GROUPING SETS(DEPTNO, JOB)
 ORDER BY DEPTNO, JOB;
 
 
--- STUDY GROUPING, GROUPING_ID --
+-- STUDY GROUPING, GROUPING_ID
 /*
 GROUPING() : ROLLUP() 또는 CUBE() 함수를 사용한 GROUP BY절에 그룹화 대상으로 지정한
 열이 그룹화된 상태로 결과가 집계되었는지 확인하는 데 사용하는 함수. GROUP BY절에 명시된 열 중
@@ -1298,7 +1307,7 @@ GROUP BY CUBE(DEPTNO, JOB)
 ORDER BY DEPTNO, JOB;
 
 
--- STUDY LISTAGG --
+-- STUDY LISTAGG
 /*
 LISTAGG() : 오라클 11g 버전부터 사용 가능한 함수. 그룹에 속해 있는 데이터를 가로로 나열할 때
 사용함.
@@ -1324,7 +1333,7 @@ GROUP BY DEPTNO, ENAME;
 GROUP BY DEPTNO;
 
 
--- STUDY PIVOT, UNPIVOT --
+-- STUDY PIVOT, UNPIVOT
 /*
 PIVOT() : 오라클 11g 버전부터 사용 가능한 함수. 기존 테이블 행을 열로 바꾸어 출력함.
 UNPIVOT() : 오라클 11g 버전부터 사용 가능한 함수. 기존 테이블 열을 행으로 바꾸어 출력함.
@@ -1444,7 +1453,7 @@ ORDER BY DEPTNO;
 
 
 /** JOIN **/
--- STUDY JOIN --
+-- STUDY JOIN
 /* JOIN : 두 개 이상의 테이블을 연결하여 하나의 테이블처럼 출력할 때 사용하는 방식. */
   SELECT *
     FROM EMP, DEPT
@@ -1482,7 +1491,7 @@ ORDER BY EMPNO;
 ORDER BY EMPNO;
 
 
--- STUDY EQUI JOIN --
+-- STUDY EQUI JOIN
 /*
 등가 조인(EQUI JOIN) = 내부 조인(INNER JOIN) = 단순 조인(SIMPLE JOIN)
 - 출력 행을 각 테이블의 특정 열에 일치한 데이터를 기준으로 선정하는 조인 방식 
@@ -1515,7 +1524,7 @@ SELECT E.EMPNO, E.ENAME, E.SAL, D.DEPTNO, D.DNAME, D.LOC
 ORDER BY E.EMPNO;
 
 
--- STUDY NON-EQUI JOIN --
+-- STUDY NON-EQUI JOIN
 /* 비등가 조인(NON-EQUI JOIN) : 등가 조인 외의 조인 방식 */
 SELECT * FROM EMP;
 SELECT * FROM SALGRADE;
@@ -1525,7 +1534,7 @@ SELECT *
  WHERE E.SAL BETWEEN S.LOSAL AND S.HISAL;
 
 
--- STUDY SELF JOIN --
+-- STUDY SELF JOIN
 /* 자체 조인(SELF JOIN) : 하나의 테이블을 여러 개의 테이블처럼 활용하여 조인하는 조인 방식 */
 SELECT E1.EMPNO
      , E1.ENAME
@@ -1536,7 +1545,7 @@ SELECT E1.EMPNO
  WHERE E1.MGR = E2.EMPNO;
  
 
--- STUDY OUTER JOIN --
+-- STUDY OUTER JOIN
 /*
 외부 조인(OUTER JOIN) : 어느 한쪽의 데이터가 NULL이더라도 결과를 출력할 때 포함시켜야 
 하는 경우 강제로 출력할 때 사용하는 조인 방식
@@ -1571,7 +1580,7 @@ STUDY SQL-99 표준 문법 JOIN : 다른 DBMS에서도 사용 가능한 JOIN의 표준 문법. 주로
 */
 
 
--- STUDY NATURAL JOIN --
+-- STUDY NATURAL JOIN
 /*
 NATURAL JOIN : 등가 조인을 대신해 사용할 수 있는 조인 방식. 조인 대상이 되는 두 테이블에 
 이름과 자료형이 같은 열을 찾은 후 그 열을 기준으로 등가 조인을 해 주는 방식. 기존 등가 조인과 
@@ -1591,7 +1600,7 @@ NATURAL JOIN : 등가 조인을 대신해 사용할 수 있는 조인 방식. 조인 대상이 되는 두 
 ORDER BY DEPTNO, E.EMPNO;
 
 
--- STUDY JOIN ~ USING --
+-- STUDY JOIN ~ USING
 /*
 JOIN ~ USING : 등가 조인을 대신해 사용할 수 있는 조인 방식. NATURAL JOIN과 다르게 USING 
 키워드에 조인 기준으로 사용할 열을 명시하여 사용함.
@@ -1613,7 +1622,7 @@ FROM TABLE1 JOIN TABLE2 USING (조인에 사용할 기준열)
 ORDER BY DEPTNO, E.EMPNO;
 
 
--- STUDY JOIN ~ ON --
+-- STUDY JOIN ~ ON
 /*
 JOIN ~ ON : 가장 범용성 있는 조인 방식. 기존 WHERE 절에 있는 조인 조건식을 ON 키워드 옆에 
 작성함. 조인 기준 조건식은 ON에 명시하고 그 밖의 출력 행을 걸러 내기 위해 WHERE 조건식을 따로 
@@ -1635,7 +1644,7 @@ FROM TABLE1 JOIN TABLE2 ON (조인 조건식)
 ORDER BY E.DEPTNO, EMPNO;
 
 
--- STUDY OUTER JOIN(SQL-99) --
+-- STUDY OUTER JOIN(SQL-99)
 /*
 OUTER JOIN(SQL-99) : WHERE절이 아닌 FROM절에서 외부 조인을 선언함
 [사용 형태]
@@ -1804,7 +1813,7 @@ ORDER BY D.DEPTNO, E.EMPNO;
 
 
 /** 서브쿼리 **/
--- STUDY subquery --
+-- STUDY subquery
 /*
 [NOTE] 서브쿼리의 특징
 1. 서브쿼리는 연산자와 같은 비교 또는 조회 대상의 오른쪽에 놓이며 괄호 ()로 묶어서 사용함
@@ -1838,7 +1847,7 @@ SELECT *
                WHERE ENAME = 'ALLEN');
                
 
--- STUDY 단일행 서브쿼리 --
+-- STUDY 단일행 서브쿼리
 /*
 [NOTE] 테이블에 비교 대상에 해당하는 데이터가 여럿 있으면 오류가 발생하여 실행되지 못함
 EX) JONES의 급여보다 높은 급여를 받는 사원 목록
@@ -1878,7 +1887,7 @@ SELECT E.EMPNO
                    FROM EMP);
                    
 
--- STUDY 다중행 서브쿼리 --
+-- STUDY 다중행 서브쿼리
 /*
 [NOTE] 서브쿼리 결과가 여러 개이므로 단잉행 연산자 사용 불가. 다중행 연산자를 사용해야 
 메인쿼리와 비교를 할 수 있음.
@@ -1888,7 +1897,7 @@ ANY, SOME             메인쿼리의 조건식을 만족하는 서브쿼리의 결과가 하나 이상이
 ALL                   메인쿼리의 조건식을 서브쿼리의 결과 모두가 만족하면 true
 EXISTS                서브쿼리의 결과가 존재하면(즉, 행이 1개 이상일 경우) true
 */
--- STUDY IN --
+-- STUDY IN
 SELECT *
   FROM EMP
  WHERE DEPTNO IN (20, 30);
@@ -1900,7 +1909,7 @@ SELECT *
                GROUP BY DEPTNO);
 
 
--- STUDY ANY, SOME --
+-- STUDY ANY, SOME
 SELECT *
   FROM EMP
  WHERE SAL = ANY (  SELECT MAX(SAL)
@@ -1941,7 +1950,7 @@ SELECT *
                    WHERE DEPTNO = 30);
      
                    
--- STUDY ALL --
+-- STUDY ALL
 SELECT *
   FROM EMP
  WHERE SAL < ALL (SELECT SAL
@@ -1955,7 +1964,7 @@ SELECT *
                    WHERE DEPTNO = 30);
                    
                    
--- STUDY EXISTS --
+-- STUDY EXISTS
 SELECT *
   FROM EMP
  WHERE EXISTS (SELECT DNAME
@@ -1976,7 +1985,7 @@ SELECT *
                         WHERE DEPTNO = 10);
                         
                         
--- STUDY 다중열 서브쿼리 --
+-- STUDY 다중열 서브쿼리
 /*
 다중열 서브쿼리 = 복수열 서브쿼리
 SELECT절에 비교할 데이터를 여러 개 지정하는 방식. 메인쿼리에 비교할 열을 괄호로 묶어 명시하고 
@@ -1989,7 +1998,7 @@ SELECT *
                         GROUP BY DEPTNO);
 
 
--- FROM절에 사용하는 서브쿼리와 WITH절 --             
+-- FROM절에 사용하는 서브쿼리와 WITH절             
 /* FROM절에 사용하는 서브쿼리를 인라인 뷰(inline view)라고도 함. */
 
 SELECT E10.EMPNO, E10.ENAME, E10.DEPTNO, D.DNAME, D.LOC
@@ -2026,7 +2035,7 @@ SELECT E10.EMPNO, E10.ENAME, E10.DEPTNO, D.DNAME, D.LOC
 ORDER BY DEPTNO, SAL;
 
 
--- SELECT절에 사용하는 서브쿼리 --
+-- SELECT절에 사용하는 서브쿼리
 /* SELECT절에 사용하는 서브쿼리를 스칼라 서브쿼리(scalar subquery)라고도 함. */
 SELECT EMPNO
      , ENAME
@@ -2102,7 +2111,7 @@ SELECT EMPNO
 
 
 /** 데이터 조작어(DML, Data Manipulation Language) **/
--- STUDY CREATE TABLE --
+-- STUDY CREATE TABLE
 CREATE TABLE DEPT_TEMP
     AS SELECT * FROM DEPT;
 -- DEPT 테이블을 복사해서 DEPT_TEMP 테이블 만들기
@@ -2160,7 +2169,7 @@ CREATE TABLE EMP_TEMP
 SELECT * FROM EMP_TEMP;
 
 
--- INSERT로 날짜 데이터 입력하기 --
+-- INSERT로 날짜 데이터 입력하기
 INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
      VALUES (9999, '홍길동', 'PRESIDENT', NULL, '2001/01/01', 5000, 1000, 10);
      
@@ -2191,7 +2200,7 @@ INSERT INTO EMP_TEMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
 SELECT * FROM EMP_TEMP;
 
 
--- STUDY 서브쿼리를 사용하여 한 번에 여러 데이터 추가하기 --
+-- STUDY 서브쿼리를 사용하여 한 번에 여러 데이터 추가하기
 /*
 [NOTE] INSERT문에서 서브쿼리 사용할 때 유의할 점
 1. VALUES절을 사용하지 않는다.
@@ -2243,7 +2252,7 @@ UPDATE EMP_TEMP
 SELECT * FROM EMP_TEMP;
 
 
--- STUDY 서브쿼리를 사용하여 데이터 수정하기 --
+-- STUDY 서브쿼리를 사용하여 데이터 수정하기
 -- 여러 열을 한 번에 수정하는 경우
 UPDATE DEPT_TEMP2
    SET (DNAME, LOC) = (SELECT DNAME, LOC
@@ -2416,7 +2425,7 @@ UPDATE ACCOUNT
 */
 
 
--- STUDY TCL(Transaction Control Language) --
+-- STUDY TCL(Transaction Control Language)
 CREATE TABLE DEPT_TCL
     AS SELECT *
          FROM DEPT;
@@ -2479,7 +2488,7 @@ LOCK이 발생하는 SQL문을 사용하고 COMMIT, ROLLBACK을 하지 않으면 다른 사용자의 작
 
 /** STUDY 데이터 정의어(DDL : Data Definition Language) **/
 /* [NOTE] DDL은 수행할 경우 바로 COMMIT이 됨(즉 ROLLBACK을 통한 실행 취소가 불가함) */
--- STUDY CREATE --
+-- STUDY CREATE
 /*
 CREATE TABLE [소유 계정.]테이블명(
   열1이름 열1자료형,
@@ -2522,7 +2531,7 @@ DESC DEPT_DDL;
 
 SELECT * FROM DEPT_DDL;
 
--- 기존 테이블의 열 구조와 일부 데이터만 복사하여 테이블 생성하기 --
+-- 기존 테이블의 열 구조와 일부 데이터만 복사하여 테이블 생성하기
 CREATE TABLE EMP_DDL_30
     AS SELECT *
          FROM EMP
@@ -2530,7 +2539,7 @@ CREATE TABLE EMP_DDL_30
         
 SELECT * FROM EMP_DDL_30;
 
--- 기존 테이블의 열 구조만 복사하여 테이블 생성하기 --
+-- 기존 테이블의 열 구조만 복사하여 테이블 생성하기
 CREATE TABLE EMPDEPT_DDL
   AS SELECT E.EMPNO, E.ENAME, E.JOB, E.MGR, E.HIREDATE,
             E.SAL, E.COMM, D.DEPTNO, D.DNAME, D.LOC
@@ -2545,7 +2554,7 @@ SELECT * FROM EMPDEPT_DDL;
 */
 
 
--- STUDY ALTER:ADD, RENAME, MODIFY, DROP --
+-- STUDY ALTER:ADD, RENAME, MODIFY, DROP
 /*
 ALTER : 테이블에 새 열을 추가 또는 삭제하거나 열의 자료형 또는 길이를 변경하는 등 테이블 구조 
 변경과 관련된 기능을 수행하는 명령어
@@ -3168,7 +3177,7 @@ SELECT OWNER, CONSTRAINT_NAME, CONSTRAINT_TYPE, TABLE_NAME
   FROM USER_CONSTRAINTS;
   
 
--- 제약 조건 삭제 --
+-- 제약 조건 삭제
 ALTER TABLE TABLE_NOTNULL2
 DROP CONSTRAINT TBLNN2_TEL_NN;
 
@@ -3860,4 +3869,779 @@ END;
 SERVEROUTPUT : 실행 결과를 화면에 출력하기 위해 해당 환경 변수 값을 ON으로 변경해 주어야 함.
 PUT_LINE : 화면 출력을 위해 오라클에서 기본으로 제공하며 DBMS_OUTPUT 패키지에 속해 있음.
 
+[PL/SQL문 작성 시 유의 사항]
+1. PL/SQL 블록을 구성하는 DECLARE, BEGIN, EXCEPTION 키워드에는 세미콜론(;)을 사용하지 않음
+2. PL/SQL 블록의 각 부분에서 실행해야 하는 문장 끝에는 세미콜론(;)을 사용
+3. PL/SQL문 내부에서 한 줄 주석과 여러 줄 주석을 사용 가능 
+4. PL/SQL문 작성을 마치고 실행하기 위해 마지막에 슬래시(/) 사용
+*/
+
+-- 한 줄 주석 사용하기
+DECLARE
+V_EMPNO NUMBER(4) := 7788;
+V_ENAME VARCHAR2(10);
+BEGIN
+V_ENAME := 'SCOTT';
+-- DBMS_OUTPUT.PUT_LINE('V_EMPNO : ' || V_EMPNO);
+DBMS_OUTPUT.PUT_LINE('V_ENAME : ' || V_ENAME);
+END;
+/
+
+-- 여러 줄 주석 사용하기
+DECLARE
+V_EMPNO NUMBER(4) := 7788;
+V_ENAME VARCHAR2(10);
+BEGIN
+V_ENAME := 'SCOTT';
+/*
+DBMS_OUTPUT.PUT_LINE('V_EMPNO : ' :: V_EMPNO);
+DBMS_OUTPUT.PUT_LINE('V_ENAME : ' :: V_ENAME);
+*/
+END;
+/
+
+-- P.422 예제
+/*
+1. 블록 / 2. DECLARE / 3. BEGIN / 4. END
+*/
+
+
+-- 변수 선언과 값 대입
+/*
+변수(variable) : 데이터를 일시적으로 저장하는 요소. 이름과 저장할 자료형을 지정하여 선언부
+(DECLARE)에서 작성. 선언부에서 작성한 변수는 실행부(BEGIN)에서 활용
+
+[변수이름] [자료형] := 값 또는 값이 도출되는 여러 표현식;
+예) V_EMPNO NUMBER(4) := 7788;
+*/
+
+-- 변수 선언 및 변수 값 출력하기
+DECLARE
+  V_EMPNO NUMBER(4) := 7788;
+  V_ENAME VARCHAR2(10);
+BEGIN
+  V_ENAME := 'SCOTT';
+  DBMS_OUTPUT.PUT_LINE('V_EMPNO : ' || V_EMPNO);
+  DBMS_OUTPUT.PUT_LINE('V_ENAME : ' || V_ENAME);
+END;
+/
+
+-- 상수 정의하기
+/*
+상수(constant) : 한번 저장한 값이 프로그램이 종료될 때까지 유지되는 저장 요소. 기존 변수 
+선언에 CONSTANT 키워드를 지정.
+
+[변수이름] CONSTANT [자료형] := 값 또는 값을 도출하는 여러 표현식;
+*/
+
+-- 상수에 값 대입 후 출력
+DECLARE
+  V_TAX CONSTANT NUMBER(1) := 3;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_TEX : ' || V_TAX);
+END;
+/
+
+-- 변수의 기본값 지정하기
+/*
+DEFAULT 키워드로 변수에 저장할 기본 값을 지정.
+
+[변수명] [자료형] DEFAULT [값 또는 도출되는 여러 표현식];
+*/
+
+-- 변수에 기본값을 설정한 후 출력하기
+DECLARE
+  V_DEPTNO NUMBER(2) DEFAULT 10;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO);
+END;
+/
+
+-- 변수에 NULL 값 저장 막기
+/*
+[변수명] [자료형] NOT NULL [:= 또는 DEFAULT 값 또는 값이 도출되는 여러 표현식];
+*/
+
+-- 변수에 NOT NULL을 설정하고 값을 대입한 후 출력하기
+DECLARE
+  V_DEPTNO NUMBER(2) NOT NULL := 10;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO);
+END;
+
+-- 변수에 NOT NULL 및 기본값을 설정한 후 출력하기
+DECLARE
+  V_DEPTNO NUMBER(2) NOT NULL DEFAULT 10;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO);
+END;
+
+/*
+[변수 이름 정하기]
+식별자(identifier) : PL/SQL문에서 지정하는 객체 이름
+1. 같은 블록 안에서는 식별자는 고유해야 함(중복 불가)
+2. 대소문자를 구별하지 않음
+3. 테이블 이름 붙이는 규칙과 같은 규칙을 따름
+  - 이름은 문자로 시작해야 함(숫자로 시작 불가)
+  - 이름은 30byte 이하여야 함(영어는 30자, 한글은 15자까지 사용 가능)
+  - 이름은 영문자(한글 가능), 숫자(0-9), 특수문자($, #, _)를 사용할 수 있음
+  - SQL 키워드는 식별자 이름으로 사용할 수 없음(SELECT, FROM 등)
+
+[변수의 자료형]
+변수에 저장할 데이터가 어떤 종류인지를 특정 짓기 위해 사용하는 자료형은 크게 스칼라(scalar), 
+복합(composite), 참조(reference), LOB(Large Object)로 구분.
+
+#스칼라형
+숫자, 문자열, 날짜 등과 같이 오라클에서 기본으로 정의해 놓은 자료형
+-> NUMBER, CHAR, VARCHAR2, DATE, BOOLEAN 등
+
+#참조형
+오라클 데이터베이스에 존재하는 특정 테이블 열의 자료형이나 하나의 행 구조를 참조하는 자료형
+
+%TYPE : 열을 참조할 때 사용
+%ROWTYPE : 행을 참조할 때 사용
+
+[변수명] 테이블이름.열이름%TYPE;
+[변수명] 테이블이름%ROWTYPE;
+
+이때 %TYPE으로 선언한 변수는 지정한 테이블 열과 완전히 같은 자료형이 됨
+*/
+
+-- 참조형(열)의 변수에 값을 대입한 후 출력하기
+DECLARE
+  V_DEPTNO DEPT.DEPTNO%TYPE := 50;
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('V_DEPTNO : ' || V_DEPTNO);
+END;
+/
+
+-- 참조형(행)의 변수에 값을 대입한 후 출력하기
+DECLARE
+  V_DEPT_ROW DEPT%ROWTYPE;
+BEGIN
+  SELECT DEPTNO, DNAME, LOC INTO V_DEPT_ROW
+    FROM DEPT
+   WHERE DEPTNO = 40;
+  DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || V_DEPT_ROW.DEPTNO);
+  DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+  DBMS_OUTPUT.PUT_LINE('LOC : ' || V_DEPT_ROW.LOC);
+END;
+/
+
+-- 복합형, LOB형
+/*
+스칼라형과 참조형 외 PL/SQL에서는 복합형(composite type)과 LOB형을 사용 가능.
+
+- 복합형 : 여러 종류 및 개수의 데이터를 저장하기 위해 사용자가 직접 정의하는 자료형.
+  컬렉션(collection), 레코드(record)로 구분됨.
+- LOB형 : 대용량의 텍스트, 이미지, 동영상, 사운드 데이터 등 대용량 데이터를 저장하기 위한 
+  자료형으로 대표적으로 BLOB, CLOB 등이 있음
+*/
+
+-- P.430 예제
+/*
+1. 스칼라형 / 2. 참조형
+*/
+
+
+/* STUDY 조건 제어문 */
+-- IF 조건문
+/*
+PL/SQL에서 제공하는 IF 조건문은 다음과 같이 세 가지 방식을 사용 가능
+
+IF-THEN : 특정 조건을 만족하는 경우 작업 수행
+IF-THEN-ELSE : 특정 조건을 만족하는 경우와 반대 경우에 각각 지정한 작업 수행
+IF-THEN-ELSIF : 여러 조건에 따라 각각 지정한 작업 수행
+
+[IF-THEN]
+IF 조건식 THEN
+  수행할 명령어;
+END IF;
+
+[IF-THEN-ELSE]
+IF 조건식 THEN
+  수행할 명령어;
+ELSE
+  수행할 명령어;
+END IF;
+
+[IF-THEN-ELSIF]
+IF 조건식 THEN
+  수행할 명령어;
+ELSIF 조건식
+  수행할 명령어;
+ELSIF 조건식
+  수행할 명령어;
+...
+ELSE
+  수행할 명령어;
+END IF;
+*/
+
+-- 변수에 입력된 값이 홀수인지 알아보기(입력 값이 홀수일 때)
+DECLARE
+  V_NUMBER NUMBER := 13;
+BEGIN
+  IF MOD(V_NUMBER, 2) = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('V_NUMBER는 홀수입니다!');
+  END IF;
+END;
+/
+
+-- 변수에 입력된 값이 홀수인지 알아보기(입력 값이 짝수일 때)
+DECLARE
+  V_NUMBER NUMBER := 14;
+BEGIN
+  IF MOD(V_NUMBER, 2) = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('V_NUMBER는 홀수입니다!');
+  END IF;
+END;
+/
+
+-- 변수에 입력된 값이 홀수인지 짝수인지 알아보기(입력 값이 짝수일 때)
+DECLARE
+  V_NUMBER NUMBER := 14;
+BEGIN
+  IF MOD(V_NUMBER, 2) = 1 THEN
+    DBMS_OUTPUT.PUT_LINE('V_NUMBER는 홀수입니다!');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('V_NUMBER는 짝수입니다!');
+  END IF;
+END;
+/
+
+-- 입력한 점수가 어느 학점인지 출력하기(IF-THEN-ELSIF 사용)
+DECLARE
+  V_SCORE NUMBER := 87;
+BEGIN
+  IF V_SCORE >= 90 THEN
+    DBMS_OUTPUT.PUT_LINE('A학점');
+  ELSIF V_SCORE >= 80 THEN
+    DBMS_OUTPUT.PUT_LINE('B학점');
+  ELSIF V_SCORE >= 70 THEN
+    DBMS_OUTPUT.PUT_LINE('C학점');
+  ELSIF V_SCORE >= 60 THEN
+    DBMS_OUTPUT.PUT_LINE('D학점');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('F학점');
+  END IF;
+END;
+/
+
+-- CASE 조건문
+/*
+CASE 조건문은 다음과 같이 두 가지 방식을 사용 가능
+
+- 단순 CASE문 : 비교 기준이 되는 조건의 값이 여러 가지일 때 해당 값만 명시하여 작업 수행
+- 검색 CASE문 : 특정한 비교 기준 없이 여러 조건식을 나열하여 조건식에 맞는 작업 수행
+
+[단순 CASE문]
+CASE 비교 기준
+  WHEN 값1 THEN
+    수행할 명령어;
+  WHEN 값2 THEN
+    수행할 명령어;
+  WHEN 값3 THEN
+    수행할 명령어;
+  ...
+  ELSE
+    수행할 명령어;
+END CASE;
+
+[검색 CASE문]
+CASE 비교 기준
+  WHEN 조건식1 THEN
+    수행할 명령어;
+  WHEN 조건식2 THEN
+    수행할 명령어;
+  WHEN 조건식3 THEN
+    수행할 명령어;
+  ...
+  ELSE
+    수행할 명령어;
+END CASE;
+*/
+
+-- 입력 점수에 따른 학점 출력하기(단순 CASE 사용)
+DECLARE
+  V_SCORE NUMBER := 87;
+BEGIN
+  CASE TRUNC(V_SCORE/10)
+    WHEN 10 THEN DBMS_OUTPUT.PUT_LINE('A학점');
+    WHEN 9 THEN DBMS_OUTPUT.PUT_LINE('A학점');
+    WHEN 8 THEN DBMS_OUTPUT.PUT_LINE('B학점');
+    WHEN 7 THEN DBMS_OUTPUT.PUT_LINE('C학점');
+    WHEN 6 THEN DBMS_OUTPUT.PUT_LINE('D학점');
+    ELSE DBMS_OUTPUT.PUT_LINE('F학점');
+  END CASE;
+END;
+/
+
+/* STUDY 반복 제어문 */
+/*
+[반복 제어문의 종류와 설명]
+- 기본 LOOP : 기본 반복문
+- WHILE LOOP : 특정 조건식의 결과를 통해 반복 수행
+- FOR LOOP : 반복 횟수를 정하여 반복 수행
+- Cusor LOOP : 커서를 활용한 반복 수행
+
+[반복 수행 중단 명령어]
+- EXIT : 수행 중인 반복 종료
+- EXIT-WHEN : 반복 종료를 위한 조건식 지정, 만족하면 반복 종료
+- CONTINUE : 수행 중인 반복의 현재 주기를 건너 뜀
+- CONTINUE-WHEN : 특정 조건식을 지정하고 조건식을 만족하면 현재 반복 주기를 건너뜀
+
+[기본 LOOP]
+LOOP
+  반복 수행 작업;
+END LOOP;
+
+[WHILE LOOP]
+WHILE 조건식 LOOP
+  반복 수행 작업;
+END LOOP;
+
+[FOR LOOP]
+FOR i IN 시작 값 .. 종료 값 LOOP
+  반복 수행 작업;
+END LOOP;
+
+[FOR LOOP] - 종료값을 역순으로 반복하고 싶을 때
+FOR i IN REVERSE 시작 값 .. 종료 값 LOOP
+  반복 수행 작업;
+END LOOP;
+*/
+
+-- 기본 LOOP 사용하기(EXIT-WHEN)
+DECLARE
+  V_NUM NUMBER := 0;
+BEGIN
+  LOOP
+      DBMS_OUTPUT.PUT_LINE('현재 V_NUM : ' || V_NUM);
+      V_NUM := V_NUM + 1;
+      EXIT WHEN V_NUM > 4;
+  END LOOP;
+END;
+/
+
+-- 기본 LOOP 사용하기(EXIT, IF)
+DECLARE
+  V_NUM NUMBER := 0;
+BEGIN
+  LOOP
+      DBMS_OUTPUT.PUT_LINE('현재 V_NUM : ' || V_NUM);
+      V_NUM := V_NUM + 1;
+      IF V_NUM > 4 THEN
+        EXIT;
+      END IF;
+  END LOOP;
+END;
+/
+
+-- WHILE LOOP 사용하기
+DECLARE
+  V_NUM NUMBER := 0;
+BEGIN
+  WHILE V_NUM < 4 LOOP
+    DBMS_OUTPUT.PUT_LINE('현재 V_NUM : ' || V_NUM);
+    V_NUM := V_NUM + 1;
+  END LOOP;
+END;
+/
+
+-- FOR LOOP 사용하기
+BEGIN
+  FOR i IN 0..4 LOOP
+    DBMS_OUTPUT.PUT_LINE('현재 i의 값 : ' || i);
+  END LOOP;
+END;
+/
+
+-- FOR LOOP 사용하기(REVERSE)
+BEGIN
+  FOR i IN REVERSE 0..4 LOOP
+    DBMS_OUTPUT.PUT_LINE('현재 i의 값 : ' || i);
+  END LOOP;
+END;
+/
+
+-- FOR LOOP 안에 CONTINUE문 사용하기
+BEGIN
+  FOR i IN 0..4 LOOP
+    CONTINUE WHEN MOD(i, 2) = 1;
+    DBMS_OUTPUT.PUT_LINE('현재 i의 값 : ' || i);
+  END LOOP;
+END;
+/
+
+-- P.444 예제
+-- Q1.
+SET SERVEROUTPUT ON;
+BEGIN
+  FOR i IN 0..10 LOOP
+    CONTINUE WHEN MOD(i, 2) = 0;
+    DBMS_OUTPUT.PUT_LINE('현재 i의 값 : ' || i);
+  END LOOP;
+  DBMS_OUTPUT.PUT_LINE('PL/SQL 처리가 정상적으로 완료되었습니다.');
+END;
+
+-- Q2.
+DECLARE
+  V_DEPTNO DEPT.DEPTNO%TYPE := 20;
+  V_DEPT_ROW DEPT%ROWTYPE;
+BEGIN
+  SELECT DEPTNO, DNAME, LOC INTO V_DEPT_ROW
+    FROM DEPT
+   WHERE DEPTNO = V_DEPTNO;
+  CASE V_DEPTNO
+    WHEN 10 THEN DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+    WHEN 20 THEN DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+    WHEN 30 THEN DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+    WHEN 40 THEN DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+    ELSE DBMS_OUTPUT.PUT_LINE('DNAME : N/A');
+  END CASE;
+  DBMS_OUTPUT.PUT_LINE('PL/SQL 처리가 정상적으로 완료되었습니다.');
+END;
+  
+  
+/* STUDY Record & Collection */
+-- 레코드(record)
+/*
+레코드(record) : 자료형이 각기 다른 데이터를 하나의 변수에 저장하는 데 사용.
+
+[기본 형식]
+TYPE 레코드명 IS RECORD(
+  [변수명] [자료형] [NOT NULL](선택) := (또는 DEFAULT)값 또는 값이 도출되는 여러 표현식(선택)
+)
+*/
+
+-- 레코드 정의해서 사용하기
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    deptno NUMBER(2) NOT NULL := 99,
+    dname DEPT.DNAME%TYPE,
+    loc DEPT.LOC%TYPE
+  );
+  dept_rec REC_DEPT;
+BEGIN
+  dept_rec.deptno := 99;
+  dept_rec.dname := 'DATABASE';
+  dept_rec.loc := 'SEOUL';
+  DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || dept_rec.deptno);
+  DBMS_OUTPUT.PUT_LINE('DNAME : ' || dept_rec.dname);
+  DBMS_OUTPUT.PUT_LINE('LOC : ' || dept_rec.loc);
+END;
+/
+
+-- 레코드를 사용한 INSERT
+CREATE TABLE DEPT_RECORD
+AS SELECT * FROM DEPT;
+
+SELECT * FROM DEPT_RECORD;
+
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    deptno NUMBER(2) NOT NULL := 99,
+    dname DEPT.DNAME%TYPE,
+    loc DEPT.LOC%TYPE
+  );
+  dept_rec REC_DEPT;
+BEGIN
+  dept_rec.deptno := 99;
+  dept_rec.dname := 'DATABASE';
+  dept_rec.loc := 'SEOUL';
+  
+INSERT INTO DEPT_RECORD
+VALUES dept_rec;
+END;
+/
+
+SELECT * FROM DEPT_RECORD;
+
+-- 레코드를 사용한 UPDATE
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    deptno NUMBER(2) NOT NULL := 99,
+    dname DEPT.DNAME%TYPE,
+    loc DEPT.LOC%TYPE
+  );
+  dept_rec REC_DEPT;
+BEGIN
+  dept_rec.deptno := 50;
+  dept_rec.dname := 'DB';
+  dept_rec.loc := 'SEOUL';
+  
+  UPDATE DEPT_RECORD
+  SET ROW = dept_rec
+  WHERE DEPTNO = 99;
+END;
+
+SELECT * FROM DEPT_RECORD;
+
+-- 레코드에 다른 레코드 포함하기
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    deptno DEPT.DEPTNO%TYPE,
+    dname DEPT.DNAME%TYPE,
+    loc DEPT.LOC%TYPE
+  );
+  TYPE REC_EMP IS RECORD(
+    empno EMP.EMPNO%TYPE,
+    ename EMP.ENAME%TYPE,
+    dinfo REC_DEPT
+  );
+  emp_rec REC_EMP;
+BEGIN
+  SELECT E.EMPNO, E.ENAME, D.DEPTNO, D.DNAME, D.LOC
+  
+    INTO emp_rec.empno, emp_rec.ename, emp_rec.dinfo.deptno,
+         emp_rec.dinfo.dname, emp_rec.dinfo.loc
+    FROM EMP E, DEPT D
+   WHERE E.DEPTNO = D.DEPTNO
+   AND E.EMPNO = 7788;
+   DBMS_OUTPUT.PUT_LINE('EMPNO : ' || emp_rec.empno);
+   DBMS_OUTPUT.PUT_LINE('ENAME : ' || emp_rec.ename);
+   
+   DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || emp_rec.dinfo.deptno);
+   DBMS_OUTPUT.PUT_LINE('DNAME : ' || emp_rec.dinfo.dname);
+   DBMS_OUTPUT.PUT_LINE('LOC : ' || emp_rec.dinfo.loc);
+END;
+/
+
+
+-- 컬렉션(collection)
+/*
+PL/SQL에서 사용 가능한 컬렉션 종류
+1. 연관 배열(associative array (or index by table))
+2. 중첩 테이블(nested table)
+3. VARRAY(variable-size array)
+*/
+
+-- 연관 배열
+/*
+연관 배열 : 인덱스라고 불리는 키(key), 값(value)으로 구성되는 컬렉션. 중복되지 않은 유일한 
+키를 통해 값을 저장하고 불러오는 방식을 사용. 연관 배열을 정의할 때 자료형이 TABLE인 변수를 
+다음과 같이 작성
+
+TYPE 연관 배열 이름 IS TABLE OF 자료형[NOT NULL]
+INDEX BY 인덱스형;
+*/
+
+-- 연관 배열 사용하기
+DECLARE
+  TYPE ITAB_EX IS TABLE OF VARCHAR2(20)
+INDEX BY PLS_INTEGER;
+
+  text_arr ITAB_EX;
+  
+BEGIN
+  text_arr(1) := '1st data';
+  text_arr(2) := '2nd data';
+  text_arr(3) := '3rd data';
+  text_arr(4) := '4th data';
+  
+  DBMS_OUTPUT.PUT_LINE('text_arr(1) : ' || text_arr(1));
+  DBMS_OUTPUT.PUT_LINE('text_arr(2) : ' || text_arr(2));
+  DBMS_OUTPUT.PUT_LINE('text_arr(3) : ' || text_arr(3));
+  DBMS_OUTPUT.PUT_LINE('text_arr(4) : ' || text_arr(4));
+END;
+/
+
+-- 연관 배열 자료형에 레코드 사용하기
+DECLARE
+  TYPE REC_DEPT IS RECORD(
+    deptno DEPT.DEPTNO%TYPE,
+    dname DEPT.DNAME%TYPE
+  );
+  
+  TYPE ITAB_DEPT IS TABLE OF REC_DEPT
+    INDEX BY PLS_INTEGER;
+    
+  dept_arr ITAB_DEPT;
+  idx PLS_INTEGER := 0;
+  
+BEGIN
+  FOR i IN (SELECT DEPTNO, DNAME FROM DEPT) LOOP
+    idx := idx +1;
+    dept_arr(idx).deptno := i.DEPTNO;
+    dept_arr(idx).dname := i.DNAME;
+    
+    DBMS_OUTPUT.PUT_LINE(
+      dept_arr(idx).deptno || ' : ' || dept_arr(idx).dname);
+  END LOOP;
+END;
+/
+
+-- %ROWTYPE으로 연관 배열 자료형 지정하기
+DECLARE
+  TYPE ITAB_DEPT IS TABLE OF DEPT%ROWTYPE
+    INDEX BY PLS_INTEGER;
+    
+  dept_arr ITAB_DEPT;
+  idx PLS_INTEGER := 0;
+
+BEGIN
+  FOR i IN(SELECT * FROM DEPT) LOOP
+    idx := idx + 1;
+    dept_arr(idx).deptno := i.DEPTNO;
+    dept_arr(idx).dname := i.DNAME;
+    dept_arr(idx).loc := i.LOC;
+    
+    DBMS_OUTPUT.PUT_LINE(
+      dept_arr(idx).deptno || ' : ' ||
+      dept_arr(idx).dname || ' : ' ||
+      dept_arr(idx).loc);
+  END LOOP;
+END;
+/
+
+-- 컬렉션 메서드
+/*
+[컬렉션 메서드 종류 및 설명]
+EXIST(n) : 컬렉션에서 n인덱스의 데이터 존재 여부를 true/false로 반환
+COUNT : 컬렉션에 포함되어 있는 요소 개수를 반환 
+LIMIT : 현재 컬렉션의 최대 크기를 반환. 최대 크기가 없으면 NULL을 반환
+FIRST : 컬렉션의 첫 번째 인덱스 번호를 반환
+LAST : 컬렉션의 마지막 인덱스 번호를 반환
+PRIOR(n) : 컬렉션에서 n인덱스 바로 앞 인덱스값을 반환. 대상 인덱스 값이 존재하지 않으면 NULL을 반환
+NEXT(n) : 컬렉션에서 n인덱스 바로 다음 인덱스값을 반환. 대상 인덱스 값이 존재하지 않으면 NULL을 반환
+DELETE : 컬렉션에 저장된 요소를 지우는 데 사용
+ - DELETE : 컬렉션에 저장된 모든 요소를 삭제
+ - DELETE(n) : n인덱스의 컬렉션 요소를 삭제
+ - DELETE(n, m) : n인덱스부터 m인덱스까지 요소를 삭제
+EXTEND : 컬렉션의 크기를 증가시킴. 연관 배열을 제외한 중첩 테이블과 VARRAY에서 사용
+TRIM : 컬렉션의 크기를 감소시킴. 연관 배열을 제외한 중첩 테이블과 VARRAY에서 사용 
+*/
+
+-- 컬렉션 메서드 사용하기
+DECLARE
+  TYPE ITAB_EX IS TABLE OF VARCHAR2(20)
+INDEX BY PLS_INTEGER;
+
+  text_arr ITAB_EX;
+  
+BEGIN
+  text_arr(1) := '1st data';
+  text_arr(2) := '2nd data';
+  text_arr(3) := '3rd data';
+  text_arr(50) := '50th data';
+  
+  DBMS_OUTPUT.PUT_LINE('text_arr.COUNT : ' || text_arr.COUNT);
+  DBMS_OUTPUT.PUT_LINE('text_arr.FIRST : ' || text_arr.FIRST);
+  DBMS_OUTPUT.PUT_LINE('text_arr.LAST : ' || text_arr.LAST);
+  DBMS_OUTPUT.PUT_LINE('text_arr.PRIOR(50) : ' || text_arr.PRIOR(50));
+  DBMS_OUTPUT.PUT_LINE('text_arr.NEXT(50) : ' || text_arr.NEXT(50));
+  
+END;
+/
+
+-- P.456 예제
+/*
+1.복합 자료형 / 2.레코드 / 3.컬렉션
+*/
+
+-- PP.457-458 예제
+-- Q1.
+CREATE TABLE EMP_RECORD
+AS SELECT * FROM EMP;
+
+SELECT * FROM EMP_RECORD;
+
+DECLARE
+  TYPE REC_EMP IS RECORD(
+    empno EMP.EMPNO%TYPE := 1111,
+    ename EMP.ENAME%TYPE := 'TEST_USER',
+    job EMP.JOB%TYPE := 'TEST_JOB',
+    mgr EMP.MGR%TYPE,
+    hiredate EMP.HIREDATE%TYPE := TO_DATE('18/03/01'),
+    sal EMP.SAL%TYPE := 3000,
+    comm EMP.COMM%TYPE,
+    deptno DEPT.DEPTNO%TYPE := 40
+  );
+  emp_rec REC_EMP;
+BEGIN
+  INSERT INTO EMP_RECORD
+  VALUES emp_rec;
+END;
+/
+
+SELECT * FROM EMP_RECORD;
+
+desc EMP;
+
+-- Q2.
+DECLARE
+  TYPE ITAB_EMP IS TABLE OF EMP%ROWTYPE
+    INDEX BY PLS_INTEGER;
+    
+  emp_arr ITAB_EMP;
+  idx PLS_INTEGER := 0;
+
+BEGIN
+  FOR i IN(SELECT * FROM EMP) LOOP
+    idx := idx + 1;
+    emp_arr(idx).empno := i.EMPNO;
+    emp_arr(idx).ename := i.ENAME;
+    emp_arr(idx).job := i.JOB;
+    emp_arr(idx).mgr := i.MGR;
+    emp_arr(idx).hiredate := i.HIREDATE;
+    emp_arr(idx).sal := i.SAL;
+    emp_arr(idx).comm := i.COMM;
+    emp_arr(idx).deptno := i.DEPTNO;
+    
+    DBMS_OUTPUT.PUT_LINE(
+      emp_arr(idx).empno || ' : ' ||
+      emp_arr(idx).ename || ' : ' ||
+      emp_arr(idx).job || ' : ' ||
+      emp_arr(idx).mgr || ' : ' ||
+      emp_arr(idx).hiredate || ' : ' ||
+      emp_arr(idx).sal || ' : ' ||
+      emp_arr(idx).comm || ' : ' ||
+      emp_arr(idx).deptno);
+  END LOOP;
+END;
+
+
+/* STUDY 커서와 예외 처리 */
+/*
+커서(cursor) : SELECT문 또는 데이터 조작어 같은 SQL문을 실행했을 때 해당 SQL문을 처리하는 
+정보를 저장한 메모리 공간. 커서를 활용해 각 행 별로 특정 작업을 수행하도록 기능을 구현할 수 있음.
+*/
+
+-- SELECT INTO 방식
+/*
+SELECT 열1, 열2, ..., 열n INTO 변수1, 변수2, ..., 변수n
+FROM ...
+*/
+
+-- SELECT INTO를 사용한 단일행 데이터 저장하기
+DECLARE
+  V_DEPT_ROW DEPT%ROWTYPE;
+BEGIN
+  SELECT DEPTNO, DNAME, LOC INTO V_DEPT_ROW
+    FROM DEPT
+   WHERE DEPTNO = 40;
+  DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || V_DEPT_ROW.DEPTNO);
+  DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+  DBMS_OUTPUT.PUT_LINE('LOC : ' || V_DEPT_ROW.LOC);
+END;
+
+-- 명시적 커서 & 묵시적 커서
+/*
+[명시적 커서(explicit cursor)]
+명시적 커서 : 사용자가 직접 커서를 선언하고 사용하는 커서. 아래와 같은 단계를 거쳐 사용함.
+
+- 1단계 - 커서 선언(declaration) : 사용자가 직접 이름을 지정하여 사용할 커서를 SQL문과 
+  함께 선언
+- 2단계 - 커서 열기(open) : 커서를 선언할 때 작성한 SQL문을 실행. 이때 실행한 SQL문에 
+  영향을 받는 행을 active set라 함.
+- 3단계 - 커서에서 읽어온 데이터 사용(fetch) : 실행된 SQL문의 결과 행 정보를 하나씩 읽어 
+  와서 변수에 저장 후 필요한 작업을 수행. 각 행별로 공통 작업을 반복해서 실행하기 위해 여러 
+  종류의 LOOP문을 함께 사용할 수 있습니다.
+- 4단계 - 커서 닫기(close) : 모든 행의 사용이 끝나고 커서를 종료.
+
+[묵시적 커서(implicit cursor)]
+묵시적 커서 : 별다른 선언 없이 SQL문을 사용했을 때 오라클에서 자동으로 
+선언되는 커서. PL/SQL문 내부에서 DML명령어나 SELECT INTO문 등이 실행될 때 자동으로 생성 
+및 처리됨.
 */
