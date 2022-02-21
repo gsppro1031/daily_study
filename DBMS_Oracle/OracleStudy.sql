@@ -4640,8 +4640,448 @@ END;
   종류의 LOOP문을 함께 사용할 수 있습니다.
 - 4단계 - 커서 닫기(close) : 모든 행의 사용이 끝나고 커서를 종료.
 
+[명시적 커서 작성법]
+DECLARE
+  CURSOR [커서명] IS [SQL문]; -- 커서 선언(Declaration)
+BEGIN
+  OPEN [커서명];               -- 커서 열기(Open)
+  FETCH [커서명] INTO [변수]    -- 커서로부터 읽어온 데이터 사용(Fetch)
+  CLOSE [커서명];              -- 커서 닫기(Close)
+END;
+
+[여러 개의 행이 조회되는 경우(FOR LOOP문)]
+FOR [루프인덱스명] IN [커서명] LOOP
+  결과 행별로 반복 수행할 작업;
+END LOOP;
+
+[커서에 파라미터 사용하기]
+CURSOR [커서명](파라미터 이름 자료형, ...) IS
+SELECT ...
+
+[속성 및 설명]
+- 커서명%NOTFOUND : 수행된 FETCH문을 통해 추출된 행이 있으면 false, 없으면 true를 반환.
+- 커서명%FOUND : 수행된 FETCH문을 통해 추출된 행이 있으면 true, 없으면 false를 반환.
+- 커서명%ROWCOUNT : 현재까지 추출된 행 수를 반환.
+- 커서명%ISOPEN : 커서가 열려(open) 있으면 true, 닫혀(close) 있으면 false를 반환.
+
 [묵시적 커서(implicit cursor)]
 묵시적 커서 : 별다른 선언 없이 SQL문을 사용했을 때 오라클에서 자동으로 
 선언되는 커서. PL/SQL문 내부에서 DML명령어나 SELECT INTO문 등이 실행될 때 자동으로 생성 
 및 처리됨.
+
+- SQL%NOTFOUND : 묵시적 커서 안에 추출한 행이 있으면 false, 없으면 true를 반환. 
+  DML 명령어로 영향을 받는 행이 없을 경우에도 true를 반환.
+- SQL%FOUND : 묵시적 커서 안에 추출한 행이 있으면 true, 없으면 false를 반환. DML 명령어로 
+  영향을 받는 행이 있다면 true를 반환.
+- SQL%ROWCOUNT : 묵시적 커서에 현재까지 추출한 행 수 또는 DML 명령어로 영향받는 행 수를 반환.
+- SQL%ISOPEN : 묵시적 커서는 자동으로 SQL문을 실행한 후 CLOSE되므로 이 속성은 항상 false를 반환.
+*/
+
+SET SERVEROUTPUT ON;
+
+-- 단일행 데이터를 저장하는 커서 사용하기
+DECLARE
+-- 커서 데이터를 입력할 변수 선언
+  V_DEPT_ROW DEPT%ROWTYPE;
+
+-- 명시적 커서 선언(Declaration)
+  CURSOR c1 IS
+    SELECT DEPTNO, DNAME, LOC
+      FROM DEPT
+     WHERE DEPTNO = 40;
+     
+BEGIN
+-- 커서 열기(Open)
+OPEN c1;
+
+-- 커서로부터 읽어온 데이터 사용(Fetch)
+FETCH c1 INTO V_DEPT_ROW;
+
+DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || V_DEPT_ROW.DEPTNO);
+DBMS_OUTPUT.PUT_LINE('DNAME : ' || V_DEPT_ROW.DNAME);
+DBMS_OUTPUT.PUT_LINE('LOC : ' || V_DEPT_ROW.LOC);
+
+-- 커서 닫기(Close)
+CLOSE c1;
+
+END;
+/
+
+-- 여러 행의 데이터를 커서에 저장하여 사용하기(LOOP문 사용)
+DECLARE
+-- 커서 데이터를 입력할 변수 선언
+  V_DEPT_ROW DEPT%ROWTYPE;
+
+-- 명시적 커서 선언(Declaration)
+  CURSOR c1 IS
+    SELECT DEPTNO, DNAME, LOC
+      FROM DEPT;
+
+BEGIN
+  OPEN c1;
+  
+  LOOP
+    -- 커서로부터 읽어온 데이터 사용(Fetch)
+    FETCH c1 INTO V_DEPT_ROW;
+    
+    -- 커서의 모든 행을 읽어오기 위해 %NOTFOUND 속성 지정
+    EXIT WHEN c1%NOTFOUND;
+    
+  DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || V_DEPT_ROW.DEPTNO
+                        || ', DNAME : ' || V_DEPT_ROW.DNAME
+                        || ', LOC : ' || V_DEPT_ROW.LOC);
+  END LOOP;
+  
+-- 커서 닫기(Close)
+CLOSE c1;
+
+END;
+/
+
+
+-- FOR LOOP문을 활용하여 커서 사용하기
+DECLARE
+  -- 명시적 커서 선언(Declaration)
+  CURSOR c1 IS
+  SELECT DEPTNO, DNAME, LOC
+    FROM DEPT;
+    
+BEGIN
+  -- 커서 FOR LOOP 시작 (자동 Open, Fetch, Close)
+  FOR c1_rec IN c1 LOOP
+    DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || c1_rec.DEPTNO
+                         || ', DNAME : ' || c1_rec.DNAME
+                         || ', LOC : ' || c1_rec.LOC );
+  END LOOP;
+  
+END;
+/
+
+
+-- 파라미터를 사용하는 커서 알아보기
+DECLARE
+  -- 커서 데이터를 입력할 변수 선언
+  V_DEPT_ROW DEPT%ROWTYPE;
+  -- 명시적 커서 선언(Declaration)
+  CURSOR c1 (p_deptno DEPT.DEPTNO%TYPE) IS
+    SELECT DEPTNO, DNAME, LOC
+      FROM DEPT
+     WHERE DEPTNO = p_deptno;
+     
+BEGIN
+  -- 10번 부서 처리를 위해 커서 사용
+  OPEN c1 (10);
+    LOOP
+      FETCH c1 INTO V_DEPT_ROW;
+      EXIT WHEN c1%NOTFOUND;
+      DBMS_OUTPUT.PUT_LINE('10번 부서 - DEPTNO : ' || V_DEPT_ROW.DEPTNO
+                             || ', DNAME : ' || V_DEPT_ROW.DNAME
+                             || ', LOC : ' || V_DEPT_ROW.LOC);
+    END LOOP;
+  CLOSE c1;
+  -- 20번 부서 처리를 위해 커서 사용
+  OPEN c1 (20);
+    LOOP
+      FETCH c1 INTO V_DEPT_ROW;
+      EXIT WHEN c1%NOTFOUND;
+      DBMS_OUTPUT.PUT_LINE('20번 부서 - DEPTNO : ' || V_DEPT_ROW.DEPTNO
+                             || ', DNAME : ' || V_DEPT_ROW.DNAME
+                             || ', LOC : ' || V_DEPT_ROW.LOC);
+    END LOOP;
+  CLOSE c1;
+END;
+/
+
+
+-- 커서에 사용할 파라미터 입력받기
+DECLARE
+  -- 사용자가 입력한 부서 번호를 저장하는 변수선언
+  v_deptno DEPT.DEPTNO%TYPE;
+  -- 명시적 커서 선언(Declaration)
+  CURSOR c1 (p_deptno DEPT.DEPTNO%TYPE) IS
+    SELECT DEPTNO, DNAME, LOC
+      FROM DEPT
+     WHERE DEPTNO = p_deptno;
+BEGIN
+  -- INPUT_DEPTNO에 부서 번호 입력받고 v_deptno에 대입
+  v_deptno := &INPUT_DEPTNO;
+  -- 커서 FOR LOOP 시작. c1 커서에 v_deptno를 대입
+  FOR c1_rec IN c1(v_deptno) LOOP
+    DBMS_OUTPUT.PUT_LINE('DEPTNO : ' || c1_rec.DEPTNO
+                           || ', DNAME : ' || c1_rec.DNAME
+                           || ', LOC : ' || c1_rec.LOC);
+  END LOOP;
+END;
+/
+
+
+-- 묵시적 커서의 속성 사용하기
+BEGIN
+  UPDATE DEPT SET DNAME='DATABASE'
+   WHERE DEPTNO = 50;
+   
+  DBMS_OUTPUT.PUT_LINE('갱신된 행의 수 : ' || SQL%ROWCOUNT);
+  IF (SQL%FOUND) THEN
+    DBMS_OUTPUT.PUT_LINE('갱신 대상 행 존재 여부 : true');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('갱신 대상 행 존재 여부 : false');
+  END IF;
+  
+  IF (SQL%ISOPEN) THEN
+    DBMS_OUTPUT.PUT_LINE('커서의 OPEN 여부 : true');
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('커서의 OPEN 여부 : false');
+  END IF;
+  
+END;
+/
+  
+-- P.470 예제
+/*
+1.커서 / 2.명시적 커서 / 3.묵시적 커서
+*/
+  
+  
+/* STUDY 예외 처리 */
+/* 오류(error)의 종류
+- 컴파일 오류(compile error), 문법 오류(syntax error) : 문법이 잘못되었거나 오타로 인한 오류
+- 런타임 오류(runtime error), 실행 오류(execute error) : 명령문 실행 중 발생한 오류 
+*/
+
+-- 예외가 발생하는 PL/SQL
+DECLARE
+  v_wrong NUMBER;
+BEGIN
+  SELECT DNAME INTO v_wrong
+    FROM DEPT
+   WHERE DEPTNO = 10;
+END;
+/
+
+-- 예외를 처리하는 PL/SQL(예외 처리 추가)
+DECLARE
+  v_wrong NUMBER;
+BEGIN
+  SELECT DNAME INTO v_wrong
+    FROM DEPT
+   WHERE DEPTNO = 10;
+EXCEPTION
+  WHEN VALUE_ERROR THEN
+    DBMS_OUTPUT.PUT_LINE('예외 처리 : 수치 또는 값 오류 발생');
+END;
+/
+
+-- 예외 발생 후의 코드 실행 여부 확인하기
+DECLARE
+  v_wrong NUMBER;
+BEGIN
+  SELECT DNAME INTO v_wrong
+    FROM DEPT
+   WHERE DEPTNO = 10;
+   
+   DBMS_OUTPUT.PUT_LINE('예외가 발생하면 다음 문장은 실행되지 않습니다.');
+EXCEPTION
+  WHEN VALUE_ERROR THEN
+    DBMS_OUTPUT.PUT_LINE('예외 처리 : 수치 또는 값 오류 발생');
+END;
+/
+
+/*
+[예외 종류]
+내부 예외(internal exceptions) : 오라클에서 미리 정의한 예외.
+  - 사전 정의된 예외(predefined name exceptions) : 예외 번호에 따라 해당하는 이름이 존재
+  - 이름이 정해지지 않은 예외(unnamed exceptions) : 이름이 존재하지 않는 예외. 사용자가 
+    필요에 따라 이름 지정 가능
+
+사용자 정의 예외(user-defined exceptions) : 사용자가 필요에 따라 추가로 정의한 예외.
+
+[사전 정의된 예외 중 자주 발생하는 예외]
+ACCESS_INTO_NULL : 초기화되지 않은 객체 속성값 할당
+CASE_NOT_FOUND : CASE문의 WHERE절에 조건이 없고 ELSE절도 없을 경우
+COLLECTION_IS_NULL : 초기화되지 않은 중첩 테이블, VARRAY에 EXIT 외 컬렉션 메서드를 사용
+하려 할 경우 또는 초기화되지 않은 중첩 테이블이나 VARRAY에 값을 대입하려 할 경우
+CURSOR_ALREADY_OPEN : 이미 OPEN된 커서를 OPEN 시도할 경우
+DUP_VAL_ON_INDEX : UNIQUE 인덱스가 있는 열에 중복된 값을 저장하려고 했을 경우
+INVALID_CURSOR : OPEN되지 않은 커서를 CLOSE 시도하는 것과 같이 잘못된 커서 작업을 시도
+하는 경우
+INVALID_NUMBER : 문자에서 숫자로의 변환이 실패했을 경우
+LOGIN_DENIED : 사용자 이름이나 패스워드가 올바르지 않은 상태에서 로그인을 시도할 경우
+NO_DATA_FOUND : SELECT INTO문에서 결과 행이 하나도 없을 경우
+NOT_LOGGED_ON : 데이터베이스에 접속되어 있지 않은 경우
+PROGRAM_ERROR : PL/SQL 내부 오류가 발생했을 경우
+ROWTYPE_MISMATCH : 호스트 커서 변수와 PL/SQL 커서 변수의 자료형이 호환되지 않을 경우
+SELF_IS_NULL : 초기화되지 않은 오브젝트의 MEMBER 메서드를 호출한 경우
+STORAGE_ERROR : PL/SQL 메모리가 부족하거나 문제가 발생한 경우
+SUBSCRIPT_BEYOND_COUNT : 컬렉션의 요소 수보다 큰 인덱스를 사용하여 중첩 테이블이나 
+VARRAY의 요소 참조를 시도할 경우
+SUBSCRIPT_OUTSIDE_LIMIT : 정상 범위 외 인덱스 번호를 사용하여 중첩 테이블이나 VARRAY 
+요소 참조를 시도할 경우
+SYS_INVALID_ROWID : 문자열을 ROWID로 변환할 때 값이 적절하지 않은 경우
+TIMEOUT_ON_RESOURCE : 자원 대기 시간을 초과했을 경우
+TOO_MANY_ROWS : SELECT INTO문의 결과 행이 여러 개일 경우
+VALUE_ERROR : 산술, 변환, 잘림, 제약 조건 오류가 발생했을 경우
+ZERO_DIVIDE : 숫자 데이터를 0으로 나누려고 했을 경우
+
+[예외 처리부 작성]
+EXCEPTION
+  WHEN 예외 이름1 [OR 예외 이름2 - ] THEN
+    예외 처리에 사용할 명령어;
+  WHEN 예외 이름3 [OR 예외 이름4 - ] THEN
+    예외 처리에 사용할 명령어;
+  ...
+  WHEN OTHERS THEN
+    예외 처리에 사용할 명령어;
+    
+[이름 없는 예외 사용]
+DECLARE
+  예외 이름1 EXCEPTION;
+  PRAGMA EXCEPTION_INIT(예외 이름1, 예외 번호);
+  ...
+EXCEPTION
+  WHEN 예외 이름1 THEN
+    예외 처리에 사용할 명령어;
+  ...
+END;
+
+[사용자 정의 예외 사용]
+DECLARE
+  사용자 예외 이름 EXCEPTION;
+  ...
+BEGIN
+  IF 사용자 예외를 발생시킬 조건 THEN
+    RAISE 사용자 예외 이름
+  ...
+  END IF;
+EXCEPTION
+  WHEN 사용자 예외 이름 THEN
+    예외 처리에 사용할 명령어;
+  ...
+END;
+
+[오류 코드와 오류 메시지 사용 함수]
+SQLCODE : 오류 번호를 반환하는 함수
+SQLERRM : 오류 메시지를 반환하는 함수
+*/
+
+-- 사전 정의된 예외 사용하기
+DECLARE
+  v_wrong NUMBER;
+BEGIN
+  SELECT DNAME INTO v_wrong
+    FROM DEPT
+   WHERE DEPTNO = 10;
+   
+   DBMS_OUTPUT.PUT_LINE('예외가 발생하면 다음 문장은 실행되지 않습니다.');
+   
+EXCEPTION
+ WHEN TOO_MANY_ROWS THEN
+  DBMS_OUTPUT.PUT_LINE('예외 처리 : 요구보다 많은 행 추출 오류 발생');
+ WHEN VALUE_ERROR THEN
+  DBMS_OUTPUT.PUT_LINE('예외 처리 : 수치 또는 값 오류 발생');
+ WHEN OTHERS THEN
+  DBMS_OUTPUT.PUT_LINE('예외 처리 : 사전 정의 외 오류 발생');
+END;
+/
+
+-- 오류 코드와 오류 메시지 사용하기
+DECLARE
+  v_wrong NUMBER;
+BEGIN
+  SELECT DNAME INTO v_wrong
+    FROM DEPT
+   WHERE DEPTNO = 10;
+   
+   DBMS_OUTPUT.PUT_LINE('예외가 발생하면 다음 문장은 실행되지 않습니다.');
+   
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('예외 처리 : 사전 정의 외 오류 발생');
+    DBMS_OUTPUT.PUT_LINE('SQLCODE : ' || TO_CHAR(SQLCODE));
+    DBMS_OUTPUT.PUT_LINE('SQLERRM : ' || SQLERRM);
+END;
+/
+
+-- PP.478-479 예제
+-- Q1.
+-- 1.
+SET SERVEROUTPUT ON;
+DECLARE
+  V_EMP_ROW EMP%ROWTYPE;
+
+  CURSOR c1 IS
+    SELECT *
+      FROM EMP;
+
+BEGIN
+  OPEN c1;
+  
+  LOOP
+    -- 커서로부터 읽어온 데이터 사용(Fetch)
+    FETCH c1 INTO V_EMP_ROW;
+    
+    -- 커서의 모든 행을 읽어오기 위해 %NOTFOUND 속성 지정
+    EXIT WHEN c1%NOTFOUND;
+    
+  DBMS_OUTPUT.PUT_LINE('EMPNO : ' || V_EMP_ROW.EMPNO
+                        || ', ENAME : ' || V_EMP_ROW.ENAME
+                        || ', JOB : ' || V_EMP_ROW.JOB
+                        || ', SAL : ' || V_EMP_ROW.SAL
+                        || ', DEPTNO : ' || V_EMP_ROW.DEPTNO
+                        );
+  END LOOP;
+  
+CLOSE c1;
+
+END;
+/
+
+-- 2.
+SET SERVEROUTPUT ON;
+DECLARE
+  CURSOR c1 IS
+  SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
+    FROM EMP;
+    
+BEGIN
+  FOR c1_rec IN c1 LOOP
+    DBMS_OUTPUT.PUT_LINE('EMPNO : ' || c1_rec.EMPNO
+                            || ', ENAME : ' || c1_rec.ENAME
+                            || ', JOB : ' || c1_rec.JOB
+                            || ', SAL : ' || c1_rec.SAL
+                            || ', DEPTNO : ' || c1_rec.DEPTNO
+                            );
+  END LOOP;
+  
+END;
+/
+
+-- Q2.
+SET SERVEROUTPUT ON;
+DECLARE
+  v_wrong DATE;
+BEGIN
+  SELECT ENAME INTO v_wrong
+    FROM EMP
+   WHERE EMPNO = 7369;
+   
+   DBMS_OUTPUT.PUT_LINE('예외가 발생하면 다음 문장은 실행되지 않습니다.');
+   
+EXCEPTION
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('오류가 발생하였습니다. ' || TO_CHAR(SYSDATE, 'YYYY') || '년' || TO_CHAR(SYSDATE, 'MM') || '월' || TO_CHAR(SYSDATE, 'DD') || '일 ' || TO_CHAR(SYSDATE, 'HH') || '시' || TO_CHAR(SYSDATE, 'MI') || '분' || TO_CHAR(SYSDATE, 'SS') || '초');
+    DBMS_OUTPUT.PUT_LINE('SQLCODE : ' || TO_CHAR(SQLCODE));
+    DBMS_OUTPUT.PUT_LINE('SQLERRM : ' || SQLERRM);
+END;
+/
+
+
+/* STUDY 저장 서브프로그램 */
+/*
+[익명 블록과 저장 서브프로그램]
+익명 블록(anonymous block) : 오라클에 저장되지 않아 다시 실행하려면 재작성 및 재실행이 필요.
+SQL 파일을 저장하는 방법도 있으나, 오라클 자체에 저장되는 것이 아니다.
+저장 서브프로그램(stored subprogram) : 여러 번 사용할 목적으로 이름을 지정하여 오라클에 
+저장해 두는 PL/SQL 프로그램. 오라클에 저장하여 공유할 수 있으므로 메모리, 성능, 재사용성 등 
+여러 면에서 장점이 있다.
+
 */
