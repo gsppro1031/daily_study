@@ -5084,4 +5084,252 @@ SQL 파일을 저장하는 방법도 있으나, 오라클 자체에 저장되는 것이 아니다.
 저장해 두는 PL/SQL 프로그램. 오라클에 저장하여 공유할 수 있으므로 메모리, 성능, 재사용성 등 
 여러 면에서 장점이 있다.
 
+                                    [익명 블록]   [저장 서브프로그램]
+이름                                 이름 없음      이름 지정
+오라클 저장                           저장 X         저장 O
+컴파일                               실행 시마다     저장할 때 한 번
+공유                                 공유 불가       공유 가능
+다른 응용 프로그램에서의 호출 가능 여부      X              O
+
+[저장 서브프로그램의 종류]
+저장 프로시저(stored procedure) : 일반적으로 특정 처리 작업 수행을 위한 서브프로그램으로
+SQL문에서는 사용 불가.
+저장 함수(stored function) : 일반적으로 특저 연산을 거친 결과 값을 반환하는 서브프로그램
+으로 SQL문에서 사용 가능.
+패키지(package) : 저장 서브프로그램을 그룹화하는 데 사용.
+트리거(trigger) : 특정 상황(이벤트)이 발생할 때 자동으로 연달아 수행할 기능을 구현하는 데
+사용함.
 */
+
+-- P.482 예제
+/*
+1.O / 2.X / 3.X
+*/
+
+
+/* STUDY 프로시저 */
+/*
+[파라미터를 사용하지 않는 프로시저]
+작업 수행에 별다른 입력 데이터가 필요하지 않을 경우에 파라미터를 사용하지 않는 프로시저 사용.
+
+CREATE [OR REPLACE] PROCEDURE [프로시저명]
+IS | AS
+  [선언부]
+BEGIN
+  [실행부]
+EXCEPTION
+  [예외 처리부]
+END [프로시저명];
+
+REPLACE : 현재 프로시저명을 가진 프로시저가 이미 존재하는 경우 현재 작성한 내용으로 대체.
+즉, 덮어 쓴다는 의미.
+프로시저명 : 같은 스키마 내에서 중복될 수 없음.
+IS | AS : 선언부를 시작하기 위해 사용하는 키워드. 선언부가 존재하지 않더라도 반드시 명시.
+EXCEPTION : 예외 처리부. 생략 가능.
+END [프로시저명] : 프로시저 생성의 종료를 뜻하며 프로시저명은 생략 가능함.
+
+
+[파라미터를 사용하는 프로시저]
+프로시저를 실행하기 위해 입력 데이터가 필요한 경우 파라미터를 정의할 수 있음.
+
+CREATE [OR REPLACE] PROCEDURE [프로시저명]
+
+[([파라미터명1] [modes] 자료형 [ := | DEFAULT 기본값],
+  [파라미터명2] [modes] 자료형 [ := | DEFAULT 기본값],
+  ...
+  [파라미터명N] [modes] 자료형 [ := | DEFAULT 기본값]
+)]
+
+IS | AS
+  [선언부]
+BEGIN
+  [실행부]
+EXCEPTION
+  [예외 처리부]
+END [프로시저명];
+
+-> 파라미터는 쉼표로 구분하여 여러 개 지정 가능. 기본값과 모드(modes)는 생략 가능.
+자료형은 자릿수 지정 및 NOT NULL 제약 조건 사용이 불가능함.
+
+[파라미터 지정 시 사용 모드]
+IN : 지정하지 않으면 기본값으로 프로시저를 호출할 때 값을 입력받음.
+OUT : 호출할 때 값을 반환함.
+IN OUT : 호출할 때 값을 입력받은 후 실행 결과 값을 반환함.
+
+
+[프로시저 실행 명령어]
++ SQL문으로 실행
+EXECUTE [프로시저명]
+
++ PL/SQL문으로 실행
+BEGIN
+  [프로시저명];
+END;
+
+[프로시저 내용 확인하기]
+SELECT *
+  FROM USER_SOURCE
+ WHERE NAME = '[프로시저명]'
+ 
+NAME : 서브프로그램(생성 객체) 이름
+TYPE : 서브프로그램 종류(PROCEDURE, FUNCTION 등)
+LINE : 서브프로그램에 작성한 줄 번호
+TEXT : 서브프로그램에 작성한 소스 코드
+*/
+
+-- 프로시저 생성하기
+
+CREATE OR REPLACE PROCEDURE pro_noparam
+IS
+  V_EMPNO NUMBER(4) := 7788;
+  V_ENAME VARCHAR2(10);
+BEGIN
+  V_ENAME := 'SCOTT';
+  DBMS_OUTPUT.PUT_LINE('V_EMPNO : ' || V_EMPNO);
+  DBMS_OUTPUT.PUT_LINE('V_ENAME : ' || V_ENAME);
+END;
+/
+
+-- SQL문으로 프로시저 실행하기
+SET SERVEROUTPUT ON;
+EXECUTE pro_noparam;
+
+-- PL/SQL문으로 실행하기
+BEGIN
+  pro_noparam;
+END;
+
+-- 프로시저 확인하기
+SELECT *
+  FROM USER_SOURCE
+ WHERE NAME = 'PRO_NOPARAM';
+
+SELECT TEXT
+  FROM USER_SOURCE
+ WHERE NAME = 'PRO_NOPARAM';
+ 
+-- 프로시저 삭제하기
+DROP PROCEDURE PRO_NOPARAM;
+
+-- IN 모드로 프로시저에 파라미터 지정하기
+CREATE OR REPLACE PROCEDURE pro_param_in
+(
+  param1 IN NUMBER,
+  param2 NUMBER,
+  param3 NUMBER := 3,
+  param4 NUMBER DEFAULT 4
+)
+IS
+
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('param1 : ' || param1);
+  DBMS_OUTPUT.PUT_LINE('param2 : ' || param2);
+  DBMS_OUTPUT.PUT_LINE('param3 : ' || param3);
+  DBMS_OUTPUT.PUT_LINE('param4 : ' || param4);
+END;
+
+-- 파라미터를 입력하여 프로시저 사용하기
+EXECUTE pro_param_in(1,2,9,8);
+
+-- 기본값이 지정된 파라미터 입력을 제외하고 프로시저 사용하기
+EXECUTE pro_param_in(1,2);
+
+-- 실행에 필요한 개수보다 적은 파라미터 입력
+EXECUTE pro_param_in(1);
+/*
+오류 발생 : ORA-06550, PLS-00306: wrong number or types of arguments in call to
+'PRO_PARAM_IN'
+-> 프로시저 호출 시 인수의 개수나 유형이 잘못되었을 때 발생.
+*/
+
+-- 파라미터 이름을 활용하여 프로시저에 값 입력하기
+EXECUTE pro_param_in(param1 => 10, param2 => 20);
+
+/* 파라미터 값 지정 방법 세 가지
+위치 지정 : 지정한 파라미터 순서대로 값을 지정하는 방식
+이름 지정 : => 연산자로 파라미터 이름을 명시하여 값을 지정하는 방식
+혼합 지정 : 일부 파라미터는 순서대로 값만 지정하고 일부 파라미터는 => 연산자로 값을 지정하는 
+방식(11g부터 사용 가능)
+*/
+
+-- OUT 모드 파라미터 정의하기
+CREATE OR REPLACE PROCEDURE pro_param_out
+(
+  in_empno IN EMP.EMPNO%TYPE,
+  out_ename OUT EMP.ENAME%TYPE,
+  out_sal OUT EMP.SAL%TYPE
+)
+IS
+
+BEGIN
+  SELECT ENAME, SAL INTO out_ename, out_sal
+    FROM EMP
+   WHERE EMPNO = in_empno;
+END pro_param_out;
+/
+
+-- OUT 모드 파라미터 사용하기
+DECLARE
+  v_ename EMP.ENAME%TYPE;
+  v_sal EMP.SAL%TYPE;
+BEGIN
+  pro_param_out(7788, v_ename, v_sal);
+  DBMS_OUTPUT.PUT_LINE('ENAME : ' || v_ename);
+  DBMS_OUTPUT.PUT_LINE('SAL : ' || v_sal);
+END;
+/
+
+-- IN OUT 모드 파라미터 정의하기
+-- 값을 입력받을 때와 프로시저 수행 후 결과값을 반환할 때 사용함.
+CREATE OR REPLACE PROCEDURE pro_param_inout
+(
+  inout_no IN OUT NUMBER
+)
+IS
+
+BEGIN
+  inout_no := inout_no * 2;
+END pro_param_inout;
+/
+
+-- IN OUT 모드 파라미터 사용하기
+DECLARE
+  no NUMBER;
+BEGIN
+  no := 5;
+  pro_param_inout(no);
+  DBMS_OUTPUT.PUT_LINE('no : ' || no);
+END;
+/
+
+-- P.492 예제
+/*
+1-2 / 2-3 / 3-1
+*/
+
+
+-- 생성할 때 오류가 발생하는 프로시저 알아보기
+CREATE OR REPLACE PROCEDURE pro_err
+IS
+  err_no NUMBER;
+BEGIN
+  err_no = 100;
+  DBMS_OUTPUT.PUT_LINE('err_no : ' || err_no);
+END pro_err;
+/
+
+-- SHOW ERRORS 명령어로 오류 확인하기
+SHOW ERRORS;
+
+/*
+SHOW ERR [프로그램종류] [프로그램명];
+SHOW ERR PROCEDURE pro_err;
+*/
+
+SELECT *
+  FROM USER_ERRORS
+ WHERE NAME = 'PRO_ERR';
+ 
+
+/* STUDY 함수(function) */
+
