@@ -5332,4 +5332,534 @@ SELECT *
  
 
 /* STUDY 함수(function) */
+/*
+사용자 정의 함수(user defined function) : PL/SQL을 통해 함수를 직접 정의할 수 있음
 
+[프로시저와 함수 비교]
+- 실행
+프로시저 : EXECUTE 명령어 또는 다른 PL/SQL 서브프로그램 내에서 호출하여 실행
+함수 : 변수를 사용한 EXECUTE 명령어 또는 다른 PL/SQL 서브프로그램에서 호출하여 실행하거나
+SQL문에서 직접 실행 가능
+
+- 파라미터 지정
+프로시저 : 필요에 따라 지정하지 않을 수도 있고 여러 개 지정할 수도 있으며 IN, OUT, IN OUT 
+세 가지 모드를 사용할 수 있음
+함수 : 프로시저와 같게 지정하지 않을 수도 있고 여러 개 지정할 수 있지만 IN 모드(또는 생략)만 
+사용
+
+- 값의 반환
+프로시저 : 실행 후 값의 반환이 없을 수도 있고 OUT, IN OUT 모드의 파라미터 수에 따라 여러 
+값을 반환할 수 있음
+함수 : 반드시 하나의 값을 반환해야 하며 값의 반환은 프로시저와 달리 OUT, IN OUT 모드의 파라
+미터를 사용하는 것이 아니라 RETURN 절과 RETURN문을 통해 반환
+
+
+[함수 생성 방법]
+CREATE [OR REPLACE] FUNCTION [함수명]
+[([파라미터명1] [IN] 자료형1,
+  [파라미터명2] [IN] 자료형2,
+  ...
+  [파라미터명N] [IN] 자료형N
+)] -> 프로시저와 달리 IN 모드만 지정 가능, DEFAULT 옵션으로 기본값 지정 가능
+RETURN [자료형] -> 반환값의 자료형을 정의
+IS | AS
+  선언부
+BEGIN
+  실행부
+  RETURN (반환 값);
+EXCEPTION
+  예외 처리부
+END [함수명];
+
+* 엄밀히 말하면 함수의 파라미터에 OUT, IN OUT 모드를 사용할 수는 있지만, 그렇게 할 경우 
+SQL문에서는 사용할 수 없는, 즉 프로시저와 다를 바 없는 함수가 됨. 때문에 오라클에서도 함수 
+파라미터에 OUT, IN OUT 모드를 사용하지 말라고 권장함.
+
+*/
+
+-- 함수 생성하기
+CREATE OR REPLACE FUNCTION func_aftertax(
+  sal IN NUMBER
+)
+RETURN NUMBER
+IS
+  tax NUMBER := 0.05;
+BEGIN
+  RETURN (ROUND(sal - (sal * tax)));
+END func_aftertax;
+/
+
+-- 함수 실행하기
+DECLARE
+  aftertax NUMBER;
+BEGIN
+  aftertax := func_aftertax(3000);
+  DBMS_OUTPUT.PUT_LINE('after-tax income : ' || aftertax);
+END;
+/
+
+-- SQL문에서 함수 실행하기
+SELECT func_aftertax(3000)
+  FROM DUAL;
+  
+-- 함수에 테이블 데이터 사용하기
+SELECT EMPNO, ENAME, SAL, func_aftertax(SAL) AS AFTERTAX
+  FROM EMP;
+  
+-- 함수 삭제하기
+DROP FUNCTION func_aftertax;
+
+-- P.499 예제
+-- 2
+
+
+/* STUDY 패키지(package) */
+/*
+패키지 : 업무나 기능 면에서 연관성이 높은 프로시저, 함수 등 여러 개의 PL/SQL 서브프로그램을 
+하나의 논리 그룹으로 묶어 통합, 관리하는 데 사용하는 객체. PL/SQL 서브프로그램의 제작, 사용, 
+관리, 보안, 성능 등에 좋은 영향을 끼침.
+
+[패키지를 통한 서브프로그램 그룹화의 장점]
+- 모듈성 : 서브프로그램을 포함한 여러 PL/SQL 구성 요소를 모듈화 가능. 모듈성은 잘 묶어 
+둔다는 뜻으로 프로그램의 이해를 쉽게 하고 패키지 사이의 상호 작용을 더 간편하고 명료하게 해 
+주는 역할을 함. 즉 PL/SQL로 제작한 프로그램의 사용 및 관리에 큰 도움을 줌.
+- 쉬운 응용 프로그램 설계 : 패키지에 포함할 서브프로그램은 완벽하게 완성되지 않아도 정의가 
+가능. 이 때문에 전체 소스 코드를 다 작성하기 전에 미리 패키지에 저장할 서브프로그램을 지정할 
+수 있으므로 설계가 수월해짐.
+- 정보 은닉 : 제작 방식에 따라 패키지에 포함하는 서브프로그램의 외부 노출 여부 또는 접근 
+여부를 지정할 수 있음. 즉 서브프로그램을 사용할 때 보안을 강화할 수 있음.
+- 기능성 향상 : 패키지 내부에는 서브프로그램 외에 변수, 커서, 예외 등도 각 세션이 유지되는 
+동안 선언해서 공용(public)으로 사용 가능. 예를 들어 특정 커서 데이터는 세션이 종료되기 전까지 
+보존되므로 여러 서브프로그램에서 사용할 수 있음.
+- 성능 향상 : 패키지를 사용할 때 패키지에 포함한 모든 서브프로그램이 메모리에 한 번에 로딩되는
+데 메모리에 로딩된 후의 호출은 디스크 I/O를 일으키지 않으므로 성능이 향상됨.
+
+[패키지 명세]
+CREATE [OR REPLACE] PACKAGE [패키지명]
+IS | AS
+  서브프로그램을 포함한 다양한 객체 선언
+END [패키지명];
+*/
+
+-- 패키지 생성하기
+CREATE OR REPLACE PACKAGE pkg_example
+IS
+  spec_no NUMBER := 10;
+  FUNCTION func_aftertax(sal NUMBER) RETURN NUMBER;
+  PROCEDURE pro_emp(in_empno IN EMP.EMPNO%TYPE);
+  PROCEDURE pro_dept(in_deptno IN DEPT.DEPTNO%TYPE);
+END;
+/
+
+-- 패키지 명세 확인하기(USER_SOURCE 데이터 사전으로 조회)
+SELECT TEXT
+  FROM USER_SOURCE
+ WHERE TYPE = 'PACKAGE'
+   AND NAME = 'PKG_EXAMPLE';
+
+-- 패키지 명세 확인하기(DESC 명령어로 조회)
+DESC pkg_example;
+
+-- 패키지 본문 작성법
+/*
+CREATE [OR REPLACE] PACKAGE BODY [패키지명]
+IS | AS
+  패키지 명세에서 선언한 서브프로그램을 포함한 여러 객체를 정의
+  경우에 따라 패키지 명세에 존재하지 않는 객체 및 서브프로그램도 정의 가능
+END [패키지명];
+*/
+
+-- 패키지 본문 생성하기
+CREATE OR REPLACE PACKAGE BODY pkg_example
+IS
+  body_no NUMBER := 10;
+  
+  FUNCTION func_aftertax(sal NUMBER) RETURN NUMBER
+    IS
+      tax NUMBER := 0.05;
+    BEGIN
+      RETURN (ROUND(sal - (sal * tax)));
+  END func_aftertax;
+    
+  PROCEDURE pro_emp(in_empno IN EMP.EMPNO%TYPE)
+    IS
+      out_ename EMP.ENAME%TYPE;
+      out_sal EMP.SAL%TYPE;
+    BEGIN
+      SELECT ENAME, SAL INTO out_ename, out_sal
+        FROM EMP
+       WHERE EMPNO = in_empno;
+       
+       DBMS_OUTPUT.PUT_LINE('ENAME : ' || out_ename);
+       DBMS_OUTPUT.PUT_LINE('SAL : ' || out_sal);
+  END pro_emp;
+
+  PROCEDURE pro_dept(in_deptno IN DEPT.DEPTNO%TYPE)
+    IS
+      out_dname DEPT.DNAME%TYPE;
+      out_loc DEPT.LOC%TYPE;
+    BEGIN
+      SELECT DNAME, LOC INTO out_dname, out_loc
+        FROM DEPT
+       WHERE DEPTNO = in_deptno;
+       
+       DBMS_OUTPUT.PUT_LINE('DNAME : ' || out_dname);
+       DBMS_OUTPUT.PUT_LINE('LOC : ' || out_loc);
+  END pro_dept;
+END;
+/
+
+-- 서브프로그램 오버로드
+/*
+서브프로그램 이름은 기본적으로 중복이 불가함. 하지만 같은 패키지에서 사용하는 파라미터의 개수, 
+자료형, 순서가 다를 경우에 한해서만 이름이 같은 서브프로그램을 정의 가능. 이를 서브프로그램 
+오버로드(subprogram overload)라고 함. 보통 같은 기능을 수행하는 여러 서브프로그램이 입력 
+데이터를 각각 다르게 정의할 때 사용. 또한 서브프로그램 종류가 같아야 오버로드 가능. 즉, 특정 
+프로시저를 오버로드할 때 반드시 이름이 같은 프로시저로 정의해야 함. 프로시저와 이름이 같은 
+함수는 정의 불가.
+
+[프로시저 오버로드 방법]
+CREATE [OR REPLACE] PACKAGE [패키지명]
+IS | AS
+  [서브프로그램 종류] [서브프로그램명](파라미터 정의);
+  [서브프로그램 종류] [서브프로그램명](개수나 자료형, 순서가 다른 파라미터 정의);
+END [패키지명];
+*/
+
+-- 프로시저 오버로드하기
+CREATE OR REPLACE PACKAGE pkg_overload
+IS
+  PROCEDURE pro_emp(in_empno IN EMP.EMPNO%TYPE);
+  PROCEDURE pro_emp(in_ename IN EMP.ENAME%TYPE);
+END;
+/
+
+-- 패키지 본문에서 오버로드된 프로시저 작성하기
+CREATE OR REPLACE PACKAGE BODY pkg_overload
+IS
+  PROCEDURE pro_emp(in_empno IN EMP.EMPNO%TYPE)
+    IS
+      out_ename EMP.ENAME%TYPE;
+      out_sal EMP.SAL%TYPE;
+    BEGIN
+      SELECT ENAME, SAL INTO out_ename, out_sal
+        FROM EMP
+       WHERE EMPNO = in_empno;
+       
+      DBMS_OUTPUT.PUT_LINE('ENAME : ' || out_ename);
+      DBMS_OUTPUT.PUT_LINE('SAL : ' || out_sal);
+  END pro_emp;
+  
+  PROCEDURE pro_emp(in_ename IN EMP.ENAME%TYPE)
+    IS
+      out_ename EMP.ENAME%TYPE;
+      out_sal EMP.SAL%TYPE;
+    BEGIN
+      SELECT ENAME, SAL INTO out_ename, out_sal
+        FROM EMP
+       WHERE ENAME = in_ename;
+       
+      DBMS_OUTPUT.PUT_LINE('ENAME : ' || out_ename);
+      DBMS_OUTPUT.PUT_LINE('SAL : ' || out_sal);
+  END pro_emp;
+  
+END;
+/
+
+-- P.505 예제
+-- 4
+
+-- 패키지 사용하기
+BEGIN
+  DBMS_OUTPUT.PUT_LINE('--pkg_example.func_aftertax(3000)--');
+  DBMS_OUTPUT.PUT_LINE('after-tax : ' || pkg_example.func_aftertax(3000));
+  
+  DBMS_OUTPUT.PUT_LINE('--pkg_example.pro_emp(7788)--');
+  pkg_example.pro_emp(7788);
+  
+  DBMS_OUTPUT.PUT_LINE('--pkg_example.pro_dept(10)--');
+  pkg_example.pro_dept(10);
+  
+  DBMS_OUTPUT.PUT_LINE('--pkg_overload.pro_emp(7788)--');
+  pkg_overload.pro_emp(7788);
+  
+  DBMS_OUTPUT.PUT_LINE('--pkg_overload.pro_emp(''SCOTT'')--');
+  pkg_overload.pro_emp('SCOTT');
+END;
+/
+
+-- 패키지 삭제하기
+/*
+[패키지 명세와 본문을 한 번에 삭제]
+DROP PACKAGE [패키지명];
+
+[패키지 본문만 삭제]
+DROP PACKAGE BODY [패키지명];
+*/
+
+
+/* STUDY 트리거(trigger) */
+/*
+트리거 : 데이터베이스 안의 특정 상황이나 동작, 즉 이벤트가 발생할 경우에 자동으로 실행되는 
+기능을 정의하는 PL/SQL 서브프로그램. 테이블, 뷰, 스키마, 데이터베이스 수준에서 다음과 같은 
+이벤트에 동작 지정 가능.
+
+DML : INSERT, UPDATE, DELETE
+DDL : CREATE, ALTER, DROP
+데이터베이스 동작 : SERVERERROR, LOGON, LOGOFF, STARTUP, SHUTDOWN
+
+[장점]
+1. 데이터와 연관된 여러 작업을 수행하기 위해 PL/SQL문 또는 서브프로그램을 일일이 실행해야 
+하는 번거로움을 줄일 수 있음. 즉 데이터 관련 작업을 좀 더 간편하게 수행 가능.
+2. 제약 조건(constraints)만으로 구현이 어렵거나 불가능한 좀 더 복잡한 데이터 규칙을 정할 
+수 있어 더 수준 높은 데이터 정의가 가능.
+3. 데이터 변경과 관련된 일련의 정보를 기록해 둘 수 있으므로 여러 사용자가 공유하는 데이터 
+보안성과 안정성 그리고 문제가 발생했을 때 대처 능력을 높일 수 있음.
+
+[단점]
+무분별하게 사용 시 데이터베이스 성능을 떨어뜨리는 원인이 됨.
+
+[트리거의 종류 및 설명]
+DML 트리거 : INSERT, UPDATE, DELETE와 같은 DML 명령어를 기점으로 동작
+DDL 트리거 : CREATE, ALTER, DROP과 같은 DDL 명령어를 기점으로 동작
+INSTEAD OF 트리거 : 뷰(View)에 사용하는 DML 명령어를 기점으로 동작함
+시스템(system) 트리거 : 데이터베이스나 스키마 이벤트로 동작함
+단순(simple) 트리거 : 다음 각 시점(timing point)에 동작함
+  - 트리거를 작동시킬 문장이 실행되기 전 시점
+  - 트리거를 작동시킬 문장이 실행된 후 시점
+  - 트리거를 작동시킬 문장이 행에 영향을 미치기 전 시점
+  - 트리거를 작동시킬 문장이 행에 영향을 준 후 시점
+복합(compound) 트리거 : 단순 트리거의 여러 시점에 동작
+
+[DML 트리거 형식]
+CREATE [OR REPLACE] TRIGGER [트리거명]
+BEFORE | AFTER
+INSERT | UPDATE | DELETE ON [테이블명]
+REFERENCING OLD as old | New as new
+FOR EACH ROW WHEN [조건식]
+FOLLOWS [트리거명2], [트리거명3] ...
+ENABLE | DISABLE
+
+DECLARE
+  선언부
+BEGIN
+  실행부
+EXCEPTION
+  예외 처리부
+END;
+
+BEFORE | AFTER : 트리거가 작동할 타이밍을 지정
+INSERT | UPDATE | DELETE ON [테이블명] : 지정한 테이블에 트리거가 작동할 DML 명령어
+REFERENCING OLD as old | New as new : DML로 변경되는 행의 변경 전 값과 변경 후 값을 
+참조하는 데 사용(생략 가능)
+FOR EACH ROW WHEN [조건식] : 트리거를 실행하는 DML 문장에 한 번만 실행할지 DML 문장에 
+의해 영향받는 행별로 실행할지를 지정. 생략하면 트리거는 DML 명령어가 실행할 때 한 번만 실행. 
+사용할 경우, DML 명령어에 영향받는 행별로 트리거를 작동하되 WHEN 키워드를 함께 사용하면 
+DML 명령어에 영향받는 행 중 트리거를 작동시킬 행을 조건식으로 지정 가능
+FOLLOWS [트리거명2], [트리거명3] ... : 여러 관련 트리거의 실행 순서 지정(생략 가능, 오라
+클11g부터 가능)
+ENABLE | DISABLE : 트리거의 활성화, 비활성화를 지정(생략 가능, 오라클11g부터 가능)
+*/
+
+-- DML 트리거의 제작 및 사용(BEFORE)
+CREATE TABLE EMP_TRG
+  AS SELECT * FROM EMP;
+
+CREATE OR REPLACE TRIGGER trg_emp_nodml_weekend
+BEFORE
+INSERT OR UPDATE OR DELETE ON EMP_TRG
+BEGIN
+  IF TO_CHAR(sysdate, 'DY') IN ('토', '일') THEN
+    IF INSERTING THEN
+      raise_application_error(-20000, '주말 사원정보 추가 불가');
+    ELSIF UPDATING THEN
+      raise_application_error(-20001, '주말 사원정보 수정 불가');
+    ELSIF DELETING THEN
+      raise_application_error(-20002, '주말 사원정보 삭제 불가');
+    ELSE
+      raise_application_error(-20003, '주말 사원정보 변경 불가');
+    END IF;
+  END IF;
+END;
+/
+
+-- 날짜 임의 변경 필요 [시작] > [설정] > [시간 및 언어] > [날짜 및 시간]
+-- 평일 날짜로 EMP_TRG 테이블 UPDATE하기
+UPDATE emp_trg SET sal = 3500 WHERE empno = 7788;
+
+-- 주말 날짜로 EMP_TRG 테이블 UPDATE하기
+UPDATE emp_trg SET sal = 3500 WHERE empno = 7788;
+
+-- DML 트리거의 제작 및 사용(AFTER)
+CREATE TABLE EMP_TRG_LOG(
+  TABLENAME VARCHAR2(10), -- DML이 수행된 테이블 이름
+  DML_TYPE VARCHAR2(10),  -- DML 명령어의 종류
+  EMPNO NUMBER(4),        -- DML 대상이 된 사원 번호
+  USER_NAME VARCHAR2(30), -- DML을 수행한 USER 이름
+  CHANGE_DATE DATE        -- DML이 수행된 날짜
+);
+
+CREATE OR REPLACE TRIGGER trg_emp_log
+AFTER
+INSERT OR UPDATE OR DELETE ON EMP_TRG
+FOR EACH ROW
+
+BEGIN
+
+  IF INSERTING THEN
+    INSERT INTO emp_trg_log
+    VALUES ('EMP_TRG', 'INSERT', :new.empno,
+            SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+
+  ELSIF UPDATING THEN
+    INSERT INTO emp_trg_log
+    VALUES ('EMP_TRG', 'UPDATE', :old.empno,
+            SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+            
+  ELSIF DELETING THEN
+    INSERT INTO emp_trg_log
+    VALUES ('EMP_TRG', 'DELETE', :old.empno,
+            SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+  END IF;
+END;
+/
+
+-- EMP_TRG 테이블에 INSERT 실행하기
+INSERT INTO EMP_TRG
+  VALUES(9999, 'TestEmp', 'CLERK', 7788, TO_DATE('2018-03-03', 'YYYY-MM-DD'), 1200, null, 20);
+
+COMMIT;
+
+SELECT *
+  FROM EMP_TRG;
+  
+SELECT *
+  FROM EMP_TRG_LOG;
+  
+-- EMP_TRG 테이블에 UPDATE 실행하기
+UPDATE EMP_TRG
+   SET SAL = 1300
+ WHERE MGR = 7788;
+ 
+COMMIT;
+
+SELECT *
+  FROM EMP_TRG;
+
+SELECT *
+  FROM EMP_TRG_LOG;
+  
+-- 트리거 정보 조회
+SELECT TRIGGER_NAME, TRIGGER_TYPE, TRIGGERING_EVENT, TABLE_NAME, STATUS
+  FROM USER_TRIGGERS;
+  
+-- 트리거 변경
+/*
+[트리거 활성화 OR 비활성화]
+ALTER TRIGGER [트리거명] ENABLE | DISABLE;
+
+[특정 테이블과 관련된 모든 트리거의 상태 활성화]
+ALTER TABLE [테이블명] ENABLE ALL TRIGGERS;
+
+[특정 테이블과 관련된 모든 트리거의 상태 비활성화]
+ALTER TABLE [테이블명] DISABLE ALL TRIGGERS;
+*/
+
+-- 트리거 삭제
+/*
+DROP TRIGGER [트리거명];
+*/
+
+-- PP.518-521 예제
+-- Q1
+CREATE OR REPLACE PROCEDURE pro_dept_in
+(
+  in_deptno IN DEPT.DEPTNO%TYPE,
+  out_deptno OUT DEPT.DEPTNO%TYPE,
+  out_dname OUT DEPT.DNAME%TYPE,
+  out_loc OUT DEPT.LOC%TYPE
+)
+IS
+
+BEGIN
+  SELECT DEPTNO, DNAME, LOC INTO out_deptno, out_dname, out_loc
+    FROM DEPT
+   WHERE DEPTNO = in_deptno;
+END pro_dept_in;
+/
+
+DECLARE
+  v_deptno DEPT.DEPTNO%TYPE;
+  v_dname DEPT.DNAME%TYPE;
+  v_loc DEPT.LOC%TYPE;
+BEGIN
+  pro_dept_in(20, v_deptno, v_dname, v_loc);
+  DBMS_OUTPUT.PUT_LINE('부서 번호 : ' || v_deptno);
+  DBMS_OUTPUT.PUT_LINE('부서 이름 : ' || v_dname);
+  DBMS_OUTPUT.PUT_LINE('지역 : ' || v_loc);
+END;
+/
+
+-- Q2
+CREATE OR REPLACE FUNCTION func_date_kor(
+   in_date IN DATE
+)
+RETURN VARCHAR2
+IS   
+BEGIN
+   RETURN (TO_CHAR(in_date, 'YYYY"년"MM"월"DD"일"'));
+END func_date_kor;
+/
+
+SELECT ENAME, func_date_kor(HIREDATE) AS HIREDATE
+  FROM EMP
+ WHERE EMPNO = 7369;
+ 
+-- Q3
+CREATE TABLE DEPT_TRG
+    AS SELECT * FROM DEPT;
+
+CREATE TABLE DEPT_TRG_LOG(
+   TABLENAME   VARCHAR2(10), -- DML이 수행된 테이블 이름
+   DML_TYPE    VARCHAR2(10), -- DML 명령어의 종류
+   DEPTNO      NUMBER(2),    -- DML 대상이 된 부서번호
+   USER_NAME   VARCHAR2(30), -- DML을 수행한 USER 이름
+   CHANGE_DATE DATE          -- DML 이 수행된 날짜
+);
+
+CREATE OR REPLACE TRIGGER trg_dept_log
+AFTER
+INSERT OR UPDATE OR DELETE ON DEPT_TRG
+FOR EACH ROW
+BEGIN
+   IF INSERTING THEN
+     INSERT INTO DEPT_TRG_LOG
+     VALUES ('DEPT_TRG', 'INSERT', :new.deptno,
+             SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+
+   ELSIF UPDATING THEN
+     INSERT INTO DEPT_TRG_LOG
+     VALUES ('DEPT_TRG', 'UPDATE', :old.deptno,
+             SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+
+   ELSIF DELETING THEN
+     INSERT INTO DEPT_TRG_LOG
+     VALUES ('DEPT_TRG', 'DELETE', :old.deptno,
+             SYS_CONTEXT('USERENV', 'SESSION_USER'), sysdate);
+   END IF;
+END;
+/
+
+INSERT INTO DEPT_TRG 
+  VALUES(99, 'TEST_DNAME', 'SEOUL');
+  
+UPDATE DEPT_TRG 
+   SET LOC = 'TEST_LOC' 
+ WHERE DEPTNO = 99;
+ 
+DELETE FROM DEPT_TRG 
+ WHERE DEPTNO = 99;
+
+SELECT * FROM DEPT_TRG;
+
+SELECT * FROM DEPT_TRG_LOG;
